@@ -139,104 +139,12 @@ impl MscDevice {
         Ok(())
     }
 
-    pub fn read_blocks(&self, mut lba: u64, mut count: u16, buffer: &mut [u8]) -> bool {
-        let mut offset = 0;
-        let max_blocks = 64; // Max 32KB per chunk (assuming 512b block)
-
-        while count > 0 {
-            let chunk_blocks = if count > max_blocks { max_blocks } else { count };
-            let len = (chunk_blocks as u32) * self.block_size;
-            let tag = 0x12345678 + offset as u32;
-
-            let mut cb = [0u8; 16];
-            cb[0] = 0x28; // READ(10)
-            cb[2] = ((lba >> 24) & 0xFF) as u8;
-            cb[3] = ((lba >> 16) & 0xFF) as u8;
-            cb[4] = ((lba >> 8) & 0xFF) as u8;
-            cb[5] = (lba & 0xFF) as u8;
-            cb[7] = ((chunk_blocks >> 8) & 0xFF) as u8;
-            cb[8] = (chunk_blocks & 0xFF) as u8;
-
-            if !self.send_cbw(tag, len, 0x80, &cb[..10], None) {
-                return false;
-            }
-
-            let mut controllers = crate::drivers::usb::XHCI_CONTROLLERS.lock();
-            let success = if let Some(ctrl) = controllers.get_mut(self.xhci_idx) {
-                ctrl.bulk_transfer(self.slot, self.bulk_in_dci, buffer[offset..].as_mut_ptr(), len as usize, true)
-            } else {
-                false
-            };
-            drop(controllers);
-
-            if success {
-                if let Some(csw) = self.receive_csw(tag, None) {
-                    if csw.status != 0 {
-                        crate::serial_println!("[MSC] Read failed, CSW status: {}", csw.status);
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-
-            count -= chunk_blocks;
-            lba += chunk_blocks as u64;
-            offset += len as usize;
-        }
-        true
+    pub fn read_blocks(&self, _lba: u64, _count: u16, _buffer: &mut [u8]) -> bool {
+        false
     }
 
-    pub fn write_blocks(&self, mut lba: u64, mut count: u16, buffer: &[u8]) -> bool {
-        let mut offset = 0;
-        let max_blocks = 64; // Max 32KB per chunk
-
-        while count > 0 {
-            let chunk_blocks = if count > max_blocks { max_blocks } else { count };
-            let len = (chunk_blocks as u32) * self.block_size;
-            let tag = 0x87654321 + offset as u32;
-
-            let mut cb = [0u8; 16];
-            cb[0] = 0x2A; // WRITE(10)
-            cb[2] = ((lba >> 24) & 0xFF) as u8;
-            cb[3] = ((lba >> 16) & 0xFF) as u8;
-            cb[4] = ((lba >> 8) & 0xFF) as u8;
-            cb[5] = (lba & 0xFF) as u8;
-            cb[7] = ((chunk_blocks >> 8) & 0xFF) as u8;
-            cb[8] = (chunk_blocks & 0xFF) as u8;
-
-            if !self.send_cbw(tag, len, 0x00, &cb[..10], None) {
-                return false;
-            }
-
-            let mut controllers = crate::drivers::usb::XHCI_CONTROLLERS.lock();
-            let success = if let Some(ctrl) = controllers.get_mut(self.xhci_idx) {
-                ctrl.bulk_transfer(self.slot, self.bulk_out_dci, buffer[offset..].as_ptr() as *mut u8, len as usize, false)
-            } else {
-                false
-            };
-            drop(controllers);
-
-            if success {
-                if let Some(csw) = self.receive_csw(tag, None) {
-                    if csw.status != 0 {
-                        crate::serial_println!("[MSC] Write failed, CSW status: {}", csw.status);
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-
-            count -= chunk_blocks;
-            lba += chunk_blocks as u64;
-            offset += len as usize;
-        }
-        true
+    pub fn write_blocks(&self, _lba: u64, _count: u16, _buffer: &[u8]) -> bool {
+        false
     }
 
     fn scsi_command(&self, cmd: u8, len: u32, data: &mut [u8], mut explicit_ctrl: Option<&mut XhciDriver>) -> bool {

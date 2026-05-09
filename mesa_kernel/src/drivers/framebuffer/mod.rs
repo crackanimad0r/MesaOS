@@ -29,8 +29,10 @@ pub fn update_status_bar(
     second: u8,
     disk_used: u64,
     disk_total: u64,
+    bat_percent: u8,
+    bat_charging: bool,
 ) {
-    console::update_status_bar(used_mb, total_mb, cpu_count, hour, minute, second, disk_used, disk_total);
+    console::update_status_bar(used_mb, total_mb, cpu_count, hour, minute, second, disk_used, disk_total, bat_percent, bat_charging);
 }
 
 pub fn get_info() -> (*mut u8, usize, usize, usize, usize) {

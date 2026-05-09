@@ -100,142 +100,17 @@ impl AtaDriver {
     
     /// Inicializa el disco
     pub fn init(&mut self) -> Result<(), &'static str> {
-        crate::serial_println!("[ATA] Detectando disco...");
-        
-        // Seleccionar drive master (0xA0 = master, 0xB0 = slave)
-        unsafe {
-            self.drive_port.write(0xA0);
-        }
-        
-        // Esperar un poco
-        self.wait_400ns();
-        
-        // Enviar comando IDENTIFY
-        unsafe {
-            self.sector_count_port.write(0);
-            self.lba_low_port.write(0);
-            self.lba_mid_port.write(0);
-            self.lba_high_port.write(0);
-            self.command_port.write(ATA_CMD_IDENTIFY);
-        }
-        
-        // Leer status
-        let status = unsafe { self.status_port.read() };
-        if status == 0 {
-            return Err("No disk detected");
-        }
-        
-        // Esperar a que el disco esté listo
-        self.wait_not_busy()?;
-        
-        // Verificar que es un disco ATA (no ATAPI)
-        let lba_mid = unsafe { Port::<u8>::new(ATA_PRIMARY_LBA_MID).read() };
-        let lba_high = unsafe { Port::<u8>::new(ATA_PRIMARY_LBA_HIGH).read() };
-        
-        if lba_mid != 0 || lba_high != 0 {
-            return Err("Not an ATA disk (probably ATAPI)");
-        }
-        
-        // Esperar DRQ
-        self.wait_drq()?;
-        
-        // Leer datos de identificación (256 words = 512 bytes)
-        let mut identify_data = [0u16; 256];
-        for i in 0..256 {
-            identify_data[i] = unsafe { self.data_port.read() };
-        }
-        
-        // Parsear información
-        let sectors = if identify_data[83] & (1 << 10) != 0 {
-            // LBA48
-            let low = identify_data[100] as u64;
-            let mid = identify_data[101] as u64;
-            let high = identify_data[102] as u64;
-            let highest = identify_data[103] as u64;
-            low | (mid << 16) | (high << 32) | (highest << 48)
-        } else {
-            // LBA28
-            let low = identify_data[60] as u64;
-            let high = identify_data[61] as u64;
-            low | (high << 16)
-        };
-        
-        let size_mb = (sectors * SECTOR_SIZE as u64) / 1024 / 1024;
-        
-        // Extraer modelo (words 27-46, 40 bytes)
-        let mut model = [0u8; 40];
-        for i in 0..20 {
-            let word = identify_data[27 + i];
-            model[i * 2] = (word & 0xFF) as u8;
-            model[i * 2 + 1] = (word >> 8) as u8;
-        }
-        
-        // Extraer serial (words 10-19, 20 bytes)
-        let mut serial = [0u8; 20];
-        for i in 0..10 {
-            let word = identify_data[10 + i];
-            serial[i * 2] = (word & 0xFF) as u8;
-            serial[i * 2 + 1] = (word >> 8) as u8;
-        }
-        
-        let info = DiskInfo {
-            sectors,
-            size_mb,
-            model,
-            serial,
-        };
-        
-        crate::serial_println!("[ATA] Disco detectado: {} ({} MB)", 
-            info.model_string(), info.size_mb);
-        
-        self.info = Some(info);
-        Ok(())
+        Err("ATA disabled for safety")
     }
     
     /// Lee un sector
-    pub fn read_sector(&mut self, lba: u64, buffer: &mut [u8; SECTOR_SIZE]) -> Result<(), &'static str> {
-        if lba >= self.info.as_ref().ok_or("Disk not initialized")?.sectors {
-            return Err("LBA out of range");
-        }
-        
-        self.access_sector(lba, ATA_CMD_READ_PIO)?;
-        
-        // Leer datos (256 words)
-        let buf16 = unsafe {
-            core::slice::from_raw_parts_mut(buffer.as_mut_ptr() as *mut u16, 256)
-        };
-        
-        for i in 0..256 {
-            buf16[i] = unsafe { self.data_port.read() };
-        }
-        
-        Ok(())
+    pub fn read_sector(&mut self, _lba: u64, _buffer: &mut [u8; SECTOR_SIZE]) -> Result<(), &'static str> {
+        Err("ATA read disabled")
     }
     
     /// Escribe un sector
-    pub fn write_sector(&mut self, lba: u64, buffer: &[u8; SECTOR_SIZE]) -> Result<(), &'static str> {
-        if lba >= self.info.as_ref().ok_or("Disk not initialized")?.sectors {
-            return Err("LBA out of range");
-        }
-        
-        self.access_sector(lba, ATA_CMD_WRITE_PIO)?;
-        
-        // Escribir datos (256 words)
-        let buf16 = unsafe {
-            core::slice::from_raw_parts(buffer.as_ptr() as *const u16, 256)
-        };
-        
-        for i in 0..256 {
-            unsafe { self.data_port.write(buf16[i]); }
-        }
-        
-        // Flush cache
-        unsafe {
-            self.command_port.write(ATA_CMD_FLUSH);
-        }
-        self.wait_not_busy()?;
-        
-        Ok(())
+    pub fn write_sector(&mut self, _lba: u64, _buffer: &[u8; SECTOR_SIZE]) -> Result<(), &'static str> {
+        Err("ATA write disabled")
     }
     
     /// Prepara el acceso a un sector

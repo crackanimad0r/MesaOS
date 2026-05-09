@@ -258,15 +258,18 @@ impl Console {
         second: u8,
         disk_used: u64,
         disk_total: u64,
+        bat_percent: u8,
+        bat_charging: bool,
     ) {
         if !self.initialized {
             return;
         }
         
-        // Formato: RAM: XX/YYY MB | DISK: AA/BB MB | CPUs: N | HH:MM:SS
+        let charging_str = if bat_charging { "+" } else { "" };
+        // Formato: BAT: XX% | RAM: XX/YYY MB | DISK: AA/BB MB | CPUs: N | HH:MM:SS
         let status_text = format!(
-            "RAM: {}/{} MB | DISK: {}/{} MB | CPUs: {} | {:02}:{:02}:{:02}",
-            used_mb, total_mb, disk_used, disk_total, cpu_count, hour, minute, second
+            "BAT: {}{}% | RAM: {}/{} MB | DISK: {}/{} MB | CPUs: {} | {:02}:{:02}:{:02}",
+            bat_percent, charging_str, used_mb, total_mb, disk_used, disk_total, cpu_count, hour, minute, second
         );
         
         let text_len = status_text.len();
@@ -340,9 +343,11 @@ pub fn update_status_bar(
     second: u8,
     disk_used: u64,
     disk_total: u64,
+    bat_percent: u8,
+    bat_charging: bool,
 ) {
     crate::curr_arch::disable_interrupts();
-    CONSOLE.lock().update_status_bar(used_mb, total_mb, cpu_count, hour, minute, second, disk_used, disk_total);
+    CONSOLE.lock().update_status_bar(used_mb, total_mb, cpu_count, hour, minute, second, disk_used, disk_total, bat_percent, bat_charging);
     crate::curr_arch::enable_interrupts();
 }
 

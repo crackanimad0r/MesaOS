@@ -2,10 +2,7 @@
 
 pub mod ramfs;
 pub mod path;
-#[cfg(target_arch = "x86_64")]
-pub mod mesafs;
 pub mod partition;
-pub mod sync;
 
 use alloc::boxed::Box;
 use alloc::string::{String, ToString};
@@ -169,30 +166,17 @@ static VFS: Mutex<Option<Vfs>> = Mutex::new(None);
 /// Directorio de trabajo actual
 static CWD: Mutex<String> = Mutex::new(String::new());
 
-/// Virtual File System
+/// Virtual File System/// Virtual File System
 pub struct Vfs {
     root: Box<dyn FileSystem>,
-    backend: Option<Box<dyn FileSystem>>,
     fs_type: String,
-    persistent: bool,
 }
 
 impl Vfs {
-    pub fn new(root: Box<dyn FileSystem>, fs_type: &str, persistent: bool) -> Self {
+    pub fn new(root: Box<dyn FileSystem>, fs_type: &str) -> Self {
         Self { 
             root,
-            backend: None,
             fs_type: String::from(fs_type),
-            persistent,
-        }
-    }
-
-    pub fn new_live_ram(ram: Box<dyn FileSystem>, backend: Box<dyn FileSystem>) -> Self {
-        Self {
-            root: ram,
-            backend: Some(backend),
-            fs_type: String::from("live-ram"),
-            persistent: true,
         }
     }
     
@@ -201,128 +185,20 @@ impl Vfs {
     }
     
     pub fn is_persistent(&self) -> bool {
-        self.persistent
+        false
     }
 }
 
 /// Resultado de la inicialización
 pub enum InitResult {
-    MesaFs,
-    LiveRam,
     RamFs,
-    NoDisk,
 }
 
-/// Inicializa el VFS - intenta MesaFS primero, luego RamFS
+/// Inicializa el VFS - Solo RamFS (persistencias eliminadas por seguridad)
 pub fn init() -> InitResult {
-    crate::serial_println!("[FS] Inicializando VFS...");
-    
-    #[cfg(target_arch = "x86_64")]
-    {
-        // 1. Intentar NVMe primero
-        if crate::drivers::nvme::NVME.lock().is_some() {
-            let nvme_dev = alloc::sync::Arc::new(crate::drivers::nvme::NvmeBlockDevice);
-            let start_lba = partition::find_mesafs_partition(nvme_dev.as_ref()).map(|(s, _)| s).unwrap_or(0);
-            
-            if let Ok(m) = try_mount_and_initialize(nvme_dev.clone(), start_lba, "NVMe") {
-                return m;
-            }
-        }
-
-        // 2. Intentar ATA
-        if let Some(ata_info) = crate::drivers::ata::disk_info() {
-            let ata_dev = alloc::sync::Arc::new(crate::drivers::ata::AtaBlockDevice);
-            let start_lba = partition::find_mesafs_partition(ata_dev.as_ref()).map(|(s, _)| s).unwrap_or(0);
-            
-            if let Ok(m) = try_mount_and_initialize(ata_dev.clone(), start_lba, "ATA") {
-                return m;
-            }
-        }
-
-        // 3. Intentar dispositivos USB
-        let usb_devices = crate::drivers::usb::msc::MSC_DEVICES.lock();
-        for (i, dev) in usb_devices.iter().enumerate() {
-            crate::serial_println!("[FS] Intentando disco USB {}", i);
-            let start_lba = partition::find_mesafs_partition(dev.as_ref()).map(|(s, _)| s).unwrap_or(0);
-            
-            if let Ok(m) = try_mount_and_initialize(dev.clone(), start_lba, "USB") {
-                return m;
-            }
-        }
-        drop(usb_devices);
-
-        // 4. Si hay discos pero no tienen filesystem, intentar auto-crear en el primero disponible (Priorizar NVMe, luego ATA)
-        if crate::drivers::nvme::NVME.lock().is_some() {
-            let nvme_dev = alloc::sync::Arc::new(crate::drivers::nvme::NvmeBlockDevice);
-            if let Ok(mesafs) = auto_create_mesafs_on_dev(nvme_dev, "NVMe") {
-                return init_live_ram(Box::new(mesafs));
-            }
-        }
-        if let Some(ata_info) = crate::drivers::ata::disk_info() {
-            let ata_dev = alloc::sync::Arc::new(crate::drivers::ata::AtaBlockDevice);
-            if let Ok(mesafs) = auto_create_mesafs_on_dev(ata_dev, "ATA") {
-                return init_live_ram(Box::new(mesafs));
-            }
-        }
-
-        let usb_devices = crate::drivers::usb::msc::MSC_DEVICES.lock();
-        if let Some(dev) = usb_devices.first() {
-             if let Ok(mesafs) = auto_create_mesafs_on_dev(dev.clone(), "USB") {
-                return init_live_ram(Box::new(mesafs));
-             }
-        }
-        drop(usb_devices);
-    }
-    
-    // Fallback a RamFS
-    crate::serial_println!("[FS] Usando RamFS como fallback...");
+    crate::serial_println!("[FS] Inicializando VFS (Modo solo RAM)...");
     init_ramfs();
-    
-    #[cfg(target_arch = "x86_64")]
-    if crate::drivers::nvme::NVME.lock().is_some() || crate::drivers::ata::disk_info().is_some() || !crate::drivers::usb::msc::MSC_DEVICES.lock().is_empty() {
-        return InitResult::RamFs;
-    }
-    
-    InitResult::NoDisk
-}
-
-#[cfg(target_arch = "x86_64")]
-fn try_mount_and_initialize(dev: alloc::sync::Arc<dyn crate::drivers::block::BlockDevice>, start_lba: u64, name: &str) -> Result<InitResult, &'static str> {
-    for attempt in 1..=2 {
-        match mesafs::MesaFs::mount_on_dev(dev.clone(), start_lba) {
-            Ok(mesafs) => {
-                crate::serial_println!("[FS] MesaFS detectado en {}, activando Live RAM...", name);
-                return Ok(init_live_ram(Box::new(mesafs)));
-            }
-            Err(_) => {
-                if attempt < 2 { core::hint::spin_loop(); }
-            }
-        }
-    }
-    Err("Mount failed")
-}
-
-#[cfg(target_arch = "x86_64")]
-fn auto_create_mesafs_on_dev(dev: alloc::sync::Arc<dyn crate::drivers::block::BlockDevice>, name: &str) -> Result<mesafs::MesaFs, &'static str> {
-    let capacity = dev.capacity();
-    if capacity == 0 { return Err("No capacity"); }
-
-    crate::mesa_println!("  [FS] ¿Deseas inicializar disco {}? (s/n)", name);
-    // En un sistema real preguntaríamos, aquí asumimos que si no hay nada, el usuario quiere usarlo.
-    
-    let start_lba = match partition::read_mbr(dev.as_ref()) {
-        Ok(_) => partition::find_mesafs_partition(dev.as_ref()).map(|(s, _)| s).unwrap_or(0),
-        Err(_) => {
-            crate::serial_println!("[FS] Creando tabla de particiones en {}...", name);
-            partition::create_mesafs_partition(dev.as_ref())?
-        }
-    };
-
-    let blocks = ((capacity.saturating_sub(start_lba)) / 2) as u32; // 1KB blocks from 512B sectors
-    let blocks = blocks.min(204800); // Max 200MB for auto-init
-
-    crate::serial_println!("[FS] Formateando MesaFS en {} LBA {}...", name, start_lba);
-    mesafs::MesaFs::create_on_dev(dev, start_lba, blocks)
+    InitResult::RamFs
 }
 
 /// Verifica si el filesystem necesita estructura inicial
@@ -381,7 +257,7 @@ pub fn create_initial_structure() {
     crate::serial_println!("[FS] Estructura inicial creada");
 }
 
-/// Inicializa con RamFS (fallback)
+/// Inicializa con RamFS (único modo soportado)
 fn init_ramfs() {
     let ramfs = ramfs::RamFs::new();
     
@@ -407,44 +283,14 @@ fn init_ramfs() {
     // Escribir ELF embebido
     let _ = ramfs.write("/bin/hello.elf", crate::userland::programs::HELLO_ELF);
     
-    *VFS.lock() = Some(Vfs::new(Box::new(ramfs), "ramfs", false));
+    *VFS.lock() = Some(Vfs::new(Box::new(ramfs), "ramfs"));
     *CWD.lock() = String::from("/");
     
     crate::klog_info!("VFS initialized with RamFS (volatile)");
 }
 
-/// Inicializa Live RAM usando un backend persistente
-pub fn init_live_ram(backend: Box<dyn FileSystem>) -> InitResult {
-    crate::serial_println!("[FS] Inicializando Live RAM Mode...");
-    
-    let ram = ramfs::RamFs::new();
-    
-    // Cargar contenido inicial desde el disco a la RAM
-    if let Err(e) = sync::load_recursive(backend.as_ref(), &ram, "/") {
-        crate::serial_println!("[FS] Error cargando datos a RAM: {}", e.as_str());
-    } else {
-        crate::serial_println!("[FS] Datos cargados exitosamente a RAM");
-    }
-    
-    *VFS.lock() = Some(Vfs::new_live_ram(Box::new(ram), backend));
-    *CWD.lock() = String::from("/");
-    
-    if needs_initial_structure() {
-        create_initial_structure();
-    }
-    
-    InitResult::LiveRam
-}
-
-/// Sincroniza la RAM con el disco si existe un backend
+/// Sincronización deshabilitada
 pub fn sync() -> FsResult<()> {
-    let vfs_guard = VFS.lock();
-    if let Some(ref vfs) = *vfs_guard {
-        if let Some(ref backend) = vfs.backend {
-            crate::serial_println!("[FS] Sincronizando RAM -> Disco...");
-            return sync::sync_recursive(vfs.root.as_ref(), backend.as_ref(), "/");
-        }
-    }
     Ok(())
 }
 
@@ -586,17 +432,14 @@ pub fn is_persistent() -> bool {
 }
 
 /// Monta un nuevo filesystem
-pub fn mount(fs: Box<dyn FileSystem>, fs_type: &str, persistent: bool) {
-    *VFS.lock() = Some(Vfs::new(fs, fs_type, persistent));
+pub fn mount(fs: Box<dyn FileSystem>, fs_type: &str) {
+    *VFS.lock() = Some(Vfs::new(fs, fs_type));
     crate::serial_println!("[FS] Mounted {} filesystem", fs_type);
     crate::klog_info!("Filesystem mounted: {}", fs_type);
 }
 pub fn stats() -> (u64, u64) {
     let vfs = VFS.lock();
     if let Some(ref v) = *vfs {
-        if let Some(ref backend) = v.backend {
-            return backend.stats();
-        }
         return v.root.stats();
     }
     (0, 0)

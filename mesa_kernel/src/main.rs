@@ -51,7 +51,7 @@ pub const OS_VERSION: &str = "v129-TASKLET";
 const COMMANDS: &[&str] = &[
     "help", "clear", "info", "mem", "echo", "time", "uptime",
     "date", "neofetch", "panic", "test", "history",
-    "reboot", "halt", "shutdown", "sync",
+    "reboot", "halt", "shutdown",
     "cpuinfo", "colors", "logo",
     "dmesg", "hexdump",
     "lspci", "vmm", "tasks", "acpi",
@@ -61,10 +61,9 @@ const COMMANDS: &[&str] = &[
     "exec", "userland",  // AGREGAR
     "ls", "cd", "pwd", "cat", "mkdir", "touch", "rm", "rmdir", "mv", "tree",
     "write", // Escribir contenido a archivo
-    "disk", "mount", "mkfs", "fstype",
-    "beep", "speak",
+    "beep",
     "ifconfig", "ping", "curl", "arp", "net", "usb", "usb_net", "ip", "nano", "config",
-    "useradd", "userdel", "fdisk",
+    "useradd", "userdel",
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -136,18 +135,6 @@ fn cmd_config(args: &[&str]) {
     }
 }
 
-/// Tarea de fondo para sincronizar RAM con Disco
-fn live_ram_sync_task() {
-    serial_println!("[SYNC] Iniciando tarea de auto-guardado (1 min)");
-    loop {
-        // Dormir 1 minuto (60000 ms)
-        scheduler::sleep_ms(60000);
-        
-        if let Err(e) = fs::sync() {
-            serial_println!("[SYNC] Error en auto-guardado: {}", e.as_str());
-        }
-    }
-}
 
 #[no_mangle]
 extern "C" fn kernel_start() -> ! {
@@ -175,7 +162,7 @@ extern "C" fn kernel_start() -> ! {
     }
     
     drivers::framebuffer::set_color(palette::IRIS);
-    mesa_println!("Mesa OS v0.3.0-{}", OS_VERSION);
+    mesa_println!("Mesa OS v0.1.0-{}", OS_VERSION);
     drivers::framebuffer::set_color(palette::SUBTLE);
     mesa_println!("\"Minimalismo con Libertad\"\n");
     
@@ -213,6 +200,10 @@ extern "C" fn kernel_start() -> ! {
     drivers::init_rtc();
     print_ok("RTC");
     
+    serial_println!("[BOOT] Inicializando Batería...");
+    drivers::init_battery();
+    print_ok("Battery Manager");
+    
     mesa_println!();
     
     drivers::framebuffer::set_color(palette::FOAM);
@@ -235,7 +226,7 @@ extern "C" fn kernel_start() -> ! {
     mesa_println!();
     
     log::init();
-    klog_info!("Mesa OS v0.3.0 booted");
+    klog_info!("Mesa OS v0.1.0 booted");
     klog_info!("Usable memory ~{} MB", mem_info.usable_memory / 1024 / 1024);
     
     drivers::framebuffer::set_color(palette::FOAM);
@@ -326,82 +317,15 @@ extern "C" fn kernel_start() -> ! {
     }
     
 
-    serial_println!("[BOOT] Inicializando disco NVMe...");
-    #[cfg(target_arch = "x86_64")]
-    let mut disk_available = match drivers::nvme::init() {
-        Ok(()) => {
-            let drv = drivers::nvme::NVME.lock();
-            let size_mb = (drv.as_ref().unwrap().ns_size_sectors * 512) / 1024 / 1024;
-            print_ok(&format!("NVMe Disk ({} MB)", size_mb));
-            true
-        }
-        Err(e) => {
-            serial_println!("[BOOT] NVMe falló: {}", e);
-            false
-        }
-    };
-
-    if !disk_available {
-        serial_println!("[BOOT] Inicializando disco ATA...");
-        #[cfg(target_arch = "x86_64")]
-        {
-            disk_available = match drivers::ata::init() {
-                Ok(()) => {
-                    if let Some(info) = drivers::ata::disk_info() {
-                        print_ok(&format!("ATA Disk ({} MB)", info.size_mb));
-                        true
-                    } else {
-                        false
-                    }
-                }
-                Err(e) => {
-                    drivers::framebuffer::set_color(palette::GOLD);
-                    mesa_print!("  [--] ");
-                    drivers::framebuffer::set_color(palette::TEXT);
-                    mesa_println!("ATA: {}", e);
-                    klog_warn!("ATA init failed: {}", e);
-                    false
-                }
-            };
-        }
-    }
-    
-    #[cfg(target_arch = "aarch64")]
     let disk_available = false;
     
     serial_println!("[BOOT] Inicializando filesystem...");
     match fs::init() {
-        fs::InitResult::MesaFs => {
-            drivers::framebuffer::set_color(palette::SUCCESS);
-            mesa_print!("  [OK] ");
-            drivers::framebuffer::set_color(palette::TEXT);
-            mesa_println!("Filesystem (MesaFS - persistente)");
-        }
-        fs::InitResult::LiveRam => {
-            drivers::framebuffer::set_color(palette::SUCCESS);
-            mesa_print!("  [OK] ");
-            drivers::framebuffer::set_color(palette::TEXT);
-            mesa_println!("Filesystem (Live RAM - auto-save activado)");
-            
-            // Iniciar tarea de sincronización
-            scheduler::spawn("live_ram_sync", live_ram_sync_task);
-        }
         fs::InitResult::RamFs => {
-            drivers::framebuffer::set_color(palette::GOLD);
-            mesa_print!("  [!!] ");
+            drivers::framebuffer::set_color(palette::SUCCESS);
+            mesa_print!("  [OK] ");
             drivers::framebuffer::set_color(palette::TEXT);
             mesa_println!("Filesystem (RamFS - volátil)");
-            if disk_available {
-                drivers::framebuffer::set_color(palette::SUBTLE);
-                mesa_println!("       Usa 'mkfs' y 'mount mesafs' para persistencia");
-                drivers::framebuffer::set_color(palette::TEXT);
-            }
-        }
-        fs::InitResult::NoDisk => {
-            drivers::framebuffer::set_color(palette::GOLD);
-            mesa_print!("  [!!] ");
-            drivers::framebuffer::set_color(palette::TEXT);
-            mesa_println!("Filesystem (RamFS - sin disco)");
         }
     }
     
@@ -460,7 +384,7 @@ fn login_screen() {
         
         drivers::framebuffer::set_color(palette::SUBTLE);
         mesa_println!("                O P E R A T I N G   S Y S T E M");
-        mesa_println!("                       Version 0.3.0");
+        mesa_println!("                       Version 0.1.0");
         mesa_println!();
         drivers::framebuffer::set_color(palette::TEXT);
         
@@ -627,6 +551,14 @@ fn update_status() {
     let disk_used_mb = disk_used / 1024;
     let disk_total_mb = disk_total / 1024;
     
+    #[cfg(target_arch = "x86_64")]
+    let (bat_pct, bat_charging) = {
+        let st = drivers::battery::read_status();
+        (st.percentage, st.is_charging)
+    };
+    #[cfg(not(target_arch = "x86_64"))]
+    let (bat_pct, bat_charging) = (100, false);
+    
     drivers::framebuffer::update_status_bar(
         used_mb,
         total_mb,
@@ -636,6 +568,8 @@ fn update_status() {
         dt.second,
         disk_used_mb,
         disk_total_mb,
+        bat_pct,
+        bat_charging,
     );
 }
 
@@ -993,11 +927,8 @@ fn execute_command(cmd: &str) {
         "reboot" => cmd_reboot(),
         #[cfg(target_arch = "x86_64")]
         "halt" | "shutdown" => cmd_halt(),
-        "sync" => cmd_sync(),
         #[cfg(target_arch = "x86_64")]
         "cpuinfo" => cmd_cpuinfo(),
-        #[cfg(target_arch = "x86_64")]
-        "disk" => cmd_disk(),
         #[cfg(target_arch = "x86_64")]
         "net" => cmd_net(args),
         #[cfg(target_arch = "x86_64")]
@@ -1015,13 +946,6 @@ fn execute_command(cmd: &str) {
         "html" => cmd_html(args),
         #[cfg(target_arch = "x86_64")]
         "beep" => drivers::audio::PcSpeaker::beep(),
-        #[cfg(target_arch = "x86_64")]
-        "speak" => cmd_speak(args),
-        #[cfg(target_arch = "x86_64")]
-        "mount" => cmd_mount(args),
-        #[cfg(target_arch = "x86_64")]
-        "mkfs" => cmd_mkfs(args),
-        "fstype" => cmd_fstype(),
         "colors" => cmd_colors(),
         "logo" => cmd_logo(),
         "dmesg" => cmd_dmesg(args),
@@ -1064,7 +988,6 @@ fn execute_command(cmd: &str) {
         "passwd" => cmd_passwd(args),
         "useradd" => cmd_useradd(args),
         "userdel" => cmd_userdel(args),
-        "fdisk" => cmd_fdisk(),
         "" => {}
         _ => {
             print_error(&format!("{}: {}", t("Comando no encontrado", "Command not found"), command));
@@ -1434,14 +1357,6 @@ fn cmd_help() {
     print_cmd_help("test_fs_user", t("Test VFS syscalls (Ring 3)", "VFS test (Ring 3)"));
     mesa_println!();
     
-    drivers::framebuffer::set_color(palette::FOAM);
-    mesa_println!("  {}", t("Disco:", "Disk:"));
-    drivers::framebuffer::set_color(palette::TEXT);
-    print_cmd_help("disk", t("Info del disco", "Disk info"));
-    print_cmd_help("mkfs <size_mb>", t("Crea filesystem", "Create filesystem"));
-    print_cmd_help("mount <tipo>", t("Monta filesystem (ramfs/mesafs)", "Mount filesystem"));
-    print_cmd_help("fstype", t("Muestra FS actual", "Show current FS"));
-    mesa_println!();
     
     drivers::framebuffer::set_color(palette::FOAM);
     mesa_println!("  {}", t("Filesystem:", "Filesystem:"));
@@ -1568,7 +1483,7 @@ fn cmd_info() {
     print_section(t("Sistema", "System"));
     mesa_println!();
     
-    print_info_line("OS", "Mesa OS v0.3.0");
+    print_info_line("OS", "Mesa OS v0.1.0");
     print_info_line(t("Arquitectura", "Architecture"), "x86_64");
     print_info_line("Bootloader", "Limine");
     print_info_line("Kernel", t("Hibrido (Rust)", "Hybrid (Rust)"));
@@ -2179,49 +2094,7 @@ fn cmd_users() {
     mesa_println!();
 }
 
-fn cmd_disk() {
-    let (used, total) = fs::stats();
-    // Convertir bloques a MB (asumiendo 1KB por bloque)
-    let used_mb = used / 1024;
-    let total_mb = total / 1024;
-    let free_mb = total_mb.saturating_sub(used_mb);
-    
-    print_section(t("Estado del Disco", "Disk Status"));
-    mesa_println!();
-    
-    print_info_line("Filesystem", "MesaFS");
-    print_info_line(t("Estado", "Status"), t("Montado (RW)", "Mounted (RW)"));
-    print_info_line(t("Capacidad", "Capacity"), &format!("{} MB", total_mb));
-    print_info_line(t("Usado", "Used"), &format!("{} MB ({}%)", used_mb, if total_mb > 0 { used_mb * 100 / total_mb } else { 0 }));
-    print_info_line(t("Libre", "Free"), &format!("{} MB", free_mb));
-    
-    mesa_println!();
-}
 
-fn cmd_fdisk() {
-    print_section(t("Tabla de Particiones (MBR)", "Partition Table (MBR)"));
-    mesa_println!();
-    
-    match fs::partition::read_mbr(&crate::drivers::ata::AtaBlockDevice) {
-        Ok(mbr) => {
-            drivers::framebuffer::set_color(palette::FOAM);
-            mesa_println!("  #   Type  Boot  Start LBA   Size (Sectors)");
-            drivers::framebuffer::set_color(palette::TEXT);
-            
-            for (i, p) in mbr.partitions.iter().enumerate() {
-                if p.lba_length > 0 {
-                    let lba_start = p.lba_start;
-                    let lba_length = p.lba_length;
-                    mesa_println!("  {:<2}  0x{:02X}  {:>4}  {:>10}  {:>12}", 
-                        i, p.partition_type, if p.attributes & 0x80 != 0 { "Yes" } else { "No" },
-                        lba_start, lba_length);
-                }
-            }
-        }
-        Err(e) => print_error(&format!("Error: {}", e)),
-    }
-    mesa_println!();
-}
 
 fn cmd_useradd(args: &[&str]) {
     if !users::is_root() {
@@ -2439,7 +2312,7 @@ fn cmd_neofetch() {
     
     drivers::framebuffer::set_color(palette::IRIS);
     mesa_print!("    ##m   m##");
-    print_neo_info("OS", "Mesa OS v0.3.0");
+    print_neo_info("OS", "Mesa OS v0.1.0");
     
     drivers::framebuffer::set_color(palette::IRIS);
     mesa_print!("    ###m m###");
@@ -2550,8 +2423,7 @@ fn cmd_reboot() {
     print_warning("Reiniciando sistema...");
     klog_info!("System reboot requested");
     
-    // Sincronizar antes de salir
-    let _ = fs::sync();
+    // Sincronización deshabilitada por seguridad
 
     unsafe {
         let mut port: x86_64::instructions::port::Port<u8> =
@@ -2589,8 +2461,7 @@ fn cmd_halt() {
     
     klog_info!("System halt requested");
     
-    // Sincronizar antes de salir
-    let _ = fs::sync();
+    // Sincronización deshabilitada por seguridad
     drivers::framebuffer::set_color(palette::SUBTLE);
     mesa_println!("  Mesa OS se ha detenido.");
     mesa_println!("  Es seguro apagar el equipo.");
@@ -2603,17 +2474,6 @@ fn cmd_halt() {
     }
 }
 
-fn cmd_sync() {
-    mesa_println!("Sincronizando RAM con disco...");
-    match fs::sync() {
-        Ok(_) => mesa_println!("  [OK] Sincronización completada."),
-        Err(e) => {
-            drivers::framebuffer::set_color(palette::ERROR);
-            mesa_println!("  [FAIL] Error: {}", e.as_str());
-            drivers::framebuffer::set_color(palette::TEXT);
-        }
-    }
-}
 
 #[cfg(target_arch = "x86_64")]
 fn cmd_cpuinfo() {
@@ -2766,7 +2626,7 @@ fn cmd_logo() {
     drivers::framebuffer::set_color(palette::MUTED);
     mesa_println!("           \"Minimalismo con Libertad\"");
     mesa_println!();
-    mesa_println!("              Version 0.3.0 Alpha");
+    mesa_println!("              Version 0.1.0 Alpha");
     
     mesa_println!();
     mesa_print!("         ");
@@ -3399,198 +3259,6 @@ fn cmd_speak(args: &[&str]) {
     drivers::audio::speak(&text);
 }
 
-#[cfg(target_arch = "x86_64")]
-fn cmd_mkfs(args: &[&str]) {
-    if !users::is_root() {
-        print_error("Solo root puede crear filesystems");
-        mesa_println!();
-        return;
-    }
-    
-    if args.is_empty() {
-        print_error("Uso: mkfs <tamaño_mb>");
-        mesa_println!();
-        print_info("Ejemplo: mkfs 10  (crea filesystem de 10 MB)");
-        mesa_println!();
-        return;
-    }
-    
-    let size_mb: u64 = match args[0].parse() {
-        Ok(n) if n > 0 && n <= 100 => n,
-        _ => {
-            print_error("Tamaño inválido (1-100 MB)");
-            mesa_println!();
-            return;
-        }
-    };
-    
-    if drivers::ata::disk_info().is_none() {
-        print_error("No hay disco detectado");
-        mesa_println!();
-        return;
-    }
-    
-    print_warning(&format!("Creando filesystem MesaFS de {} MB...", size_mb));
-    mesa_println!();
-    
-    let sectors_per_mb = 1024 * 1024 / 512;
-    let total_sectors = size_mb * sectors_per_mb;
-    let blocks = (total_sectors / 2) as u32; // 2 sectores = 1 bloque
-    
-    match fs::mesafs::MesaFs::create(0, blocks) {
-        Ok(_) => {
-            print_success(&format!("Filesystem creado ({} bloques de 1KB)", blocks));
-            mesa_println!();
-            print_info("Usa 'mount mesafs' para montar el filesystem");
-        }
-        Err(e) => {
-            print_error(&format!("Error al crear filesystem: {}", e));
-        }
-    }
-    mesa_println!();
-}
-
-#[cfg(target_arch = "x86_64")]
-fn cmd_mount(args: &[&str]) {
-    use fs::FileSystem;
-    
-    if !users::is_root() {
-        print_error("Solo root puede montar filesystems");
-        mesa_println!();
-        return;
-    }
-    
-    if args.is_empty() {
-        // Mostrar estado actual
-        let fs_type = fs::filesystem_type();
-        let persistent = fs::is_persistent();
-        
-        print_section("Filesystem Actual");
-        mesa_println!();
-        print_info_line("Tipo", &fs_type);
-        print_info_line("Persistente", if persistent { "Sí" } else { "No" });
-        mesa_println!();
-        
-        drivers::framebuffer::set_color(palette::SUBTLE);
-        mesa_println!("  Uso: mount <tipo>");
-        mesa_println!("  Tipos: ramfs, mesafs");
-        drivers::framebuffer::set_color(palette::TEXT);
-        mesa_println!();
-        return;
-    }
-    
-    let fs_type = args[0];
-    
-    match fs_type {
-        "ramfs" => {
-            print_info("Montando RamFS...");
-            mesa_println!();
-            
-            let ramfs = fs::ramfs::RamFs::new();
-            
-            let _ = ramfs.mkdir("/bin");
-            let _ = ramfs.mkdir("/etc");
-            let _ = ramfs.mkdir("/home");
-            let _ = ramfs.mkdir("/tmp");
-            let _ = ramfs.write("/etc/hostname", b"mesa-os");
-            
-            fs::mount(alloc::boxed::Box::new(ramfs), "ramfs", false);
-            let _ = fs::chdir("/");
-            
-            print_success("RamFS montado");
-            print_warning("Los datos NO persistirán");
-        }
-        
-        "mesafs" => {
-            if drivers::ata::disk_info().is_none() {
-                print_error("No hay disco detectado");
-                mesa_println!();
-                return;
-            }
-            
-            print_info("Montando MesaFS...");
-            mesa_println!();
-            
-            match fs::mesafs::MesaFs::mount(0) {
-                Ok(mesafs) => {
-                    fs::mount(alloc::boxed::Box::new(mesafs), "mesafs", true);
-                    let _ = fs::chdir("/");
-                    
-                    print_success("MesaFS montado");
-                    print_success("Los datos persisten en disco");
-                    
-                    if fs::needs_initial_structure() {
-                        print_info("Creando estructura inicial...");
-                        fs::create_initial_structure();
-                    }
-                }
-                Err(e) => {
-                    print_error(&format!("Error: {}", e));
-                    mesa_println!();
-                    print_info("Usa 'mkfs <MB>' para crear el filesystem");
-                }
-            }
-        }
-        
-        _ => {
-            print_error(&format!("Filesystem '{}' no soportado", fs_type));
-            mesa_println!();
-            print_info("Tipos: ramfs, mesafs");
-        }
-    }
-    mesa_println!();
-}
-
-fn cmd_fstype() {
-    let fs_type = fs::filesystem_type();
-    let persistent = fs::is_persistent();
-    
-    drivers::framebuffer::set_color(palette::FOAM);
-    mesa_print!("Filesystem: ");
-    drivers::framebuffer::set_color(palette::TEXT);
-    mesa_println!("{}", fs_type);
-    
-    drivers::framebuffer::set_color(palette::FOAM);
-    mesa_print!("Persistente: ");
-    if persistent {
-        drivers::framebuffer::set_color(palette::SUCCESS);
-        mesa_println!("Sí");
-    } else {
-        drivers::framebuffer::set_color(palette::GOLD);
-        mesa_println!("No (datos se pierden al reiniciar)");
-    }
-    
-    drivers::framebuffer::set_color(palette::TEXT);
-    mesa_println!();
-    
-    match fs_type.as_str() {
-        "ramfs" => {
-            drivers::framebuffer::set_color(palette::SUBTLE);
-            mesa_println!("  RamFS - Filesystem en memoria");
-            mesa_println!("  Los datos se pierden al reiniciar");
-            #[cfg(target_arch = "x86_64")]
-            if drivers::ata::disk_info().is_some() {
-                mesa_println!();
-                mesa_println!("  Para usar disco persistente:");
-                mesa_println!("    mkfs 10       # Crear filesystem");
-                mesa_println!("    mount mesafs  # Montar");
-            }
-        }
-        "mesafs" => {
-            drivers::framebuffer::set_color(palette::SUCCESS);
-            mesa_println!("  MesaFS - Filesystem en disco");
-            mesa_println!("  Los datos persisten entre reinicios");
-            #[cfg(target_arch = "x86_64")]
-            if let Some(info) = drivers::ata::disk_info() {
-                mesa_println!("  Disco: {} ({}MB)", info.model_string(), info.size_mb);
-            }
-        }
-        _ => {}
-    }
-    
-    drivers::framebuffer::set_color(palette::TEXT);
-    mesa_println!();
-}
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELPERS

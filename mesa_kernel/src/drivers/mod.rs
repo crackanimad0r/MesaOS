@@ -18,6 +18,8 @@ pub mod usb;
 pub mod block;
 #[cfg(target_arch = "x86_64")]
 pub mod nvme;
+#[cfg(target_arch = "x86_64")]
+pub mod battery;
 
 pub fn init_serial() {
     serial::init();
@@ -40,4 +42,9 @@ pub fn init_keyboard() {
 pub fn init_rtc() {
     #[cfg(target_arch = "x86_64")]
     rtc::init();
+}
+
+pub fn init_battery() {
+    #[cfg(target_arch = "x86_64")]
+    battery::init();
 }
