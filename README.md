@@ -21,21 +21,23 @@ El repositorio no solo contiene el código fuente, sino también investigación 
 
 ## 📊 Estado del Desarrollo
 
-### ✅ Cosas Terminadas
+### ✅ Terminados
 - [x] **Kernel Core:** Gestión de interrupciones (IDT) y excepciones.
 - [x] **Memoria:** Paginación dinámica y gestor de memoria física/virtual.
 - [x] **Multitarea:** Planificador de procesos (Scheduler) básico.
-- [x] **Driver NVMe:** Comunicación funcional con unidades de estado sólido (Lectura/Escritura).
+- [x] **Driver NVMe:** Comunicación funcional (Lectura/Escritura).
 - [x] **Soporte UEFI:** Arranque moderno mediante Limine.
-- [x] **Documentación xHCI:** Análisis completo del protocolo para controladores USB modernos.
 - [x] **User Mode:** Separación completa entre espacio de kernel y aplicaciones de usuario.
+- [x] **Documentación xHCI:** Análisis completo del protocolo USB 3.0.
 
-### 🚧 Cosas que estan en beta
-- [x/] **Sistema de Archivos:** Implementación de una capa VFS estable (actualmente en pruebas).(Funcional solo RAMFS)
-- [x/] **Driver WiFi:** Funcional solo en emulador (Y parcialmente)
-- [x/] **USB Stack:** Finalizar el driver xHCI para soporte de teclado y ratón físico. (por ahora solo enumeracion y deshabilitado)
+### 🚧 En fase Beta / Parcial
+- [/] **Sistema de Archivos:** Capa VFS funcional únicamente con **RAMFS** por ahora.
+- [/] **Driver WiFi:** Funcionalidad parcial (limitado principalmente a entornos de emulación).
+- [/] **USB Stack:** Driver xHCI permite la **enumeración** de dispositivos (soporte de periféricos deshabilitado temporalmente).
+
+### ⏳ Pendientes
 - [ ] **Protección de Particiones:** Implementar salvaguardas para evitar la escritura accidental en el Sector 0 (GPT/MBR).
-- [ ] **User Mode:** Separación completa entre espacio de kernel y aplicaciones de usuario.
+- [ ] **Persistencia:** Extender el VFS para soporte de sistemas de archivos en disco.
 
 ---
 
@@ -45,9 +47,14 @@ El repositorio no solo contiene el código fuente, sino también investigación 
 - **Rust (Nightly toolchain)**
 - **Mtools & Xorriso** (Para la creación de la imagen ISO)
 - **QEMU** (Para emulación segura)
-- **GCC & Make** (Para compilar las utilidades de Limine)
+- **GCC & Make** (Para las utilidades de Limine)
 
 ### Pasos para compilar
-1. **Compilar:**
+1. **Compilación completa:**
    ```bash
    ./build.sh build
+2. **Ejecucion:**
+   ```bash
+   ./build.sh run-wifi //recomendado
+Creador: Crackanimad0r/Crackanimador ⛩️⛩️
+
