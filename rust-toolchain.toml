@@ -1,0 +1,5 @@
+# rust-toolchain.toml
+
+[toolchain]
+channel = "nightly"
+components = ["rust-src", "llvm-tools-preview"]

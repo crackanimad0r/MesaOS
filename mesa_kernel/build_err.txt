@@ -1,0 +1,2292 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /home/antonio/Documentos/MesaOS/mesa_kernel/Cargo.toml
+workspace: /home/antonio/Documentos/MesaOS/Cargo.toml
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/pci.c:10:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h: In function 'fill_txdesc_checksum_common':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:125:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   125 |         le32p_replace_bits(&tx_desc->w7, 0, RTW_TX_DESC_W7_TXDESC_CHECKSUM);
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:130:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   130 |         le32p_replace_bits(&tx_desc->w7, __le16_to_cpu(chksum),
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: In function 'rtw_pci_free_rx_ring_skbs':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:136:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   136 |         for (i = 0; i < rx_ring->r.len; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: In function 'rtw_pci_init_rx_ring':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:272:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   272 |         for (i = 0; i < len; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: In function 'rtw_dbi_write8':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:1257:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1257 |         WARN(flag, "failed to write to DBI register, addr=0x%04x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: In function 'rtw_dbi_read8':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:1280:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1280 |         WARN(1, "failed to read DBI register, addr=0x%04x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: In function 'rtw_mdio_write':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:1307:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1307 |         WARN(wflag, "failed to write to MDIO register, addr=0x%02x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/pci.c:1650:12: warning: 'rtw_pci_napi_poll' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:  1650 | static int rtw_pci_napi_poll(struct napi_struct *napi, int budget)
+warning: mesa_kernel@0.1.0:       |            ^~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/mac.c: In function 'download_firmware_reg_backup':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/mac.c:510:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   510 |         WARN(bckp_idx != DLFW_RESTORE_REG_NUM, "wrong backup number\n");
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/fw.c:10:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h: In function 'fill_txdesc_checksum_common':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:125:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   125 |         le32p_replace_bits(&tx_desc->w7, 0, RTW_TX_DESC_W7_TXDESC_CHECKSUM);
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:130:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   130 |         le32p_replace_bits(&tx_desc->w7, __le16_to_cpu(chksum),
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function '_rtw_fw_dump_dbg_info':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:69:24: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:    69 |         for (i = 0;  i < size; i++) {
+warning: mesa_kernel@0.1.0:       |                        ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_fw_ra_report_handle':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:206:36: warning: variable 'ra_data' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:   206 |         struct rtw_fw_iter_ra_data ra_data;
+warning: mesa_kernel@0.1.0:       |                                    ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_fw_send_h2c_command_register':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:423:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   423 |                 WARN(1, "invalid h2c mail box number\n");
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_fw_send_h2c_command':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:479:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   479 |                 WARN(1, "invalid h2c mail box number\n");
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_nlo_info_get':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1112:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  1112 |         for (i = 0; i < pno_req->match_set_cnt; i++)
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1115:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  1115 |         for (i = 0; i < pno_req->match_set_cnt; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1126:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  1126 |         for (i = 0; i < pno_req->match_set_cnt; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_get_rsvd_page_skb':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1226:31: warning: variable 'vif' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:  1226 |         struct ieee80211_vif *vif;
+warning: mesa_kernel@0.1.0:       |                               ^~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_add_rsvd_page_pno':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1438:24: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  1438 |         for (i = 0 ; i < rtw_pno_req->match_set_cnt; i++) {
+warning: mesa_kernel@0.1.0:       |                        ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function '__rtw_build_rsvd_page_from_vifs':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1602:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1602 |                 WARN(1, "Should not have an empty reserved page\n");
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_add_chan_list':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:2163:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  2163 |         for (i = 0; i < req->n_channels; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:2188:24: warning: comparison of integer expressions of different signedness: 'u32' {aka 'unsigned int'} and 'int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:  2188 |         if (list->size > fifo->rsvd_pg_num << TX_PAGE_SIZE_SHIFT) {
+warning: mesa_kernel@0.1.0:       |                        ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1569:13: warning: 'rtw_build_rsvd_page_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:  1569 | static void rtw_build_rsvd_page_iter(void *data, u8 *mac,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:145:13: warning: 'rtw_fw_ra_report_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   145 | static void rtw_fw_ra_report_iter(void *data, struct ieee80211_sta *sta)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/main.h:2137,
+warning: mesa_kernel@0.1.0:                  from c_drivers/rtw88/fw.c:7:
+warning: mesa_kernel@0.1.0: In function 'rtw_write8',
+warning: mesa_kernel@0.1.0:     inlined from 'rtw_fw_write_data_rsvd_page' at c_drivers/rtw88/fw.c:1531:3:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:119:9: warning: 'bckp[1]' may be used uninitialized [-Wmaybe-uninitialized]
+warning: mesa_kernel@0.1.0:   119 |         rtwdev->hci.ops->write8(rtwdev, addr, val);
+warning: mesa_kernel@0.1.0:       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c: In function 'rtw_fw_write_data_rsvd_page':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/fw.c:1469:12: note: 'bckp[1]' was declared here
+warning: mesa_kernel@0.1.0:  1469 |         u8 bckp[3];
+warning: mesa_kernel@0.1.0:       |            ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/tx.c:6:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h: In function 'fill_txdesc_checksum_common':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:125:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   125 |         le32p_replace_bits(&tx_desc->w7, 0, RTW_TX_DESC_W7_TXDESC_CHECKSUM);
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:130:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   130 |         le32p_replace_bits(&tx_desc->w7, __le16_to_cpu(chksum),
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.c: In function 'rtw_txq_push':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.c:645:23: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   645 |         for (i = 0; i < frames; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.c: In function '__rtw_tx_work':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1093:38: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:  1093 | #define ieee80211_txq_get_depth(...) 0
+warning: mesa_kernel@0.1.0:       |                                      ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.c:670:17: note: in expansion of macro 'ieee80211_txq_get_depth'
+warning: mesa_kernel@0.1.0:   670 |                 ieee80211_txq_get_depth(txq, &frame_cnt, NULL);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/main.c:17:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h: In function 'fill_txdesc_checksum_common':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:125:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   125 |         le32p_replace_bits(&tx_desc->w7, 0, RTW_TX_DESC_W7_TXDESC_CHECKSUM);
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:130:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   130 |         le32p_replace_bits(&tx_desc->w7, __le16_to_cpu(chksum),
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_watch_dog_work':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:240:9: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:   240 |         ieee80211_queue_delayed_work(rtwdev->hw, &rtwdev->watch_dog_work,
+warning: mesa_kernel@0.1.0:       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_sta_add':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:365:23: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   365 |         for (i = 0; i < ARRAY_SIZE(sta->txq); i++)
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_sta_remove':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:394:23: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   394 |         for (i = 0; i < ARRAY_SIZE(sta->txq); i++)
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_dump_reg':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:567:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   567 |                 WARN(1, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function '__fw_recovery_work':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:663:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   663 |         WARN(1, "firmware crash, start reset and recover\n");
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_update_channel':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:809:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   809 |                 WARN(1, "unknown ch(%u) to SAR band\n", center_channel);
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_hw_config_rf_ant_num':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:1003:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1003 |                 WARN(1, "invalid hw configuration from efuse\n");
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_core_start':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:1531:9: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  1531 |         ieee80211_queue_delayed_work(rtwdev->hw, &rtwdev->watch_dog_work,
+warning: mesa_kernel@0.1.0:       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: In function 'rtw_core_deinit':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:449:30: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   449 | #define timer_delete_sync(t) 0
+warning: mesa_kernel@0.1.0:       |                              ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:2231:9: note: in expansion of macro 'timer_delete_sync'
+warning: mesa_kernel@0.1.0:  2231 |         timer_delete_sync(&rtwdev->tx_report.purge_timer);
+warning: mesa_kernel@0.1.0:       |         ^~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:1723:13: warning: 'rtw_vif_smps_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:  1723 | static void rtw_vif_smps_iter(void *data, u8 *mac,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:689:13: warning: 'rtw_txq_ba_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   689 | static void rtw_txq_ba_iter(void *data, struct ieee80211_sta *sta)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:622:13: warning: 'rtw_reset_vif_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   622 | static void rtw_reset_vif_iter(void *data, u8 *mac, struct ieee80211_vif *vif)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:611:13: warning: 'rtw_reset_sta_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   611 | static void rtw_reset_sta_iter(void *data, struct ieee80211_sta *sta)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/main.c:599:13: warning: 'rtw_reset_key_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   599 | static void rtw_reset_key_iter(struct ieee80211_hw *hw,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_parsing_cfo':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:708:39: warning: variable 'data' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:   708 |         struct rtw_rx_addr_match_data data = {};
+warning: mesa_kernel@0.1.0:       |                                       ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_setup_phy_cond':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:1147:19: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+warning: mesa_kernel@0.1.0:  1147 |                 *((u32 *)&hal->phy_cond), *((u32 *)&hal->phy_cond2));
+warning: mesa_kernel@0.1.0:       |                  ~^~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_store_tx_power_by_rate':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:1567:57: warning: pointer targets in passing argument 6 of 'rtw_phy_get_rate_values_of_txpwr_by_rate' differ in signedness [-Wpointer-sign]
+warning: mesa_kernel@0.1.0:  1567 |                                                  rates, pwr_by_rate, &rate_num);
+warning: mesa_kernel@0.1.0:       |                                                         ^~~~~~~~~~~
+warning: mesa_kernel@0.1.0:       |                                                         |
+warning: mesa_kernel@0.1.0:       |                                                         s8 * {aka signed char *}
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:1252:46: note: expected 'u8 *' {aka 'unsigned char *'} but argument is of type 's8 *' {aka 'signed char *'}
+warning: mesa_kernel@0.1.0:  1252 |                                          u8 *pwr_by_rate, u8 *rate_num)
+warning: mesa_kernel@0.1.0:       |                                          ~~~~^~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_set_tx_power_limit':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:1647:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1647 |                 WARN(1,
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_get_channel_group':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:1896:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:  1896 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_get_2g_tx_power_index':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:2047:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:  2047 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_get_5g_tx_power_index':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:2103:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:  2103 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_rate_to_rate_section':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:2145:18: warning: comparison is always true due to limited range of data type [-Wtype-limits]
+warning: mesa_kernel@0.1.0:  2145 |         if (rate >= DESC_RATE1M && rate <= DESC_RATE11M)
+warning: mesa_kernel@0.1.0:       |                  ^~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_get_tx_power_limit':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:2213:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  2213 |         WARN(1, "invalid arguments, band=%d, bw=%d, path=%d, rate=%d, ch=%d\n",
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: In function 'rtw_phy_get_tx_power_sar':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:2234:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  2234 |         WARN(1, "invalid arguments, sar_band=%d, path=%d, rate=%d\n",
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/phy.c:682:13: warning: 'rtw_phy_parsing_cfo_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   682 | static void rtw_phy_parsing_cfo_iter(void *data, u8 *mac,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/ps.c: In function 'rtw_power_mode_change':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/ps.c:105:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   105 |                 WARN(1, "firmware failed to ack driver for %s Deep Power mode\n",
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c: In function 'rtw_regd_apply_hw_cap_flags':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:294:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   294 |         for (i = 0; i < sband->n_channels; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:304:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   304 |         for (i = 0; i < sband->n_channels; i++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c: In function 'rtw_regd_init':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:346:54: warning: pointer targets in passing argument 1 of 'rtw_reg_find_by_name' differ in signedness [-Wpointer-sign]
+warning: mesa_kernel@0.1.0:   346 |         chip_reg = rtw_reg_find_by_name(rtwdev->efuse.country_code);
+warning: mesa_kernel@0.1.0:       |                                         ~~~~~~~~~~~~~^~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0:       |                                                      |
+warning: mesa_kernel@0.1.0:       |                                                      u8 * {aka unsigned char *}
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:320:70: note: expected 'const char *' but argument is of type 'u8 *' {aka 'unsigned char *'}
+warning: mesa_kernel@0.1.0:   320 | static const struct rtw_regulatory *rtw_reg_find_by_name(const char *alpha2)
+warning: mesa_kernel@0.1.0:       |                                                          ~~~~~~~~~~~~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c: In function 'rtw_regd_hint':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:383:59: warning: pointer targets in passing argument 2 of 'regulatory_hint' differ in signedness [-Wpointer-sign]
+warning: mesa_kernel@0.1.0:   383 |                 ret = regulatory_hint(wiphy, rtwdev->efuse.country_code);
+warning: mesa_kernel@0.1.0:       |                                              ~~~~~~~~~~~~~^~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0:       |                                                           |
+warning: mesa_kernel@0.1.0:       |                                                           u8 * {aka unsigned char *}
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1245:68: note: expected 'const char *' but argument is of type 'u8 *' {aka 'unsigned char *'}
+warning: mesa_kernel@0.1.0:  1245 | static inline int regulatory_hint(struct wiphy *wiphy, const char *alpha2) { return 0; }
+warning: mesa_kernel@0.1.0:       |                                                        ~~~~~~~~~~~~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c: In function 'rtw_regd_mgmt_programmed':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:416:63: warning: pointer targets in passing argument 2 of 'rtw_reg_match' differ in signedness [-Wpointer-sign]
+warning: mesa_kernel@0.1.0:   416 |             rtw_reg_match(next_regd->regulatory, rtwdev->efuse.country_code)) {
+warning: mesa_kernel@0.1.0:       |                                                  ~~~~~~~~~~~~~^~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0:       |                                                               |
+warning: mesa_kernel@0.1.0:       |                                                               u8 * {aka unsigned char *}
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/regd.c:315:73: note: expected 'const char *' but argument is of type 'u8 *' {aka 'unsigned char *'}
+warning: mesa_kernel@0.1.0:   315 | static bool rtw_reg_match(const struct rtw_regulatory *reg, const char *alpha2)
+warning: mesa_kernel@0.1.0:       |                                                             ~~~~~~~~~~~~^~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: In file included from c_drivers/rtw88/rtw8822c.c:9:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h: In function 'fill_txdesc_checksum_common':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:125:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   125 |         le32p_replace_bits(&tx_desc->w7, 0, RTW_TX_DESC_W7_TXDESC_CHECKSUM);
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/tx.h:130:28: warning: taking address of packed member of 'struct rtw_tx_desc' may result in an unaligned pointer value [-Waddress-of-packed-member]
+warning: mesa_kernel@0.1.0:   130 |         le32p_replace_bits(&tx_desc->w7, __le16_to_cpu(chksum),
+warning: mesa_kernel@0.1.0:       |                            ^~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c: In function 'rtw8822c_get_path_write_addr':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c:248:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:   248 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c: In function 'rtw8822c_get_path_read_addr':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c:267:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:   267 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c: In function 'rtw8822c_dac_cal_adc':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:100:20: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:   100 | #define WARN_ON(c) (!!(c))
+warning: mesa_kernel@0.1.0:       |                    ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rtw8822c.c:414:17: note: in expansion of macro 'WARN_ON'
+warning: mesa_kernel@0.1.0:   414 |                 WARN_ON(1);
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_wl_ccklock_detect':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:252:17: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:   252 |                 ieee80211_queue_delayed_work(rtwdev->hw, &coex->wl_ccklock_work,
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_monitor_bt_enable':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:533:25: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:   533 |                         ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_update_wl_link_info':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:566:25: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:   566 |                         ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_set_ant_path':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:25: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:1427:17: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:  1427 |                 WARN(1, "unknown phase when setting antenna path\n");
+warning: mesa_kernel@0.1.0:       |                 ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_connect_notify':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:2946:17: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  2946 |                 ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:2960:17: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  2960 |                 ieee80211_queue_delayed_work(rtwdev->hw, &coex->defreeze_work,
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_bt_info_notify':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3076:25: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  3076 |                         ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3129:25: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  3129 |                         ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3204:17: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  3204 |                 ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:65:15: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    65 | #define false 0
+warning: mesa_kernel@0.1.0:       |               ^
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:1085:43: note: in expansion of macro 'false'
+warning: mesa_kernel@0.1.0:  1085 | #define ieee80211_queue_delayed_work(...) false
+warning: mesa_kernel@0.1.0:       |                                           ^~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3225:17: note: in expansion of macro 'ieee80211_queue_delayed_work'
+warning: mesa_kernel@0.1.0:  3225 |                 ieee80211_queue_delayed_work(rtwdev->hw,
+warning: mesa_kernel@0.1.0:       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3017:13: warning: variable 'bt_relink_time' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:  3017 |         u32 bt_relink_time;
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_vif_stat_iter':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3887:44: warning: variable 'sta_iter_data' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:  3887 |         struct rtw_coex_sta_stat_iter_data sta_iter_data;
+warning: mesa_kernel@0.1.0:       |                                            ^~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: In function 'rtw_coex_display_coex_info':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3929:44: warning: variable 'vif_iter_data' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:  3929 |         struct rtw_coex_vif_stat_iter_data vif_iter_data;
+warning: mesa_kernel@0.1.0:       |                                            ^~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3883:13: warning: 'rtw_coex_vif_stat_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:  3883 | static void rtw_coex_vif_stat_iter(void *data, u8 *mac,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/coex.c:3860:13: warning: 'rtw_coex_sta_stat_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:  3860 | static void rtw_coex_sta_stat_iter(void *data, struct ieee80211_sta *sta)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c: In function 'rtw_debugfs_copy_from_user':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c:237:19: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   237 |         if (count < num)
+warning: mesa_kernel@0.1.0:       |                   ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c:240:26: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   240 |         tmp_len = (count > size - 1 ? size - 1 : count);
+warning: mesa_kernel@0.1.0:       |                          ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c:240:39: warning: operand of '?:' changes signedness from 'int' to 'size_t' {aka 'long unsigned int'} due to unsignedness of other operand [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   240 |         tmp_len = (count > size - 1 ? size - 1 : count);
+warning: mesa_kernel@0.1.0:       |                                       ^~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c: In function 'rtw_debugfs_get_rsvd_page':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/debug.c:330:24: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:   330 |         for (i = 0 ; i < buf_size ; i += 8) {
+warning: mesa_kernel@0.1.0:       |                        ^
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/util.c: In function 'rtw_restore_reg':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/util.c:60:23: warning: comparison of integer expressions of different signedness: 'int' and 'u32' {aka 'unsigned int'} [-Wsign-compare]
+warning: mesa_kernel@0.1.0:    60 |         for (i = 0; i < num; i++, bckp++) {
+warning: mesa_kernel@0.1.0:       |                       ^
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/util.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/util.c:170:13: warning: 'rtw_collect_vif_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   170 | static void rtw_collect_vif_iter(void *data, u8 *mac, struct ieee80211_vif *vif)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/util.c:120:13: warning: 'rtw_collect_sta_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   120 | static void rtw_collect_sta_iter(void *data, struct ieee80211_sta *sta)
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: In file included from <command-line>:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h: In function 'rtw_write32_mask':
+warning: mesa_kernel@0.1.0: ./src/linux_compat/mesa_compat.h:99:26: warning: statement with no effect [-Wunused-value]
+warning: mesa_kernel@0.1.0:    99 | #define WARN(c, f, ...) (!!(c))
+warning: mesa_kernel@0.1.0:       |                         ~^~~~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/hci.h:248:9: note: in expansion of macro 'WARN'
+warning: mesa_kernel@0.1.0:   248 |         WARN(addr & 0x3, "should be 4-byte aligned, addr = 0x%08x\n", addr);
+warning: mesa_kernel@0.1.0:       |         ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c: In function 'rtw_rx_phy_stat':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c:49:15: warning: variable 'idx' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:    49 |         u8 i, idx;
+warning: mesa_kernel@0.1.0:       |               ^~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c: In function 'rtw_rx_addr_match':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c:134:39: warning: variable 'data' set but not used [-Wunused-but-set-variable]
+warning: mesa_kernel@0.1.0:   134 |         struct rtw_rx_addr_match_data data = {};
+warning: mesa_kernel@0.1.0:       |                                       ^~~~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c: In function 'rtw_rx_fill_rx_status':
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c:225:35: warning: comparison is always true due to limited range of data type [-Wtype-limits]
+warning: mesa_kernel@0.1.0:   225 |                    pkt_stat->rate >= DESC_RATE1M &&
+warning: mesa_kernel@0.1.0:       |                                   ^~
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c: At top level:
+warning: mesa_kernel@0.1.0: c_drivers/rtw88/rx.c:102:13: warning: 'rtw_rx_addr_match_iter' defined but not used [-Wunused-function]
+warning: mesa_kernel@0.1.0:   102 | static void rtw_rx_addr_match_iter(void *data, u8 *mac,
+warning: mesa_kernel@0.1.0:       |             ^~~~~~~~~~~~~~~~~~~~~~
+warning: mesa_kernel@0.1.0: rtw88 C driver compiled successfully.
+warning: unused imports: `cosf` and `sinf`
+ --> mesa_kernel/src/drivers/framebuffer/ui.rs:2:19
+  |
+2 | use libm::{sqrtf, sinf, cosf};
+  |                   ^^^^  ^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `super::console::Color`
+ --> mesa_kernel/src/drivers/framebuffer/html.rs:2:5
+  |
+2 | use super::console::Color;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+ --> mesa_kernel/src/drivers/net/wifi/mod.rs:2:5
+  |
+2 | use alloc::string::String;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `super::reg`
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/mac.rs:3:5
+  |
+3 | use super::reg;
+  |     ^^^^^^^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mac.rs:291:40
+    |
+291 | ...   if !is_first { ch0_ctrl |= (1 << 24); } ...
+    |                                  ^       ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+291 -             if !is_first { ch0_ctrl |= (1 << 24); }   // CHKSUM_CONT
+291 +             if !is_first { ch0_ctrl |= 1 << 24; }   // CHKSUM_CONT
+    |
+
+warning: unused import: `super::reg`
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/pci.rs:3:5
+  |
+3 | use super::reg;
+  |     ^^^^^^^^^^
+
+warning: unnecessary parentheses around function argument
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:73:56
+   |
+73 | ...esc_ptr.add(0), (1u32 << 31));      // OWN
+   |                    ^          ^
+   |
+help: remove these parentheses
+   |
+73 -             core::ptr::write_volatile(desc_ptr.add(0), (1u32 << 31));      // OWN
+73 +             core::ptr::write_volatile(desc_ptr.add(0), 1u32 << 31);      // OWN
+   |
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/ieee80211.rs:5:5
+  |
+5 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused doc comment
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:232:25
+    |
+232 |                           /// POLL addr mask target
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+233 | /                         if let (Ok(addr), Ok(mask), ...
+234 | |                              crate::mesa_println!("[...
+235 | |                              let mut ok = false;
+236 | |                              for _ in 0..1000 {
+...   |
+244 | |                              if !ok { crate::mesa_pr...
+245 | |                         }
+    | |_________________________- rustdoc does not generate documentation for expressions
+    |
+    = help: use `//` for a plain comment
+    = note: `#[warn(unused_doc_comments)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `virt_to_phys`
+  --> mesa_kernel/src/memory/mod.rs:14:29
+   |
+14 | pub use vmm::{phys_to_virt, virt_to_phys};
+   |                             ^^^^^^^^^^^^
+
+warning: unused imports: `flags as page_flags` and `layout as user_layout`
+  --> mesa_kernel/src/memory/mod.rs:15:39
+   |
+15 | ...e, flags as page_flags, layout as user_layout};
+   |       ^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::collections::BTreeMap`
+ --> mesa_kernel/src/fs/mesafs.rs:6:5
+  |
+6 | use alloc::collections::BTreeMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/pipe.rs:3:5
+  |
+3 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/net/mod.rs:9:5
+  |
+9 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `spin::Mutex`
+  --> mesa_kernel/src/net/mod.rs:10:5
+   |
+10 | use spin::Mutex;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+    --> mesa_kernel/src/main.rs:1092:13
+     |
+1092 |         use alloc::string::String;
+     |             ^^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::BootTimeRequest`: please use `DateAtBootRequest` instead
+ --> mesa_kernel/src/arch/x86_64/limine_req.rs:5:5
+  |
+5 |     BootTimeRequest, FramebufferRequest, HhdmReq...
+  |     ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated type alias `limine::request::KernelAddressRequest`: please use `ExecutableAddressRequest` instead
+ --> mesa_kernel/src/arch/x86_64/limine_req.rs:5:55
+  |
+5 | ...hdmRequest, KernelAddressRequest,
+  |                ^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::SmpRequest`: please use `MpRequest` instead
+ --> mesa_kernel/src/arch/x86_64/limine_req.rs:6:36
+  |
+6 |     MemoryMapRequest, RsdpRequest, SmpRequest,
+  |                                    ^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::KernelAddressRequest`: please use `ExecutableAddressRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:33:32
+   |
+33 | ...SS_REQUEST: KernelAddressRequest = KernelAdd...
+   |                ^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::KernelAddressRequest`: please use `ExecutableAddressRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:33:55
+   |
+33 | ...ssRequest = KernelAddressRequest::new();
+   |                ^^^^^^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::SmpRequest`: please use `MpRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:37:21
+   |
+37 | static SMP_REQUEST: SmpRequest = SmpRequest::ne...
+   |                     ^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::SmpRequest`: please use `MpRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:37:34
+   |
+37 | static SMP_REQUEST: SmpRequest = SmpRequest::ne...
+   |                                  ^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::BootTimeRequest`: please use `DateAtBootRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:41:27
+   |
+41 | static BOOT_TIME_REQUEST: BootTimeRequest = Boo...
+   |                           ^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::request::BootTimeRequest`: please use `DateAtBootRequest` instead
+  --> mesa_kernel/src/arch/x86_64/limine_req.rs:41:45
+   |
+41 | ...TimeRequest = BootTimeRequest::new();
+   |                  ^^^^^^^^^^^^^^^
+
+warning: use of deprecated type alias `limine::response::SmpResponse`: please use `MpResponse` instead
+   --> mesa_kernel/src/arch/x86_64/limine_req.rs:123:60
+    |
+123 | ...mine::response::SmpResponse> {
+    |                    ^^^^^^^^^^^
+
+warning: use of deprecated method `limine::response::DateAtBootResponse::boot_time`: please use `DateAtBootResponse::timestamp` instead
+   --> mesa_kernel/src/arch/x86_64/limine_req.rs:112:20
+    |
+112 |         .map(|r| r.boot_time())
+    |                    ^^^^^^^^^
+
+warning: unused variable: `ticks`
+ --> mesa_kernel/src/arch/x86_64/interrupts/timer.rs:9:9
+  |
+9 |     let ticks = TICKS.fetch_add(1, Ordering::Rel...
+  |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_ticks`
+  |
+  = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/arch/x86_64/mod.rs:20:5
+   |
+20 |     unsafe { x86_64::instructions::interrupts::...
+   |     ^^^^^^ unnecessary `unsafe` block
+   |
+   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/arch/x86_64/mod.rs:83:5
+   |
+83 |     unsafe { x86_64::instructions::interrupts::...
+   |     ^^^^^^ unnecessary `unsafe` block
+
+warning: variable `is_h1` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:32:9
+   |
+32 |     let mut is_h1 = false;
+   |         ^^^^^^^^^
+   |
+   = note: consider using `_is_h1` instead
+
+warning: variable `is_bold` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:33:9
+   |
+33 |     let mut is_bold = false;
+   |         ^^^^^^^^^^^
+   |
+   = note: consider using `_is_bold` instead
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:54:17
+   |
+54 |                 is_h1 = false;
+   |                 ^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:50:17
+   |
+50 |                 is_h1 = true;
+   |                 ^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:65:17
+   |
+65 |                 is_bold = false;
+   |                 ^^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:62:17
+   |
+62 |                 is_bold = true;
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.rea...
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+90 |             if wait_write!() { command_port.wri...
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.rea...
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+91 |             if wait_write!() { command_port.wri...
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.rea...
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+99 |             if wait_write!() {
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+115 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+125 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+127 |                         if wait_write!() {
+    |                            ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 | ...           while (unsafe { status_port.read...
+    |                      ^^^^^^ unnecessary `unsafe` block
+...
+ 72 | ...   unsafe {
+    |       ------ because it's nested under this `unsafe` block
+...
+131 | ...                       if wait_write!() {
+    |                              ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+144 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+151 |                 if wait_write!() {
+    |                    ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+153 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+101 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+117 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 | ...           while (unsafe { status_port.read()...
+    |                      ^^^^^^ unnecessary `unsafe` block
+...
+ 72 | ...   unsafe {
+    |       ------ because it's nested under this `unsafe` block
+...
+133 | ...                           if wait_read!() {
+    |                                  ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.re...
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+155 |                         if wait_read!() {
+    |                            ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: value assigned to `final_ccb` is never read
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:114:33
+    |
+114 |             let mut final_ccb = 0;
+    |                                 ^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:317:21
+    |
+281 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+317 |                     unsafe { core::ptr::read_v...
+    |                     ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:323:36
+    |
+281 | ...   unsafe {
+    |       ------ because it's nested under this `unsafe` block
+...
+323 | ...                   bytes[i] = unsafe { core...
+    |                                  ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:368:29
+    |
+281 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+368 |                 packet.push(unsafe { core::ptr...
+    |                             ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `bd_phys`
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mac.rs:200:87
+    |
+200 | ...virt: *mut u8, bd_phys: u64, chunk_virt: *m...
+    |                   ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_bd_phys`
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/bridge.rs:52:9
+   |
+52 | ...   unsafe { core::arch::x86_64::_mm_pause(); }
+   |       ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `is_prefetchable`
+   --> mesa_kernel/src/pci/mod.rs:159:9
+    |
+159 |     let is_prefetchable = (bar_low & 0x08) != 0;
+    |         ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_is_prefetchable`
+
+warning: unused variable: `status`
+   --> mesa_kernel/src/syscall/mod.rs:160:13
+    |
+160 | fn sys_exit(status: i32) -> i64 {
+    |             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_status`
+
+warning: function `shell_stdout` is never used
+   --> mesa_kernel/src/main.rs:749:4
+    |
+749 | fn shell_stdout(s: &str) {
+    |    ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `INFO` is never used
+  --> mesa_kernel/src/drivers/framebuffer/ui.rs:25:15
+   |
+25 |     pub const INFO: Color = Color::new(156, 207...
+   |               ^^^^
+
+warning: constant `BAR_BG` is never used
+  --> mesa_kernel/src/drivers/framebuffer/ui.rs:27:15
+   |
+27 |     pub const BAR_BG: Color = Color::new(20, 18...
+   |               ^^^^^^
+
+warning: function `has_events` is never used
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:197:8
+    |
+197 | pub fn has_events() -> bool {
+    |        ^^^^^^^^^^
+
+warning: function `clear_buffer` is never used
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:201:8
+    |
+201 | pub fn clear_buffer() {
+    |        ^^^^^^^^^^^^
+
+warning: function `is_ctrl_pressed` is never used
+   --> mesa_kernel/src/drivers/keyboard/scancode.rs:171:8
+    |
+171 | pub fn is_ctrl_pressed() -> bool {
+    |        ^^^^^^^^^^^^^^^
+
+warning: function `is_alt_pressed` is never used
+   --> mesa_kernel/src/drivers/keyboard/scancode.rs:175:8
+    |
+175 | pub fn is_alt_pressed() -> bool {
+    |        ^^^^^^^^^^^^^^
+
+warning: function `is_shift_pressed` is never used
+   --> mesa_kernel/src/drivers/keyboard/scancode.rs:179:8
+    |
+179 | pub fn is_shift_pressed() -> bool {
+    |        ^^^^^^^^^^^^^^^^
+
+warning: constant `BASE_TIMEZONE_OFFSET` is never used
+  --> mesa_kernel/src/drivers/rtc.rs:29:7
+   |
+29 | const BASE_TIMEZONE_OFFSET: i8 = 1;  // CET = U...
+   |       ^^^^^^^^^^^^^^^^^^^^
+
+warning: method `format_time_short` is never used
+  --> mesa_kernel/src/drivers/rtc.rs:58:12
+   |
+41 | impl DateTime {
+   | ------------- method in this implementation
+...
+58 |     pub fn format_time_short(&self) -> alloc::s...
+   |            ^^^^^^^^^^^^^^^^^
+
+warning: function `get_time` is never used
+   --> mesa_kernel/src/drivers/rtc.rs:309:8
+    |
+309 | pub fn get_time() -> alloc::string::String {
+    |        ^^^^^^^^
+
+warning: constant `ATA_SR_DRDY` is never used
+  --> mesa_kernel/src/drivers/ata.rs:30:7
+   |
+30 | const ATA_SR_DRDY: u8 = 0x40; // Drive ready
+   |       ^^^^^^^^^^^
+
+warning: field `error_port` is never read
+  --> mesa_kernel/src/drivers/ata.rs:72:5
+   |
+70 | pub struct AtaDriver {
+   |            --------- field in this struct
+71 |     data_port: Port<u16>,
+72 |     error_port: PortReadOnly<u8>,
+   |     ^^^^^^^^^^
+
+warning: constant `RX_BUFFER_SIZE` is never used
+  --> mesa_kernel/src/drivers/net/rtl8139.rs:15:7
+   |
+15 | const RX_BUFFER_SIZE: usize = 8192 + 16 + 1500;...
+   |       ^^^^^^^^^^^^^^
+
+warning: constant `RCR_WRAP` is never used
+  --> mesa_kernel/src/drivers/net/rtl8139.rs:48:7
+   |
+48 | const RCR_WRAP: u32 = 0x80;    // Wrap mode
+   |       ^^^^^^^^
+
+warning: function `get_cbr` is never used
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:420:8
+    |
+420 | pub fn get_cbr() -> u16 {
+    |        ^^^^^^^
+
+warning: function `get_rx_offset` is never used
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:427:8
+    |
+427 | pub fn get_rx_offset() -> u16 {
+    |        ^^^^^^^^^^^^^
+
+warning: function `get_cmd` is never used
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:431:8
+    |
+431 | pub fn get_cmd() -> u8 {
+    |        ^^^^^^^
+
+warning: static `WIFI_LOG_BUFFER` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:14:12
+   |
+14 | pub static WIFI_LOG_BUFFER: Mutex<Vec<String>> ...
+   |            ^^^^^^^^^^^^^^^
+
+warning: constant `MAX_WIFI_LOGS` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:15:7
+   |
+15 | const MAX_WIFI_LOGS: usize = 128;
+   |       ^^^^^^^^^^^^^
+
+warning: function `add_wifi_log` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:17:8
+   |
+17 | pub fn add_wifi_log(msg: String) {
+   |        ^^^^^^^^^^^^
+
+warning: static `COFFEE_COUNT` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:27:12
+   |
+27 | pub static COFFEE_COUNT: core::sync::atomic::At...
+   |            ^^^^^^^^^^^^
+
+warning: fields `hal` and `fw_data` are never read
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:39:9
+   |
+35 | pub struct RtwDev {
+   |            ------ fields in this struct
+...
+39 |     pub hal: RtwHal,
+   |         ^^^
+40 |     pub fw_data: &'static [u8],
+   |         ^^^^^^^
+
+warning: field `cut_version` is never read
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:44:9
+   |
+43 | pub struct RtwHal {
+   |            ------ field in this struct
+44 |     pub cut_version: u8,
+   |         ^^^^^^^^^^^
+
+warning: field `id` is never read
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:48:9
+   |
+47 | pub struct RtwChipInfo {
+   |            ----------- field in this struct
+48 |     pub id: u8,
+   |         ^^
+
+warning: multiple methods are never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:155:19
+    |
+ 59 | impl RtwDev {
+    | ----------- methods in this implementation
+...
+155 |     pub unsafe fn coffee_step(&self) {
+    |                   ^^^^^^^^^^^
+...
+187 |     pub fn run_expe_script(&self, path: &str) {
+    |            ^^^^^^^^^^^^^^^
+...
+264 |     pub fn get_info(&self) -> String {
+    |            ^^^^^^^^
+...
+276 |     pub unsafe fn print_hw_status(&self) {
+    |                   ^^^^^^^^^^^^^^^
+...
+319 |     pub unsafe fn dump_dbi(&self) {
+    |                   ^^^^^^^^
+...
+327 |     pub unsafe fn start_scan(&self) -> Result<...
+    |                   ^^^^^^^^^^
+...
+340 |     pub unsafe fn poll_rx_basic(&self) {
+    |                   ^^^^^^^^^^^^^
+
+warning: function `parse_hex` is never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mod.rs:352:4
+    |
+352 | fn parse_hex(s: &str) -> Result<u64, ()> {
+    |    ^^^^^^^^^
+
+warning: constant `REG_SYS_FUNC_EN` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:2:11
+  |
+2 | pub const REG_SYS_FUNC_EN: u64 = 0x0002;
+  |           ^^^^^^^^^^^^^^^
+
+warning: constant `BIT_FEN_BB_GLB_RST` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:3:11
+  |
+3 | pub const BIT_FEN_BB_GLB_RST: u16 = 1 << 1;
+  |           ^^^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_FEN_BB_RSTB` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:4:11
+  |
+4 | pub const BIT_FEN_BB_RSTB: u16 = 1 << 0;
+  |           ^^^^^^^^^^^^^^^
+
+warning: constant `REG_SYS_PW_CTRL` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:6:11
+  |
+6 | pub const REG_SYS_PW_CTRL: u64 = 0x0004;
+  |           ^^^^^^^^^^^^^^^
+
+warning: constant `REG_SYS_CLK_CTRL` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:7:11
+  |
+7 | pub const REG_SYS_CLK_CTRL: u64 = 0x0008;
+  |           ^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_CPU_CLK_EN` is never used
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:8:11
+  |
+8 | pub const BIT_CPU_CLK_EN: u32 = 1 << 14;
+  |           ^^^^^^^^^^^^^^
+
+warning: constant `REG_RSV_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:10:11
+   |
+10 | pub const REG_RSV_CTRL: u64 = 0x001C;
+   |           ^^^^^^^^^^^^
+
+warning: constant `REG_RF_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:11:11
+   |
+11 | pub const REG_RF_CTRL: u64 = 0x001F;
+   |           ^^^^^^^^^^^
+
+warning: constant `BIT_RF_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:12:11
+   |
+12 | pub const BIT_RF_EN: u8 = 1 << 0;
+   |           ^^^^^^^^^
+
+warning: constant `REG_AFE_XTAL_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:14:11
+   |
+14 | pub const REG_AFE_XTAL_CTRL: u64 = 0x0024;
+   |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `REG_AFE_PLL_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:15:11
+   |
+15 | pub const REG_AFE_PLL_CTRL: u64 = 0x0028;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `REG_AFE_CTRL3` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:16:11
+   |
+16 | pub const REG_AFE_CTRL3: u64 = 0x002C;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `REG_LDO_SWR_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:18:11
+   |
+18 | pub const REG_LDO_SWR_CTRL: u64 = 0x007C;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `REG_MCUFW_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:19:11
+   |
+19 | pub const REG_MCUFW_CTRL: u64 = 0x0080;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `BIT_FW_INIT_RDY` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:20:11
+   |
+20 | pub const BIT_FW_INIT_RDY: u16 = 1 << 15;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `BIT_FW_DW_RDY` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:21:11
+   |
+21 | pub const BIT_FW_DW_RDY: u16 = 1 << 14;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `BIT_RPWM_TOGGLE` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:22:11
+   |
+22 | pub const BIT_RPWM_TOGGLE: u8 = 1 << 7;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `BIT_MCUFWDL_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:23:11
+   |
+23 | pub const BIT_MCUFWDL_EN: u16 = 1 << 0;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `REG_HCI_OPT_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:25:11
+   |
+25 | pub const REG_HCI_OPT_CTRL: u64 = 0x0074;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_USB_SUS_DIS` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:26:11
+   |
+26 | pub const BIT_USB_SUS_DIS: u32 = 1 << 8;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `REG_CR` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:28:11
+   |
+28 | pub const REG_CR: u64 = 0x0100;
+   |           ^^^^^^
+
+warning: constant `BIT_HCI_TXDMA_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:29:11
+   |
+29 | pub const BIT_HCI_TXDMA_EN: u8 = 1 << 0;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_HCI_RXDMA_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:30:11
+   |
+30 | pub const BIT_HCI_RXDMA_EN: u8 = 1 << 1;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_TXDMA_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:31:11
+   |
+31 | pub const BIT_TXDMA_EN: u8 = 1 << 2;
+   |           ^^^^^^^^^^^^
+
+warning: constant `BIT_RXDMA_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:32:11
+   |
+32 | pub const BIT_RXDMA_EN: u8 = 1 << 3;
+   |           ^^^^^^^^^^^^
+
+warning: constant `BIT_PROTOCOL_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:33:11
+   |
+33 | pub const BIT_PROTOCOL_EN: u8 = 1 << 4;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `BIT_SCHEDULE_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:34:11
+   |
+34 | pub const BIT_SCHEDULE_EN: u8 = 1 << 5;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `BIT_MACTXEN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:35:11
+   |
+35 | pub const BIT_MACTXEN: u8 = 1 << 6;
+   |           ^^^^^^^^^^^
+
+warning: constant `BIT_MACRXEN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:36:11
+   |
+36 | pub const BIT_MACRXEN: u8 = 1 << 7;
+   |           ^^^^^^^^^^^
+
+warning: constant `REG_CPWM` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:38:11
+   |
+38 | pub const REG_CPWM: u64 = 0x012C;
+   |           ^^^^^^^^
+
+warning: constant `REG_RPWM` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:39:11
+   |
+39 | pub const REG_RPWM: u64 = 0x00D0;
+   |           ^^^^^^^^
+
+warning: constant `REG_RPWM2` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:40:11
+   |
+40 | pub const REG_RPWM2: u64 = 0x009C;
+   |           ^^^^^^^^^
+
+warning: constant `REG_TXDMA_PQ_MAP` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:42:11
+   |
+42 | pub const REG_TXDMA_PQ_MAP: u64 = 0x010C;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `REG_TXDMA_STATUS` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:43:11
+   |
+43 | pub const REG_TXDMA_STATUS: u64 = 0x0210;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `REG_CPU_DMEM_CON` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:45:11
+   |
+45 | pub const REG_CPU_DMEM_CON: u64 = 0x1080;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_WL_PLATFORM_RST` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:46:11
+   |
+46 | pub const BIT_WL_PLATFORM_RST: u32 = 1 << 16;
+   |           ^^^^^^^^^^^^^^^^^^^
+
+warning: constant `BIT_DDMA_EN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:47:11
+   |
+47 | pub const BIT_DDMA_EN: u32 = 1 << 8;
+   |           ^^^^^^^^^^^
+
+warning: constant `REG_SYS_SDIO_CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:49:11
+   |
+49 | pub const REG_SYS_SDIO_CTRL: u64 = 0x0070;
+   |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `REG_SYS_STATUS1` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:50:11
+   |
+50 | pub const REG_SYS_STATUS1: u64 = 0x00F4;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `REG_SYS_CFG1` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:51:11
+   |
+51 | pub const REG_SYS_CFG1: u64 = 0x00F0;
+   |           ^^^^^^^^^^^^
+
+warning: constant `REG_DDMA_CH0SA` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:54:11
+   |
+54 | pub const REG_DDMA_CH0SA: u64 = 0x1200;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `REG_DDMA_CH0DA` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:55:11
+   |
+55 | pub const REG_DDMA_CH0DA: u64 = 0x1204;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `REG_DDMA_CH0CTRL` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/reg.rs:56:11
+   |
+56 | pub const REG_DDMA_CH0CTRL: u64 = 0x1208;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: methods `download_firmware`, `fw_hybrid_download`, `cache_flush`, and `wlan_cpu_enable` are never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/mac.rs:69:19
+    |
+  6 | impl RtwDev {
+    | ----------- methods in this implementation
+...
+ 69 |     pub unsafe fn download_firmware(&self, fw_...
+    |                   ^^^^^^^^^^^^^^^^^
+...
+200 |     unsafe fn fw_hybrid_download(&self, data: ...
+    |               ^^^^^^^^^^^^^^^^^^
+...
+341 |     pub(super) unsafe fn cache_flush(&self, ad...
+    |                          ^^^^^^^^^^^
+...
+350 |     unsafe fn wlan_cpu_enable(&self, enable: b...
+    |               ^^^^^^^^^^^^^^^
+
+warning: methods `write32_ocp` and `read32_ocp` are never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/pci.rs:32:19
+   |
+ 5 | impl RtwDev {
+   | ----------- methods in this implementation
+...
+32 |     pub unsafe fn write32_ocp(&self, addr: u32,...
+   |                   ^^^^^^^^^^^
+...
+40 |     pub unsafe fn read32_ocp(&self, addr: u32) ...
+   |                   ^^^^^^^^^^
+
+warning: struct `TxAgcEntry` is never constructed
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/phy.rs:26:12
+   |
+26 | pub struct TxAgcEntry {
+   |            ^^^^^^^^^^
+
+warning: constant `RF_DATA_A` is never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/phy.rs:127:7
+    |
+127 | const RF_DATA_A: u64 = 0x0824;
+    |       ^^^^^^^^^
+
+warning: constant `RF_DATA_B` is never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/phy.rs:129:7
+    |
+129 | const RF_DATA_B: u64 = 0x0864;
+    |       ^^^^^^^^^
+
+warning: methods `read_bb` and `read_rf` are never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/phy.rs:139:19
+    |
+131 | impl RtwDev {
+    | ----------- methods in this implementation
+...
+139 |     pub unsafe fn read_bb(&self, addr: u32) ->...
+    |                   ^^^^^^^
+...
+163 |     pub unsafe fn read_rf(&self, path: u8, add...
+    |                   ^^^^^^^
+
+warning: constant `QSEL_VO` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:21:11
+   |
+21 | pub const QSEL_VO:  u8 = 0x06;
+   |           ^^^^^^^
+
+warning: constant `QSEL_VI` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:22:11
+   |
+22 | pub const QSEL_VI:  u8 = 0x05;
+   |           ^^^^^^^
+
+warning: constant `QSEL_BE` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:23:11
+   |
+23 | pub const QSEL_BE:  u8 = 0x00;
+   |           ^^^^^^^
+
+warning: constant `QSEL_BK` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:24:11
+   |
+24 | pub const QSEL_BK:  u8 = 0x01;
+   |           ^^^^^^^
+
+warning: constant `QSEL_BCN` is never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:25:11
+   |
+25 | pub const QSEL_BCN: u8 = 0x10;
+   |           ^^^^^^^^
+
+warning: methods `tx_send` and `rx_poll` are never used
+   --> mesa_kernel/src/drivers/net/wifi/rtw88/dma.rs:128:19
+    |
+ 45 | impl RtwDev {
+    | ----------- methods in this implementation
+...
+128 |     pub unsafe fn tx_send(&self, frame: &[u8],...
+    |                   ^^^^^^^
+...
+167 |     pub unsafe fn rx_poll(&self, max: usize) -...
+    |                   ^^^^^^^
+
+warning: struct `BssEntry` is never constructed
+ --> mesa_kernel/src/drivers/net/wifi/rtw88/ieee80211.rs:8:12
+  |
+8 | pub struct BssEntry {
+  |            ^^^^^^^^
+
+warning: methods `handle_80211_frame`, `parse_beacon`, and `poll_rx` are never used
+  --> mesa_kernel/src/drivers/net/wifi/rtw88/ieee80211.rs:19:12
+   |
+16 | impl RtwDev {
+   | ----------- methods in this implementation
+...
+19 |     pub fn handle_80211_frame(&self, frame: &[u...
+   |            ^^^^^^^^^^^^^^^^^^
+...
+36 |     fn parse_beacon(&self, frame: &[u8]) {
+   |        ^^^^^^^^^^^^
+...
+75 |     pub unsafe fn poll_rx(&self) {
+   |                   ^^^^^^^
+
+warning: field `total_memory` is never read
+  --> mesa_kernel/src/memory/mod.rs:19:9
+   |
+17 | pub struct MemoryInfo {
+   |            ---------- field in this struct
+18 |     pub usable_memory: u64,
+19 |     pub total_memory: u64,
+   |         ^^^^^^^^^^^^
+
+warning: struct `PhysAddr` is never constructed
+  --> mesa_kernel/src/memory/addr.rs:10:12
+   |
+10 | pub struct PhysAddr(u64);
+   |            ^^^^^^^^
+
+warning: struct `VirtAddr` is never constructed
+  --> mesa_kernel/src/memory/addr.rs:15:12
+   |
+15 | pub struct VirtAddr(u64);
+   |            ^^^^^^^^
+
+warning: associated items `new`, `as_u64`, `is_aligned`, `align_down`, and `align_up` are never used
+  --> mesa_kernel/src/memory/addr.rs:19:18
+   |
+17 | impl PhysAddr {
+   | ------------- associated items in this implementation
+18 |     #[inline]
+19 |     pub const fn new(addr: u64) -> Self {
+   |                  ^^^
+...
+24 |     pub const fn as_u64(self) -> u64 {
+   |                  ^^^^^^
+...
+29 |     pub const fn is_aligned(self, align: u64) -...
+   |                  ^^^^^^^^^^
+...
+34 |     pub const fn align_down(self, align: u64) -...
+   |                  ^^^^^^^^^^
+...
+39 |     pub const fn align_up(self, align: u64) -> ...
+   |                  ^^^^^^^^
+
+warning: associated items `new`, `as_u64`, `as_ptr`, and `as_mut_ptr` are never used
+  --> mesa_kernel/src/memory/addr.rs:46:18
+   |
+44 | impl VirtAddr {
+   | ------------- associated items in this implementation
+45 |     #[inline]
+46 |     pub const fn new(addr: u64) -> Self {
+   |                  ^^^
+...
+51 |     pub const fn as_u64(self) -> u64 {
+   |                  ^^^^^^
+...
+56 |     pub const fn as_ptr<T>(self) -> *const T {
+   |                  ^^^^^^
+...
+61 |     pub const fn as_mut_ptr<T>(self) -> *mut T {
+   |                  ^^^^^^^^^^
+
+warning: field `last_index` is never read
+  --> mesa_kernel/src/memory/pmm.rs:28:5
+   |
+22 | pub struct PhysicalMemoryManager {
+   |            --------------------- field in this struct
+...
+28 |     last_index: u64,
+   |     ^^^^^^^^^^
+
+warning: function `virt_to_phys` is never used
+  --> mesa_kernel/src/memory/vmm.rs:24:8
+   |
+24 | pub fn virt_to_phys(virt: u64) -> u64 {
+   |        ^^^^^^^^^^^^
+
+warning: associated items `kernel`, `activate`, and `map_range_phys` are never used
+   --> mesa_kernel/src/memory/address_space.rs:77:12
+    |
+ 51 | impl AddressSpace {
+    | ----------------- associated items in this implementation
+...
+ 77 |     pub fn kernel() -> Self {
+    |            ^^^^^^
+...
+112 |     pub unsafe fn activate(&self) {
+    |                   ^^^^^^^^
+...
+196 |     pub fn map_range_phys(&mut self, virt_star...
+    |            ^^^^^^^^^^^^^^
+
+warning: constant `WRITE_THROUGH` is never used
+  --> mesa_kernel/src/memory/address_space.rs:13:15
+   |
+13 |     pub const WRITE_THROUGH: u64 = 1 << 3;
+   |               ^^^^^^^^^^^^^
+
+warning: constant `NO_CACHE` is never used
+  --> mesa_kernel/src/memory/address_space.rs:14:15
+   |
+14 |     pub const NO_CACHE: u64     = 1 << 4;
+   |               ^^^^^^^^
+
+warning: constant `ACCESSED` is never used
+  --> mesa_kernel/src/memory/address_space.rs:15:15
+   |
+15 |     pub const ACCESSED: u64     = 1 << 5;
+   |               ^^^^^^^^
+
+warning: constant `DIRTY` is never used
+  --> mesa_kernel/src/memory/address_space.rs:16:15
+   |
+16 |     pub const DIRTY: u64        = 1 << 6;
+   |               ^^^^^
+
+warning: constant `HUGE_PAGE` is never used
+  --> mesa_kernel/src/memory/address_space.rs:17:15
+   |
+17 |     pub const HUGE_PAGE: u64    = 1 << 7;
+   |               ^^^^^^^^^
+
+warning: constant `GLOBAL` is never used
+  --> mesa_kernel/src/memory/address_space.rs:18:15
+   |
+18 |     pub const GLOBAL: u64       = 1 << 8;
+   |               ^^^^^^
+
+warning: constant `NO_EXECUTE` is never used
+  --> mesa_kernel/src/memory/address_space.rs:19:15
+   |
+19 |     pub const NO_EXECUTE: u64   = 1 << 63;
+   |               ^^^^^^^^^^
+
+warning: constant `KERNEL_RW` is never used
+  --> mesa_kernel/src/memory/address_space.rs:21:15
+   |
+21 |     pub const KERNEL_RW: u64 = PRESENT | WRITABLE;
+   |               ^^^^^^^^^
+
+warning: constant `KERNEL_RX` is never used
+  --> mesa_kernel/src/memory/address_space.rs:22:15
+   |
+22 |     pub const KERNEL_RX: u64 = PRESENT;
+   |               ^^^^^^^^^
+
+warning: constant `USER_HEAP_BASE` is never used
+  --> mesa_kernel/src/memory/address_space.rs:37:15
+   |
+37 |     pub const USER_HEAP_BASE: u64 = 0x0000_0000...
+   |               ^^^^^^^^^^^^^^
+
+warning: variants `Blocked` and `Sleeping` are never constructed
+  --> mesa_kernel/src/scheduler/mod.rs:25:5
+   |
+22 | pub enum TaskState {
+   |          --------- variants in this enum
+...
+25 |     Blocked,
+   |     ^^^^^^^
+26 |     Sleeping(u64),
+   |     ^^^^^^^^
+   |
+   = note: `TaskState` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `kernel_stack`, `address_space`, `user_entry`, `user_stack`, and `priority` are never read
+  --> mesa_kernel/src/scheduler/mod.rs:44:5
+   |
+37 | pub struct Task {
+   |            ---- fields in this struct
+...
+44 |     kernel_stack: Vec<u8>,
+   |     ^^^^^^^^^^^^
+...
+48 |     pub address_space: Option<AddressSpace>,
+   |         ^^^^^^^^^^^^^
+...
+54 |     pub user_entry: u64,
+   |         ^^^^^^^^^^
+55 |     pub user_stack: u64,
+   |         ^^^^^^^^^^
+...
+58 |     pub priority: u8,
+   |         ^^^^^^^^
+
+warning: function `create_task` is never used
+   --> mesa_kernel/src/scheduler/mod.rs:228:8
+    |
+228 | pub fn create_task(name: &str, entry_point: fn...
+    |        ^^^^^^^^^^^
+
+warning: function `tick` is never used
+   --> mesa_kernel/src/scheduler/mod.rs:270:8
+    |
+270 | pub fn tick() {
+    |        ^^^^
+
+warning: function `current_task_name` is never used
+   --> mesa_kernel/src/scheduler/mod.rs:437:8
+    |
+437 | pub fn current_task_name() -> Option<String> {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: function `task_count` is never used
+   --> mesa_kernel/src/scheduler/mod.rs:441:8
+    |
+441 | pub fn task_count() -> usize {
+    |        ^^^^^^^^^^
+
+warning: function `ready_count` is never used
+   --> mesa_kernel/src/scheduler/mod.rs:445:8
+    |
+445 | pub fn ready_count() -> usize {
+    |        ^^^^^^^^^^^
+
+warning: variants `Debug` and `Error` are never constructed
+  --> mesa_kernel/src/log.rs:10:5
+   |
+ 9 | pub enum LogLevel {
+   |          -------- variants in this enum
+10 |     Debug,
+   |     ^^^^^
+...
+13 |     Error,
+   |     ^^^^^
+   |
+   = note: `LogLevel` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `cpu_ids` is never read
+  --> mesa_kernel/src/acpi/mod.rs:24:9
+   |
+17 | pub struct AcpiInfo {
+   |            -------- field in this struct
+...
+24 |     pub cpu_ids: Vec<u8>,
+   |         ^^^^^^^
+   |
+   = note: `AcpiInfo` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `prog_if` and `header_type` are never read
+  --> mesa_kernel/src/pci/mod.rs:25:9
+   |
+17 | pub struct PciDevice {
+   |            --------- fields in this struct
+...
+25 |     pub prog_if: u8,
+   |         ^^^^^^^
+26 |     pub revision: u8,
+27 |     pub header_type: u8,
+   |         ^^^^^^^^^^^
+   |
+   = note: `PciDevice` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: function `pci_read_bar` is never used
+   --> mesa_kernel/src/pci/mod.rs:141:8
+    |
+141 | pub fn pci_read_bar(bus: u8, device: u8, funct...
+    |        ^^^^^^^^^^^^
+
+warning: function `pci_enable_bus_mastering` is never used
+   --> mesa_kernel/src/pci/mod.rs:195:8
+    |
+195 | pub fn pci_enable_bus_mastering(bus: u8, devic...
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `pci_enable_memory_space` is never used
+   --> mesa_kernel/src/pci/mod.rs:200:8
+    |
+200 | pub fn pci_enable_memory_space(bus: u8, device...
+    |        ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `find_usb_controller` is never used
+   --> mesa_kernel/src/pci/mod.rs:327:8
+    |
+327 | pub fn find_usb_controller(prog_if: u8) -> Opt...
+    |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pci_find_parent_bridge` is never used
+   --> mesa_kernel/src/pci/mod.rs:352:8
+    |
+352 | pub fn pci_find_parent_bridge(bus: u8) -> Opti...
+    |        ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `pci_set_power_state` is never used
+   --> mesa_kernel/src/pci/mod.rs:391:8
+    |
+391 | pub fn pci_set_power_state(bus: u8, device: u8...
+    |        ^^^^^^^^^^^^^^^^^^^
+
+warning: function `pci_wait_for_link` is never used
+   --> mesa_kernel/src/pci/mod.rs:440:8
+    |
+440 | pub fn pci_wait_for_link(bus: u8, device: u8, ...
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: field `shell` is never read
+  --> mesa_kernel/src/users/mod.rs:22:9
+   |
+16 | pub struct User {
+   |            ---- field in this struct
+...
+22 |     pub shell: String,
+   |         ^^^^^
+   |
+   = note: `User` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: field `members` is never read
+  --> mesa_kernel/src/users/mod.rs:78:9
+   |
+75 | pub struct Group {
+   |            ----- field in this struct
+...
+78 |     pub members: Vec<Uid>,
+   |         ^^^^^^^
+   |
+   = note: `Group` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: function `is_logged_in` is never used
+   --> mesa_kernel/src/users/mod.rs:165:8
+    |
+165 | pub fn is_logged_in() -> bool {
+    |        ^^^^^^^^^^^^
+
+warning: struct `Permissions` is never constructed
+   --> mesa_kernel/src/users/mod.rs:246:12
+    |
+246 | pub struct Permissions {
+    |            ^^^^^^^^^^^
+
+warning: associated items `default_file`, `default_dir`, and `to_string` are never used
+   --> mesa_kernel/src/users/mod.rs:259:12
+    |
+258 | impl Permissions {
+    | ---------------- associated items in this implementation
+259 |     pub fn default_file() -> Self {
+    |            ^^^^^^^^^^^^
+...
+267 |     pub fn default_dir() -> Self {
+    |            ^^^^^^^^^^^
+...
+275 |     pub fn to_string(&self) -> String {
+    |            ^^^^^^^^^
+
+warning: variants `Symlink` and `Device` are never constructed
+  --> mesa_kernel/src/fs/mod.rs:18:5
+   |
+15 | pub enum NodeType {
+   |          -------- variants in this enum
+...
+18 |     Symlink,
+   |     ^^^^^^^
+19 |     Device,
+   |     ^^^^^^
+   |
+   = note: `NodeType` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: fields `read`, `write`, and `execute` are never read
+  --> mesa_kernel/src/fs/mod.rs:25:9
+   |
+24 | pub struct Permissions {
+   |            ----------- fields in this struct
+25 |     pub read: bool,
+   |         ^^^^
+26 |     pub write: bool,
+   |         ^^^^^
+27 |     pub execute: bool,
+   |         ^^^^^^^
+   |
+   = note: `Permissions` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: associated items `read_only`, `read_exec`, and `to_string` are never used
+  --> mesa_kernel/src/fs/mod.rs:35:18
+   |
+30 | impl Permissions {
+   | ---------------- associated items in this implementation
+...
+35 |     pub const fn read_only() -> Self {
+   |                  ^^^^^^^^^
+...
+43 |     pub const fn read_exec() -> Self {
+   |                  ^^^^^^^^^
+...
+47 |     pub fn to_string(&self) -> String {
+   |            ^^^^^^^^^
+
+warning: fields `owner_uid`, `owner_gid`, `permissions`, and `created` are never read
+  --> mesa_kernel/src/fs/mod.rs:61:9
+   |
+58 | pub struct Metadata {
+   |            -------- fields in this struct
+...
+61 |     pub owner_uid: u32,
+   |         ^^^^^^^^^
+62 |     pub owner_gid: u32,
+   |         ^^^^^^^^^
+63 |     pub permissions: Permissions,
+   |         ^^^^^^^^^^^
+64 |     pub created: u64,
+   |         ^^^^^^^
+   |
+   = note: `Metadata` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: variants `NotAFile` and `ReadOnly` are never constructed
+   --> mesa_kernel/src/fs/mod.rs:110:5
+    |
+106 | pub enum FsError {
+    |          ------- variants in this enum
+...
+110 |     NotAFile,
+    |     ^^^^^^^^
+...
+116 |     ReadOnly,
+    |     ^^^^^^^^
+    |
+    = note: `FsError` has derived impls for the traits `Clone` and `Debug`, but these are intentionally ignored during dead code analysis
+
+warning: method `name` is never used
+   --> mesa_kernel/src/fs/mod.rs:142:8
+    |
+141 | pub trait FileSystem: Send + Sync {
+    |           ---------- method in this trait
+142 |     fn name(&self) -> &str;
+    |        ^^^^
+
+warning: function `is_dir` is never used
+   --> mesa_kernel/src/fs/mod.rs:488:8
+    |
+488 | pub fn is_dir(path: &str) -> bool {
+    |        ^^^^^^
+
+warning: function `is_file` is never used
+   --> mesa_kernel/src/fs/mod.rs:493:8
+    |
+493 | pub fn is_file(path: &str) -> bool {
+    |        ^^^^^^^
+
+warning: method `is_file` is never used
+  --> mesa_kernel/src/fs/ramfs.rs:49:8
+   |
+23 | impl FsNode {
+   | ----------- method in this implementation
+...
+49 |     fn is_file(&self) -> bool {
+   |        ^^^^^^^
+
+warning: associated function `navigate_mut` is never used
+   --> mesa_kernel/src/fs/ramfs.rs:113:8
+    |
+ 59 | impl RamFs {
+    | ---------- associated function in this implementation
+...
+113 |     fn navigate_mut<'a>(node: &'a mut FsNode, ...
+    |        ^^^^^^^^^^^^
+
+warning: function `basename` is never used
+  --> mesa_kernel/src/fs/path.rs:62:8
+   |
+62 | pub fn basename(path: &str) -> &str {
+   |        ^^^^^^^^
+
+warning: function `dirname` is never used
+  --> mesa_kernel/src/fs/path.rs:67:8
+   |
+67 | pub fn dirname(path: &str) -> String {
+   |        ^^^^^^^
+
+warning: function `join` is never used
+  --> mesa_kernel/src/fs/path.rs:80:8
+   |
+80 | pub fn join(base: &str, name: &str) -> String {
+   |        ^^^^
+
+warning: methods `available` and `is_read_eof` are never used
+  --> mesa_kernel/src/pipe.rs:63:8
+   |
+24 | impl PipeBuffer {
+   | --------------- methods in this implementation
+...
+63 |     fn available(&self) -> usize {
+   |        ^^^^^^^^^
+...
+71 |     fn is_read_eof(&self) -> bool {
+   |        ^^^^^^^^^^^
+
+warning: fields `src_mac` and `dest_mac` are never read
+ --> mesa_kernel/src/net/ethernet.rs:4:9
+  |
+3 | pub struct EthernetFrame {
+  |            ------------- fields in this struct
+4 |     pub src_mac: [u8; 6],
+  |         ^^^^^^^
+5 |     pub dest_mac: [u8; 6],
+  |         ^^^^^^^^
+
+warning: field `checksum` is never read
+ --> mesa_kernel/src/net/udp.rs:7:9
+  |
+3 | pub struct UdpPacket {
+  |            --------- field in this struct
+...
+7 |     pub checksum: u16,
+  |         ^^^^^^^^
+
+warning: creating a shared reference to mutable static
+   --> mesa_kernel/src/acpi/mod.rs:164:14
+    |
+164 |     unsafe { ACPI_INFO.as_ref() }
+    |              ^^^^^^^^^^^^^^^^^^ shared reference to mutable static
+    |
+    = note: for more information, see <https://doc.rust-lang.org/edition-guide/rust-2024/static-mut-references.html>
+    = note: shared references to mutable statics are dangerous; it's undefined behavior if the static is mutated or if a mutable reference is created for it while the shared reference lives
+    = note: `#[warn(static_mut_refs)]` (part of `#[warn(rust_2024_compatibility)]`) on by default
+
+warning: `mesa_kernel` (bin "mesa_kernel") generated 199 warnings (run `cargo fix --bin "mesa_kernel" -p mesa_kernel` to apply 19 suggestions)
+    Finished `release` profile [optimized] target(s) in 0.17s

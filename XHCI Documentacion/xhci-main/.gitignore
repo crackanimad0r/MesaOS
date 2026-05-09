@@ -1,0 +1,7 @@
+/target
+tags
+**/*.swp
+**/*.swo
+**/*~
+*.temp
+*.lock

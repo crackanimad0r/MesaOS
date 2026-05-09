@@ -1,0 +1,521 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /home/antonio/Documentos/MesaOS/mesa_kernel/Cargo.toml
+workspace: /home/antonio/Documentos/MesaOS/Cargo.toml
+   Compiling mesa_kernel v0.1.0 (/home/antonio/Documentos/MesaOS/mesa_kernel)
+warning: unused imports: `cosf` and `sinf`
+ --> mesa_kernel/src/drivers/framebuffer/ui.rs:2:19
+  |
+2 | use libm::{sqrtf, sinf, cosf};
+  |                   ^^^^  ^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `super::console::Color`
+ --> mesa_kernel/src/drivers/framebuffer/html.rs:2:5
+  |
+2 | use super::console::Color;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::pci::PciDevice`
+ --> mesa_kernel/src/drivers/net/virtio_net.rs:2:5
+  |
+2 | use crate::pci::PciDevice;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::boxed::Box`
+  --> mesa_kernel/src/drivers/usb/xhci/mod.rs:19:5
+   |
+19 | use alloc::boxed::Box;
+   |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::pci::PciDevice`
+  --> mesa_kernel/src/drivers/usb/mod.rs:10:5
+   |
+10 | use crate::pci::PciDevice;
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `xhci::accessor::Mapper as XhciMapper`
+  --> mesa_kernel/src/memory/xhci_access.rs:27:9
+   |
+27 | pub use xhci::accessor::Mapper as XhciMapper;
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `PmmXhciAdapter` and `XhciMemory`
+  --> mesa_kernel/src/memory/mod.rs:11:23
+   |
+11 | pub use xhci_access::{XhciMemory, PmmXhciAdapter};
+   |                       ^^^^^^^^^^  ^^^^^^^^^^^^^^
+
+warning: unused import: `virt_to_phys`
+  --> mesa_kernel/src/memory/mod.rs:17:29
+   |
+17 | pub use vmm::{phys_to_virt, virt_to_phys};
+   |                             ^^^^^^^^^^^^
+
+warning: unused import: `layout as user_layout`
+  --> mesa_kernel/src/memory/mod.rs:18:60
+   |
+18 | pub use address_space::{AddressSpace, flags as page_flags, layout as user_layout};
+   |                                                            ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `spinlock::*`
+ --> mesa_kernel/src/linux/mod.rs:8:9
+  |
+8 | pub use spinlock::*;
+  |         ^^^^^^^^^^^
+
+warning: type `u8` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:20:10
+   |
+20 | pub type u8 = core::primitive::u8;
+   |          ^^ help: convert the identifier to upper camel case (notice the capitalization): `U8`
+   |
+   = note: `#[warn(non_camel_case_types)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: type `u16` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:21:10
+   |
+21 | pub type u16 = core::primitive::u16;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U16`
+
+warning: type `u32` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:22:10
+   |
+22 | pub type u32 = core::primitive::u32;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U32`
+
+warning: type `u64` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:23:10
+   |
+23 | pub type u64 = core::primitive::u64;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U64`
+
+warning: unused import: `alloc::collections::BTreeMap`
+ --> mesa_kernel/src/fs/mesafs.rs:6:5
+  |
+6 | use alloc::collections::BTreeMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/pipe.rs:3:5
+  |
+3 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/net/mod.rs:9:5
+  |
+9 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `spin::Mutex`
+  --> mesa_kernel/src/net/mod.rs:10:5
+   |
+10 | use spin::Mutex;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+    --> mesa_kernel/src/main.rs:1094:13
+     |
+1094 |         use alloc::string::String;
+     |             ^^^^^^^^^^^^^^^^^^^^^
+
+error[E0608]: cannot index into a value of type `([u8; 4], u8)`
+    --> mesa_kernel/src/main.rs:2696:25
+     |
+2696 |                 reply_ip[0], reply_ip[1], reply_ip[2], reply_ip[3], seq));
+     |                         ^^^ help: to access tuple element `0`, use: `.0`
+     |
+     = help: tuples are indexed with a dot and a literal index: `tuple.0`, `tuple.1`, etc.
+
+error[E0608]: cannot index into a value of type `([u8; 4], u8)`
+    --> mesa_kernel/src/main.rs:2696:38
+     |
+2696 |                 reply_ip[0], reply_ip[1], reply_ip[2], reply_ip[3], seq));
+     |                                      ^^^ help: to access tuple element `1`, use: `.1`
+     |
+     = help: tuples are indexed with a dot and a literal index: `tuple.0`, `tuple.1`, etc.
+
+error[E0608]: cannot index into a value of type `([u8; 4], u8)`
+    --> mesa_kernel/src/main.rs:2696:51
+     |
+2696 |                 reply_ip[0], reply_ip[1], reply_ip[2], reply_ip[3], seq));
+     |                                                   ^^^
+     |
+     = help: tuples are indexed with a dot and a literal index: `tuple.0`, `tuple.1`, etc.
+
+error[E0608]: cannot index into a value of type `([u8; 4], u8)`
+    --> mesa_kernel/src/main.rs:2696:64
+     |
+2696 |                 reply_ip[0], reply_ip[1], reply_ip[2], reply_ip[3], seq));
+     |                                                                ^^^
+     |
+     = help: tuples are indexed with a dot and a literal index: `tuple.0`, `tuple.1`, etc.
+
+warning: unused import: `DeviceHandler`
+ --> mesa_kernel/src/drivers/usb/xhci/context.rs:1:75
+  |
+1 | use xhci::context::{Input64Byte, Input32Byte, EndpointType, InputHandler, DeviceHandler};
+  |                                                                           ^^^^^^^^^^^^^
+
+warning: unused variable: `ticks`
+ --> mesa_kernel/src/arch/x86_64/interrupts/timer.rs:9:9
+  |
+9 |     let ticks = TICKS.fetch_add(1, Ordering::Relaxed);
+  |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_ticks`
+  |
+  = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/arch/x86_64/mod.rs:20:5
+   |
+20 |     unsafe { x86_64::instructions::interrupts::enable(); }
+   |     ^^^^^^ unnecessary `unsafe` block
+   |
+   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/arch/x86_64/mod.rs:83:5
+   |
+83 |     unsafe { x86_64::instructions::interrupts::enable(); }
+   |     ^^^^^^ unnecessary `unsafe` block
+
+warning: variable `is_h1` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:32:9
+   |
+32 |     let mut is_h1 = false;
+   |         ^^^^^^^^^
+   |
+   = note: consider using `_is_h1` instead
+
+warning: variable `is_bold` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:33:9
+   |
+33 |     let mut is_bold = false;
+   |         ^^^^^^^^^^^
+   |
+   = note: consider using `_is_bold` instead
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:54:17
+   |
+54 |                 is_h1 = false;
+   |                 ^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:50:17
+   |
+50 |                 is_h1 = true;
+   |                 ^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:65:17
+   |
+65 |                 is_bold = false;
+   |                 ^^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:62:17
+   |
+62 |                 is_bold = true;
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+90 |             if wait_write!() { command_port.write(0xAD); }
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+91 |             if wait_write!() { command_port.write(0xA7); }
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+   |
+53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+   |                        ^^^^^^ unnecessary `unsafe` block
+...
+72 |         unsafe {
+   |         ------ because it's nested under this `unsafe` block
+...
+99 |             if wait_write!() {
+   |                ------------- in this macro invocation
+   |
+   = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+115 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+125 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+127 |                         if wait_write!() {
+    |                            ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+131 |                             if wait_write!() {
+    |                                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+144 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+151 |                 if wait_write!() {
+    |                    ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:53:24
+    |
+ 53 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+153 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+101 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+117 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+133 |                                 if wait_read!() {
+    |                                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:64:24
+    |
+ 64 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 72 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+155 |                         if wait_read!() {
+    |                            ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: value assigned to `final_ccb` is never read
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:114:33
+    |
+114 |             let mut final_ccb = 0;
+    |                                 ^
+    |
+    = help: maybe it is overwritten before being read?
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:317:21
+    |
+281 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+317 |                     unsafe { core::ptr::read_volatile((rx_virt_base + off) as *const u32) }
+    |                     ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:323:36
+    |
+281 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+323 |                         bytes[i] = unsafe { core::ptr::read_volatile((rx_virt_base + b_off) as *const u8) };
+    |                                    ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:368:29
+    |
+281 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+368 |                 packet.push(unsafe { core::ptr::read_volatile((rx_virt_base + b_off) as *const u8) });
+    |                             ^^^^^^ unnecessary `unsafe` block
+
+warning: variable does not need to be mutable
+ --> mesa_kernel/src/drivers/usb/xhci/handshake.rs:4:9
+  |
+4 |     let mut offset = unsafe { core::ptr::read_volatile((base_virt + 0x10) as *const u32) };
+  |         ----^^^^^^
+  |         |
+  |         help: remove this `mut`
+  |
+  = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> mesa_kernel/src/drivers/usb/xhci/mod.rs:75:13
+   |
+75 |         let mut regs = unsafe { Registers::new(bar0_phys as usize, mapper) };
+   |             ----^^^^
+   |             |
+   |             help: remove this `mut`
+
+warning: variable does not need to be mutable
+   --> mesa_kernel/src/drivers/usb/xhci/mod.rs:305:13
+    |
+305 |         let mut enable_slot = command::EnableSlot::new();
+    |             ----^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+
+warning: unused variable: `out_ctx_virt`
+   --> mesa_kernel/src/drivers/usb/xhci/mod.rs:320:28
+    |
+320 |         let (out_ctx_phys, out_ctx_virt) = self.alloc_64b(2048).unwrap();
+    |                            ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_out_ctx_virt`
+
+warning: unused variable: `xhci`
+ --> mesa_kernel/src/drivers/usb/hub.rs:8:28
+  |
+8 | pub unsafe fn usb_hub_init(xhci: *mut XhciController) {
+  |                            ^^^^ help: if this is intentional, prefix it with an underscore: `_xhci`
+
+warning: unused variable: `pipe`
+  --> mesa_kernel/src/drivers/usb/linux_glue.rs:40:5
+   |
+40 |     pipe: u32,
+   |     ^^^^ help: if this is intentional, prefix it with an underscore: `_pipe`
+
+warning: unused variable: `status`
+   --> mesa_kernel/src/syscall/mod.rs:160:13
+    |
+160 | fn sys_exit(status: i32) -> i64 {
+    |             ^^^^^^ help: if this is intentional, prefix it with an underscore: `_status`
+
+warning: unused variable: `i`
+   --> mesa_kernel/src/net/arp.rs:104:9
+    |
+104 |     for i in 0..iterations {
+    |         ^ help: if this is intentional, prefix it with an underscore: `_i`
+
+For more information about this error, try `rustc --explain E0608`.
+warning: `mesa_kernel` (bin "mesa_kernel") generated 55 warnings
+error: could not compile `mesa_kernel` (bin "mesa_kernel") due to 4 previous errors; 55 warnings emitted

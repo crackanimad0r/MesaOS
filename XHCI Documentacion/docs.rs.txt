@@ -1,0 +1,28 @@
+
+A library to handle xHCI.
+
+This crate provides types of the xHCI structures, such as the Registers and Contexts. Users can use this library to implement a USB device deriver on your own OS.
+
+This crate is #![no_std] compatible.
+
+Examples
+let mut r = unsafe { xhci::Registers::new(MMIO_BASE, mapper) };
+let o = &mut r.operational;
+
+o.usbcmd.update(|u| {
+    u.set_run_stop();
+});
+while o.usbsts.read().hc_halted() {}
+Re-exports
+pub use extended_capabilities::ExtendedCapability;
+pub use registers::Registers;
+pub use accessor;
+Modules
+context
+The xHCI Contexts.
+extended_capabilities
+The xHCI Extended Capabilities
+registers
+xHCI registers
+ring
+TRB Ring.

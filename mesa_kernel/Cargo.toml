@@ -1,0 +1,42 @@
+[package]
+name = "mesa_kernel"
+version = "0.1.0"
+edition = "2021"
+
+# CPU and Platform abstractions
+[target.'cfg(target_arch = "x86_64")'.dependencies]
+x86_64 = "0.15"
+uart_16550 = "0.3"
+pic8259 = "0.11"
+
+[dependencies]
+# Bootloader protocol
+limine = "0.5"
+
+# Concurrency primitives
+spin = "0.9"
+lazy_static = { version = "1.5", features = ["spin_no_std"] }
+
+# Math (para gradientes en UI)
+libm = "0.2"
+
+# Bit manipulation
+bitflags = "2.4"
+
+# Allocator
+linked_list_allocator = "0.10"
+xhci = "0.9.0"
+
+# xHCI Driver custom trait impl (git dep skipped)
+
+[build-dependencies]
+cc = "1.0"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true
+opt-level = 2
+

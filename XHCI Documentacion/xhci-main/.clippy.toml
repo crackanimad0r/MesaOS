@@ -1,0 +1,2 @@
+too-many-arguments-threshold = 3
+doc-valid-idents = ["xHCI", "xHC", "PCIe", "DbC"]

@@ -1,0 +1,16 @@
+# Cargo.toml (raíz del proyecto)
+
+[workspace]
+resolver = "2"
+members = [
+    "mesa_kernel",
+    "tools/mesafs_inject",
+]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+lto = true
+opt-level = 2

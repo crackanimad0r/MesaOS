@@ -1,0 +1,11 @@
+[package]
+name = "mesafs_inject"
+version = "0.1.0"
+edition = "2021"
+description = "Inyecta archivos en un disco con MesaFS (Mesa OS)"
+
+[[bin]]
+name = "mesafs_inject"
+path = "src/main.rs"
+
+[dependencies]

@@ -1,0 +1,4225 @@
+# 📘 DOCUMENTACIÓN TÉCNICA COMPLETA: Realtek RTL8822CE
+## Guía de Desarrollo de Drivers para Sistemas Operativos
+
+---
+
+## 📋 ÍNDICE
+
+1. [Visión General del Chip](#1-vision-general)
+2. [Identificación PCI / Hardware IDs](#2-identificacion-pci)
+3. [Arquitectura del Hardware](#3-arquitectura)
+4. [Interfaz de Bus PCIe](#4-interfaz-pcie)
+5. [Mapa de Registros MMIO (Memory-Mapped I/O)](#5-mapa-registros)
+6. [Secuencia de Power-On / Power-Off](#6-power-sequence)
+7. [Firmware: Carga y Comunicación H2C/C2H](#7-firmware)
+8. [Sistema de Transmisión (TX)](#8-tx)
+9. [Sistema de Recepción (RX)](#9-rx)
+10. [EFUSE / E-Fuse Map](#10-efuse)
+11. [Gestión de Energía (Power Management)](#11-power-management)
+12. [Coexistencia Bluetooth](#12-bt-coex)
+13. [Calibración RF y PHY](#13-calibracion)
+14. [Arquitectura de Driver (modelo rtw88)](#14-arquitectura-driver)
+15. [Implementación Práctica Completa en C](#15-implementacion)
+16. [Referencia de Archivos de Firmware](#16-firmware-files)
+17. [Compilación y Despliegue](#17-compilacion)
+
+---
+
+## 1. VISIÓN GENERAL DEL CHIP
+
+El RTL8822CE es un chipset de Realtek con configuración Tx/Rx 2T2R, que cumple con los estándares IEEE 802.11a, 802.11b, 802.11g, 802.11n y 802.11ac, con interfaz de bus PCI Express. Opera en rangos de frecuencia de 5.15–5.85 GHz (802.11a/ac) y 2.412–2.484 GHz (802.11bg).
+
+RTL8822CE combina un WLAN MAC, un baseband WLAN de 2T2R y RF en un solo chip.
+
+El RTL8822CE MAC soporta 802.11e para aplicaciones multimedia, 802.11i y WAPI para seguridad, y 802.11n/802.11ac para eficiencia mejorada del protocolo MAC.
+
+Además, RTL8822CE proporciona STBC (Space-Time Block Code) de un stream espacial, Transmit Beamforming (TxBF) y Low Density Parity Check (LDPC) para extender el alcance de transmisión.
+
+La interfaz cumple con PCI Express Base Specification Revision 2.1, y USB2.0 FS-mode para Bluetooth.
+
+### Características principales:
+
+| Parámetro | Valor |
+|---|---|
+| **Chipset** | Realtek RTL8822CE-CG |
+| **Estándar WiFi** | 802.11a/b/g/n/ac (WiFi 5) |
+| **Bluetooth** | BT 5.0 + BLE |
+| **Configuración MIMO** | 2T2R (MU-MIMO) |
+| **Ancho de banda** | 20/40/80 MHz |
+| **Tasa máxima (5 GHz)** | 867 Mbps |
+| **Tasa máxima (2.4 GHz)** | 300 Mbps |
+| **Interfaz WLAN** | PCIe 2.1 (1 lane) |
+| **Interfaz BT** | USB 2.0 FS |
+| **Form Factor** | M.2 2230 (Key A/E) |
+| **Tensión** | 3.3V / 1.5A |
+| **Temp. operación** | 0°C a +70°C |
+| **MTBF** | > 150,000 horas |
+
+### Tasas de datos soportadas:
+
+
+- **802.11a:** 6, 9, 12, 18, 24, 36, 48, 54 Mbps
+- **802.11b:** 1, 2, 5.5, 11 Mbps
+- **802.11g:** 6, 9, 12, 18, 24, 36, 48, 54 Mbps
+
+
+- **802.11n (HT):** Hasta 300 Mbps (2x2, 40 MHz, Short GI)
+- **802.11ac (VHT):** Hasta 867 Mbps (2x2, 80 MHz, Short GI)
+
+---
+
+## 2. IDENTIFICACIÓN PCI / HARDWARE IDs
+
+El PCI ID del RTL8822CE es `10ec:c822`. El Vendor ID es `10ec` (Realtek Semiconductor Co., Ltd.) y el Device ID es `c822`.
+
+También existe una variante con Device ID `c82f` que igualmente corresponde al RTL8822CE.
+
+### Tabla de Hardware IDs
+
+| Campo | Valor |
+|---|---|
+| **PCI Vendor ID** | `0x10EC` |
+| **PCI Device ID** | `0xC822` (principal) / `0xC82F` (variante) |
+| **PCI Class Code** | `0x0280` (Network Controller: Wireless) |
+| **PCI Revision** | `0x00` |
+| **USB Vendor ID (BT)** | `0x0BDA` |
+| **USB Device ID (BT)** | `0xC822` |
+| **FCC ID** | TX2-RTL8822CE |
+| **IC** | 6317A-RTL8822CE |
+
+### Subsystem IDs conocidos:
+
+Subsistemas conocidos incluyen AzureWave `1a3b:3750` (ASUS TUF), Hewlett-Packard `103c:85f7` (HP Stream), y Lenovo `17aa:c123` (ThinkBook 14).
+
+```c
+/* Constantes de identificación PCI */
+#define RTW_PCI_VENDOR_ID_REALTEK    0x10EC
+#define RTW_PCI_DEVICE_ID_8822CE     0xC822
+#define RTW_PCI_DEVICE_ID_8822CE_2   0xC82F
+#define RTW_PCI_CLASS_WIRELESS       0x028000
+
+/* Tabla PCI ID para el driver */
+static const struct pci_device_id rtw_8822ce_pci_ids[] = {
+    { PCI_DEVICE(0x10EC, 0xC822), .driver_data = 0 },
+    { PCI_DEVICE(0x10EC, 0xC82F), .driver_data = 0 },
+    { /* sentinel */ }
+};
+```
+
+---
+
+## 3. ARQUITECTURA DEL HARDWARE
+
+El chip implementa una solución Dual-Band MIMO 2x2 (11ac 2x2 MAC/BB/RF + PA) con controlador Bluetooth integrado.
+
+### Diagrama de bloques funcional:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     RTL8822CE SoC                                │
+│                                                                  │
+│  ┌──────────────┐   ┌──────────────┐   ┌──────────────────┐    │
+│  │   PCIe 2.1   │   │   USB 2.0    │   │   GPIO / Misc    │    │
+│  │  (WLAN Bus)  │   │  (BT Bus)    │   │   Control Pins   │    │
+│  └──────┬───────┘   └──────┬───────┘   └──────────────────┘    │
+│         │                   │                                    │
+│  ┌──────▼───────────────────▼──────────────────────────────┐    │
+│  │              System Function (SYS)                       │    │
+│  │         Power Management / Clock / Reset                 │    │
+│  │         EFUSE Controller / LDO Regulators               │    │
+│  └──────────────┬──────────────────────┬───────────────────┘    │
+│                 │                      │                         │
+│  ┌──────────────▼──────┐  ┌───────────▼───────────────┐        │
+│  │    WLAN Subsystem    │  │    Bluetooth Subsystem    │        │
+│  │                      │  │                           │        │
+│  │  ┌──────────────┐   │  │  ┌─────────────────┐     │        │
+│  │  │   MAC Layer   │   │  │  │  BT Core + HCI  │     │        │
+│  │  │ (802.11 MAC)  │   │  │  │  (BT 5.0 + BLE) │     │        │
+│  │  └──────┬───────┘   │  │  └─────────────────┘     │        │
+│  │         │            │  │                           │        │
+│  │  ┌──────▼───────┐   │  │  ┌─────────────────┐     │        │
+│  │  │  Baseband     │   │  │  │  BT Baseband    │     │        │
+│  │  │  Processor    │   │  │  └─────────────────┘     │        │
+│  │  │  (BB/PHY)     │   │  │                           │        │
+│  │  └──────┬───────┘   │  └───────────┬───────────────┘        │
+│  │         │            │              │                         │
+│  └─────────┼────────────┘              │                         │
+│            │                           │                         │
+│  ┌─────────▼───────────────────────────▼───────────────────┐    │
+│  │              RF Transceiver (2T2R)                       │    │
+│  │         2.4 GHz / 5 GHz Dual-Band                       │    │
+│  │         with Integrated PA/LNA                          │    │
+│  └─────────────────────┬───────────────────────────────────┘    │
+│                        │                                         │
+└────────────────────────┼─────────────────────────────────────────┘
+                         │
+                  ┌──────▼──────┐
+                  │  2x IPEX    │
+                  │  MHF4       │
+                  │  Antenas    │
+                  └─────────────┘
+```
+
+### Subsistemas:
+
+1. **SYS (System):** Control de power, clock, reset, EFUSE, reguladores
+2. **MAC:** 802.11 MAC engine, TX/RX queues, encryption/decryption
+3. **BB (Baseband):** OFDM/CCK/DSSS modulation, AGC, channel estimation
+4. **RF:** Transceiver dual-band, synthesizer, PA, LNA
+5. **BT:** Bluetooth 5.0 core con HCI sobre USB
+6. **PCIe:** DMA engine, interrupt controller, bus mastering
+
+---
+
+## 4. INTERFAZ DE BUS PCIe
+
+La interfaz PCIe incluye señales de PCI Express Transceiver Interface, Reference Clock Request Signal (también usado por L1 PM substates), y señal para solicitar el bus PCI Express.
+
+La señal PCI Express Reset (PERST#) es activa baja. Cuando PERST# se activa en el estado de power-on, el RTL8822CE retorna a un estado de reset predefinido y queda listo para inicialización y configuración.
+
+### 4.1 PCI Configuration Space (estándar 256 bytes)
+
+```
+Offset  Tamaño  Nombre                    Descripción
+──────  ──────  ────────────────────────  ─────────────────────────────
+0x00    2       Vendor ID                 0x10EC (Realtek)
+0x02    2       Device ID                 0xC822
+0x04    2       Command                   Bus Master, Memory Space, I/O Space
+0x06    2       Status                    Capabilities list
+0x08    1       Revision ID               0x00
+0x09    3       Class Code                0x028000
+0x0C    1       Cache Line Size           System-dependent
+0x0D    1       Latency Timer             0x00
+0x0E    1       Header Type               0x00
+0x0F    1       BIST                      0x00
+0x10    4       BAR0 (I/O)                I/O port base (256 bytes)
+0x14    8       BAR1 (Memory 64-bit)      MMIO base (64 KB)
+0x1C    4       BAR2                      Not used
+0x2C    2       Subsystem Vendor ID       Varía por OEM
+0x2E    2       Subsystem Device ID       Varía por OEM
+0x30    4       Expansion ROM             0x00
+0x34    1       Capabilities Pointer      → Power Management Cap
+0x3C    1       Interrupt Line            Asignado por BIOS/OS
+0x3D    1       Interrupt Pin             INTA#
+```
+
+### 4.2 PCIe Extended Capabilities
+
+```
+Offset  Capability
+──────  ──────────────────────────────────
+0x40    Power Management (PM)
+0x50    MSI (Message Signaled Interrupts)
+0x70    PCI Express Capability
+0x100   Advanced Error Reporting (AER)
+0x148   L1 PM Substates
+0x158   Latency Tolerance Reporting (LTR)
+```
+
+### 4.3 BAR (Base Address Registers)
+
+Los recursos de hardware del RTL8822CE típicamente incluyen puertos I/O (256 bytes) y memoria MMIO de 64KB. Por ejemplo, un dispositivo puede reportar: "I/O ports at 2000 [size=256]" y "Memory at c0700000 (64-bit, non-prefetchable) [size=64K]".
+
+```c
+/* BAR Layout */
+#define RTW_BAR0_IO_SIZE        256      /* I/O port space */
+#define RTW_BAR1_MMIO_SIZE      0x10000  /* 64 KB Memory-Mapped I/O */
+
+/* Acceso a registros */
+static inline u8 rtw_read8(struct rtw_dev *rtwdev, u32 addr)
+{
+    return readb(rtwdev->mmio_base + addr);
+}
+
+static inline u16 rtw_read16(struct rtw_dev *rtwdev, u32 addr)
+{
+    return readw(rtwdev->mmio_base + addr);
+}
+
+static inline u32 rtw_read32(struct rtw_dev *rtwdev, u32 addr)
+{
+    return readl(rtwdev->mmio_base + addr);
+}
+
+static inline void rtw_write8(struct rtw_dev *rtwdev, u32 addr, u8 val)
+{
+    writeb(val, rtwdev->mmio_base + addr);
+}
+
+static inline void rtw_write16(struct rtw_dev *rtwdev, u32 addr, u16 val)
+{
+    writew(val, rtwdev->mmio_base + addr);
+}
+
+static inline void rtw_write32(struct rtw_dev *rtwdev, u32 addr, u32 val)
+{
+    writel(val, rtwdev->mmio_base + addr);
+}
+
+/* Escritura con máscara de bits */
+static inline void rtw_write32_mask(struct rtw_dev *rtwdev, u32 addr,
+                                     u32 mask, u32 data)
+{
+    u32 shift = __ffs(mask);
+    u32 orig = rtw_read32(rtwdev, addr);
+    u32 set = (orig & ~mask) | ((data << shift) & mask);
+    rtw_write32(rtwdev, addr, set);
+}
+```
+
+---
+
+## 5. MAPA DE REGISTROS MMIO (Memory-Mapped I/O)
+
+> **NOTA:** Los registros a continuación están derivados del análisis del código fuente del kernel Linux (`rtw88/reg.h`) y documentación pública FCC/Realtek. Estos incluyen registros como `REG_TIMER0_SRC_SEL` en `0x05B4`, `REG_MAR` en `0x0620`, `REG_USTIME_EDCA` en `0x0638`, `REG_ACKTO_CCK` en `0x0639`, `REG_RESP_SIFS_CCK` en `0x063C`, `REG_RESP_SIFS_OFDM` en `0x063E`, `REG_ACKTO` en `0x0640`, entre otros.
+
+### 5.1 Registros del Sistema (SYS) — Offset `0x0000–0x00FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0000    REG_SYS_FUNC_EN         16     R/W   Habilitación de funciones del sistema
+            BIT_FEN_BBRSTB           BIT(0)      Baseband Reset (activo alto)
+            BIT_FEN_BB_GLB_RST       BIT(1)      BB Global Reset
+            BIT_FEN_USBA             BIT(2)      USB Analog Enable
+            BIT_FEN_UPLL             BIT(3)      USB PLL Enable
+            BIT_FEN_USBD             BIT(4)      USB Digital Enable
+            BIT_FEN_DIO_PCIE         BIT(5)      PCIe Digital I/O Enable
+            BIT_FEN_PCIEA            BIT(6)      PCIe Analog Enable
+            BIT_FEN_PPLL             BIT(7)      PCIe PLL Enable
+            BIT_FEN_CPUEN            BIT(10)     CPU/Firmware Enable
+            BIT_FEN_ELDR             BIT(12)     EEPROM Loader Enable
+            BIT_FEN_HWPDN            BIT(14)     Hardware Power Down
+            BIT_FEN_MREGEN           BIT(15)     MAC Register Enable
+
+0x0002    REG_SYS_PW_CTRL         16     R/W   Control de alimentación del sistema
+0x0004    REG_SYS_CLK_CTRL        16     R/W   Control del reloj del sistema
+            BIT_MAC_CLK_EN           BIT(11)     MAC Clock Enable
+            BIT_ANA8M_EN             BIT(10)     Analog 8M Clock Enable
+            BIT_LOADER_CLK_EN        BIT(5)      Loader Clock Enable
+
+0x0006    REG_SYS_EEPROM_CTRL     16     R/W   Control EEPROM/EFUSE
+            BIT_AUTOLOAD_SUS         BIT(5)      Autoload Suspend
+            BIT_EERPOMSEL            BIT(4)      EEPROM/EFUSE Select
+            BIT_EEM_MASK             0x0003      EEPROM Mode Mask
+
+0x0008    REG_EE_VPD               32     R/W   EEPROM VPD Data
+0x000C    REG_SYS_SWR_CTRL1       32     R/W   Switching Regulator Control 1
+0x0010    REG_SYS_SWR_CTRL2       32     R/W   Switching Regulator Control 2
+
+0x0014    REG_SYS_SWR_CTRL3       32     R/W   Switching Regulator Control 3
+0x0018    REG_RSV_CTRL             16     R/W   Reserved Control
+            BIT_WLOCK_ALL            BIT(0)      Write Lock All
+            BIT_WLOCK_08             BIT(1)      Write Lock 0x08
+            BIT_WLOCK_04             BIT(2)      Write Lock 0x04
+            BIT_WLOCK_00             BIT(3)      Write Lock 0x00
+            BIT_R_DIS_PRST           BIT(6)      Disable Preset
+
+0x001C    REG_RF_CTRL              8      R/W   RF Control
+            BIT_RF_EN               BIT(0)       RF Block Enable
+            BIT_RF_RSTB             BIT(1)       RF Reset (active low)
+            BIT_RF_SDM_RSTB         BIT(2)       RF SDM Reset
+
+0x001E    REG_AFE_CTRL1            16     R/W   AFE (Analog Front End) Control 1
+0x0020    REG_AFE_CTRL2            32     R/W   AFE Control 2
+0x0024    REG_AFE_CTRL3            32     R/W   AFE Control 3
+0x0028    REG_EFUSE_CTRL           32     R/W   EFUSE Access Control
+0x002C    REG_LDO_EFUSE_CTRL      32     R/W   LDO EFUSE Control
+0x0030    REG_PWR_OPTION_CTRL     32     R/W   Power Option Control
+0x0038    REG_CAL_TIMER            32     R/W   Calibration Timer
+0x003C    REG_ACLK_MON            32     R/W   Clock Monitor
+
+0x0040    REG_GPIO_MUXCFG          32     R/W   GPIO Multiplexer Config
+            BIT_FSPI_EN              BIT(19)     Flash SPI Enable
+            BIT_EN_SIC               BIT(12)     Enable SIC Interface
+            BIT_BT_AOD_GPIO3         BIT(9)      BT GPIO3 Control
+            BIT_BT_PAPE_CTRL        BIT(4)      BT PA/PE Control
+
+0x0044    REG_GPIO_PIN_CTRL       32     R/W   GPIO Pin Control
+0x0048    REG_GPIO_INTM            32     R/W   GPIO Interrupt Mask
+0x004C    REG_LED_CFG              32     R/W   LED Configuration
+            BIT_LNAON_SEL_EN         BIT(26)     LNA ON Select Enable
+            BIT_PAPE_SEL_EN          BIT(25)     PA/PE Select Enable
+            BIT_GPIO13_14_WL_CTRL    BIT(22)     GPIO13/14 WLAN Control
+
+0x0050    REG_FSIMR                32     R/W   Function Specific Interrupt Mask
+0x0054    REG_FSISR                32     R/C   Function Specific Interrupt Status
+0x0058    REG_HSIMR                32     R/W   Host System Interrupt Mask
+0x005C    REG_HSISR                32     R/C   Host System Interrupt Status
+
+0x0060    REG_GPIO_EXT_CTRL       32     R/W   Extended GPIO Control
+0x0064    REG_PAD_CTRL1            32     R/W   Pad Control 1
+0x0068    REG_WL_BT_PWR_CTRL      32     R/W   WLAN/BT Power Control
+0x006C    REG_SDM_DEBUG            32     R     SDM Debug
+
+0x0070    REG_SYS_SDIO_CTRL       32     R/W   SDIO Control
+0x0074    REG_HCI_OPT_CTRL        32     R/W   HCI Option Control
+0x0078    REG_AFE_CTRL4            32     R/W   AFE Control 4
+0x0080    REG_LDO_SWR_CTRL        32     R/W   LDO/SWR Control
+0x0084    REG_FW_CTRL              32     R/W   Firmware Control
+
+0x0090    REG_MCUFW_CTRL           32     R/W   MCU Firmware Control
+            BIT_MCUFWDL_EN           BIT(0)      MCU Firmware Download Enable
+            BIT_MCUFWDL_RDY          BIT(1)      MCU Firmware Download Ready
+            BIT_FWDL_CHK_RPT         BIT(2)      FW Download Check Report
+            BIT_WINTINI_RDY          BIT(6)      WLAN Init Ready
+            BIT_RAM_DL_SEL           BIT(7)      RAM Download Select
+            BIT_ROM_DLEN             BIT(19)     ROM Download Enable
+            BIT_CPU_CLK_SEL          GENMASK(15,12) CPU Clock Select
+
+0x0094    REG_MCU_TST_CFG          32     R/W   MCU Test Configuration
+0x0098    REG_HMEBOX_E0_E1        32     R/W   H2C Mailbox Extension 0/1
+0x009C    REG_HMEBOX_E2_E3        32     R/W   H2C Mailbox Extension 2/3
+
+0x00FC    REG_SYS_CFG1             32     R     System Configuration 1
+            BIT_RTL_ID               BIT(23)     RTL ID
+            BIT_SYS_CFG_SPSRAM      BIT(22)     SP-SRAM
+            BIT_SYS_CFG_CLK         BIT(20)     System Clock Config
+            BIT_CHIP_VER             GENMASK(15,12) Chip Version
+            BIT_RF_TYPE_ID           GENMASK(11,8)  RF Type ID
+            BIT_VENDOR_ID            GENMASK(7,4)   Vendor ID
+            BIT_EXT_VENDOR_ID        GENMASK(3,0)   Extended Vendor ID
+```
+
+### 5.2 Registros del MAC TX — Offset `0x0200–0x03FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0200    REG_TXDMA_OFFSET_CHK   32     R/W   TX DMA Offset Check
+0x0204    REG_DBI_WDATA           32     R/W   DBI Write Data
+0x0208    REG_DBI_RDATA           32     R     DBI Read Data
+0x020C    REG_DBI_ADDR_FLAG      32     R/W   DBI Address/Flag
+
+0x0210    REG_TXPKTBUF_BCNQ_BDNY  8     R/W   Beacon Queue Boundary
+0x0211    REG_TXPKTBUF_MGQ_BDNY   8     R/W   Management Queue Boundary
+0x0212    REG_LIFETIME_EN          8     R/W   TX Lifetime Enable
+            BIT_LIFETIME_BK_EN       BIT(0)
+            BIT_LIFETIME_BE_EN       BIT(1)
+            BIT_LIFETIME_VI_EN       BIT(2)
+            BIT_LIFETIME_VO_EN       BIT(3)
+
+0x0214    REG_MULTI_BCNQ_OFFSET  32     R/W   Multi-Beacon Queue Offset
+0x0218    REG_SPEC_SIFS           16     R/W   Special SIFS Timing
+0x021A    REG_RL                   16     R/W   Retry Limit
+            BIT_SRL                  GENMASK(5,0)   Short Retry Limit
+            BIT_LRL                  GENMASK(13,8)  Long Retry Limit
+
+0x021C    REG_TXPKTBUF_WMAC_LBK_BF_HD  32  R/W  TX Pkt Buf WMAC Loopback
+0x0220    REG_DARFRC               32     R/W   Data Auto Rate Fallback Count
+0x0224    REG_RARFRC               32     R/W   Response Auto Rate Fallback Count
+0x0228    REG_RRSR                 32     R/W   Response Rate Set Register
+            BIT_RRSR_RSC            GENMASK(22,21)  Response SC
+            BIT_RRSR_RATE           GENMASK(19,0)   Response Rate Bitmap
+
+0x022C    REG_ARFR0                32     R/W   Auto Rate Fallback Register 0
+0x0230    REG_ARFR0_H              32     R/W   ARFR0 High Part
+0x0234    REG_ARFR1                32     R/W   Auto Rate Fallback Register 1
+0x0238    REG_ARFR1_H              32     R/W   ARFR1 High Part
+0x023C    REG_CCK_CHECK            8      R/W   CCK Check
+
+0x0240    REG_AMPDU_MAX_TIME      8      R/W   A-MPDU Max Time (μs)
+0x0241    REG_BCNQ1_BDNY          8      R/W   Beacon Queue 1 Boundary
+0x0242    REG_AMPDU_MAX_LENGTH    32     R/W   A-MPDU Maximum Length
+
+0x0260    REG_FAST_EDCA_CTRL     32     R/W   Fast EDCA Control
+            BIT_FAST_EDCA_VO         GENMASK(7,0)
+            BIT_FAST_EDCA_VI         GENMASK(15,8)
+            BIT_FAST_EDCA_BE         GENMASK(23,16)
+            BIT_FAST_EDCA_BK         GENMASK(31,24)
+
+0x0280    REG_INIRTS_RATE_SEL    8      R/W   Initial RTS Rate Select
+0x0281    REG_POWER_STATUS        8      R     Power Status
+
+0x0290    REG_PKT_VO_VI_LIFE_TIME   32  R/W   VO/VI Packet Lifetime
+0x0294    REG_PKT_BE_BK_LIFE_TIME   32  R/W   BE/BK Packet Lifetime
+0x0298    REG_STBC_SETTING          32  R/W   STBC Settings
+0x029C    REG_QUEUE_CTRL            32  R/W   Queue Control
+            BIT_PTA_EDCCA_EN         BIT(5)
+            BIT_PTA_WL_TX_EN         BIT(4)
+
+0x02F0    REG_RD_NAV_NXT           16     R/W   Read NAV Next
+0x02F2    REG_RD_RESP_PKT_TH      8      R/W   Response Packet Threshold
+0x02F4    REG_TXPAUSE              8      R/W   TX Pause Control
+            BIT_STOP_BCN             BIT(6)
+            BIT_STOP_MGT             BIT(5)
+            BIT_STOP_BK              BIT(4)
+            BIT_STOP_BE              BIT(3)
+            BIT_STOP_VI              BIT(2)
+            BIT_STOP_VO              BIT(1)
+            BIT_STOP_HI              BIT(0)
+
+0x02F8    REG_DIS_TXREQ_CLR       32     R/W   Disable TX Request Clear
+0x02FC    REG_RD_CTRL              16     R/W   Read Control
+```
+
+### 5.3 Registros del MAC RX — Offset `0x0600–0x06FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0600    REG_RCR                  32     R/W   Receive Configuration Register
+            BIT_APP_FCS              BIT(31)     Append FCS
+            BIT_APP_MIC              BIT(30)     Append MIC
+            BIT_APP_ICV              BIT(29)     Append ICV
+            BIT_APP_PHYSTS           BIT(28)     Append PHY Status
+            BIT_APP_BASSN            BIT(27)     Append BA SSN
+            BIT_VHT_DACK             BIT(26)     VHT D-ACK
+            BIT_TCPOFLD_EN           BIT(25)     TCP Offload Enable
+            BIT_ENMBID               BIT(24)     Enable MBID
+            BIT_LSIGEN               BIT(23)     L-SIG Enable
+            BIT_MFBEN                BIT(22)     MFB Enable
+            BIT_DISCHKPPDLLEN        BIT(21)     Disable CHK PPDU Length
+            BIT_PKTCTL_DLEN          BIT(20)     Packet Control DLEN
+            BIT_TIM_PARSER_EN        BIT(18)     TIM Parser Enable
+            BIT_BC_MD_EN             BIT(17)     BC MD Enable
+            BIT_UC_MD_EN             BIT(16)     UC MD Enable
+            BIT_RXSK_PERPKT          BIT(15)     RX SK Per Packet
+            BIT_HTC_LOC_CTRL         BIT(14)     HTC LOC Control
+            BIT_RPFM_CAM_ENABLE      BIT(12)     RPFM CAM Enable
+            BIT_TA_BCN               BIT(11)     TA Beacon
+            BIT_RCR_ADF              BIT(11)     Accept Data Frame
+            BIT_DISDECMYPKT          BIT(10)     Disable Decrypt My Packet
+            BIT_AICV                 BIT(9)      Accept ICV Error
+            BIT_ACRC32               BIT(8)      Accept CRC32 Error
+            BIT_CBSSID_BCN           BIT(7)      Check BSSID Beacon
+            BIT_CBSSID_DATA          BIT(6)      Check BSSID Data
+            BIT_APWRMGT              BIT(5)      Accept Power Management
+            BIT_ADD3                 BIT(4)      Accept Address 3 Match
+            BIT_AB                   BIT(3)      Accept Broadcast
+            BIT_AM                   BIT(2)      Accept Multicast
+            BIT_APM                  BIT(1)      Accept Physical Match (Unicast)
+            BIT_AAP                  BIT(0)      Accept All Packets
+
+0x0604    REG_RCR_EXT              32     R/W   Extended Receive Configuration
+
+0x0608    REG_RX_PKT_LIMIT        8      R/W   RX Packet Size Limit
+0x060C    REG_RX_DLK_TIME         8      R/W   RX Deadlock Time
+
+0x0610    REG_RXPKTBUF_CTRL       32     R/W   RX Packet Buffer Control
+0x0614    REG_RXDMA_CTRL           8      R/W   RX DMA Control
+0x0618    REG_RXDMA_PRO            32     R/W   RX DMA Protocol
+
+0x0620    REG_MAR                  64     R/W   Multicast Address Register
+            [0x0620] REG_MAR_L               Lower 32 bits
+            [0x0624] REG_MAR_H               Upper 32 bits
+
+0x0638    REG_USTIME_EDCA          8      R/W   μs Time for EDCA
+0x0639    REG_ACKTO_CCK            8      R/W   ACK Timeout (CCK)
+0x063A    REG_MAC_SPEC_SIFS        16     R/W   MAC Specific SIFS Time
+0x063C    REG_RESP_SIFS_CCK        8      R/W   Response SIFS (CCK)
+0x063D    REG_RESP_SIFS_OFDM       8      R/W   Response SIFS (OFDM)
+0x063E    REG_RESP_SIFS_OFDM       16     R/W   Response SIFS (OFDM, 16-bit)
+0x0640    REG_ACKTO                8      R/W   ACK Timeout (OFDM)
+0x0641    REG_CTS2TO               8      R/W   CTS2Self Timeout
+0x0642    REG_EIFS                 16     R/W   EIFS Duration
+```
+
+### 5.4 Registros EDCA (802.11e QoS) — Offset `0x0500–0x05FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0500    REG_EDCA_VO_PARAM       32     R/W   EDCA VO Parameters
+            BIT_TXOPLIMIT_VO         GENMASK(26,16)  TXOP Limit VO
+            BIT_ECWIN_MAX_VO         GENMASK(15,12)  ECW max VO
+            BIT_ECWIN_MIN_VO         GENMASK(11,8)   ECW min VO
+            BIT_AIFS_VO              GENMASK(7,0)    AIFS VO
+
+0x0504    REG_EDCA_VI_PARAM       32     R/W   EDCA VI Parameters
+0x0508    REG_EDCA_BE_PARAM       32     R/W   EDCA BE Parameters
+0x050C    REG_EDCA_BK_PARAM       32     R/W   EDCA BK Parameters
+0x0510    REG_BCNTCFG              16     R/W   Beacon Time Config
+0x0512    REG_PIFS                 8      R/W   PIFS Duration
+0x0514    REG_RDG_PIFS             16     R/W   RDG PIFS
+0x0516    REG_SIFS                 16     R/W   SIFS Duration
+            BIT_SIFS_CCK             GENMASK(7,0)    SIFS for CCK
+            BIT_SIFS_OFDM            GENMASK(15,8)   SIFS for OFDM
+
+0x0518    REG_TSFTR_SYN_OFFSET   16     R/W   TSF Timer Sync Offset
+0x051A    REG_AGGR_BREAK_TIME     8      R/W   Aggregation Break Time
+
+0x0520    REG_SLOT                 8      R/W   Slot Time (9μs o 20μs)
+0x0524    REG_TX_PTCL_CTRL        32     R/W   TX Protocol Control
+0x0528    REG_TXPAUSE_TH           32     R/W   TX Pause Threshold
+0x052C    REG_DIS_TXREQ            32     R/W   Disable TX Request
+0x0550    REG_TBTT_PROHIBIT        32     R/W   TBTT Prohibit
+0x0554    REG_RD_NAV_NXT           16     R/W   RD NAV Next
+
+0x0558    REG_NAV_PROT_LEN        16     R/W   NAV Protection Length
+0x055A    REG_BCN_CTRL             8      R/W   Beacon Control
+            BIT_DIS_TSF_UDT          BIT(4)      Disable TSF Update
+            BIT_EN_BCN_FUNCTION      BIT(3)      Enable Beacon Function
+            BIT_EN_TXBCN_RPT         BIT(2)      Enable TX Beacon Report
+            BIT_DIS_RX_BSSID_FIT     BIT(1)      Disable RX BSSID Fit
+            BIT_DIS_ATIM             BIT(0)      Disable ATIM Window
+
+0x055C    REG_BCN_CTRL_1           8      R/W   Beacon Control 1 (port 1)
+0x0560    REG_MBID_NUM             8      R/W   Multi-BSSID Number
+0x0562    REG_DUAL_TSF_RST         8      R/W   Dual TSF Reset
+0x0564    REG_BCN_INTERVAL         16     R/W   Beacon Interval (TU)
+0x0568    REG_DRVERLYINT           8      R/W   Driver Early Interrupt
+0x0569    REG_BCNDMATIM            8      R/W   Beacon DMA Time
+0x056A    REG_ATIMWND              16     R/W   ATIM Window
+0x056C    REG_USTIME_TSF           8      R/W   μs Time for TSF
+0x0570    REG_BCN_MAX_ERR          8      R/W   Max Beacon Error
+0x0578    REG_RXTSF_OFFSET_CCK    8      R/W   RX TSF Offset (CCK)
+0x057A    REG_RXTSF_OFFSET_OFDM   8      R/W   RX TSF Offset (OFDM)
+
+0x0580    REG_TSFTR                64     R     TSF Timer Register
+            [0x0580] REG_TSFTR_L             Lower 32 bits
+            [0x0584] REG_TSFTR_H             Upper 32 bits
+0x0588    REG_TSFTR1               64     R     TSF Timer 1 (Port 1)
+
+0x0590    REG_ATIMWND_1            16     R/W   ATIM Window 1
+0x05A0    REG_CTWND                16     R/W   Contention Window
+0x05A4    REG_SECONDARY_CCA_CTRL  32     R/W   Secondary CCA Control
+0x05A7    REG_HIQ_NO_LMT_EN       8      R/W   HI Queue No Limit Enable
+            BIT_HIQ_NO_LMT_EN_ROOT   BIT(0)
+
+0x05B4    REG_TIMER0_SRC_SEL      32     R/W   Timer0 Source Select
+            BIT_TSFT_SEL_TIMER0      (BIT(4)|BIT(5)|BIT(6))
+```
+
+### 5.5 Registros de Control de Interrupciones — Offset `0x0300–0x03FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0300    REG_HIMR0                32     R/W   Host Interrupt Mask Register 0
+            BIT_TXBCNOK              BIT(25)     TX Beacon OK
+            BIT_TXBCNERR             BIT(24)     TX Beacon Error
+            BIT_GTINT4_INT           BIT(23)     General Timer Int 4
+            BIT_GTINT3_INT           BIT(22)     General Timer Int 3
+            BIT_ATIMEND              BIT(20)     ATIM End
+            BIT_BCNDERR0             BIT(16)     Beacon DMA Error 0
+            BIT_HSISR_IND            BIT(15)     HSISR Indicator
+            BIT_BCNDMAINT0           BIT(14)     Beacon DMA Interrupt 0
+            BIT_BCNINT0              BIT(13)     Beacon Interrupt 0
+            BIT_PSTIMEOUT            BIT(12)     PS Timeout
+            BIT_C2H_INT              BIT(11)     C2H Interrupt (FW → Host)
+            BIT_CPWM_INT             BIT(10)     CPWM Interrupt
+            BIT_CPWM2_INT            BIT(9)      CPWM2 Interrupt
+            BIT_HIGHDOK_INT          BIT(7)      HIGH Queue TX Done OK
+            BIT_MGTDOK_INT           BIT(6)      Management Queue TX Done OK
+            BIT_BKDOK_INT            BIT(5)      BK Queue TX Done OK
+            BIT_BEDOK_INT            BIT(4)      BE Queue TX Done OK
+            BIT_VIDOK_INT            BIT(3)      VI Queue TX Done OK
+            BIT_VODOK_INT            BIT(2)      VO Queue TX Done OK
+            BIT_RDU_INT              BIT(1)      RX Descriptor Unavailable
+            BIT_RXOK_INT             BIT(0)      RX OK
+
+0x0304    REG_HISR0                32     R/C   Host Interrupt Status Register 0
+                                               (mismos bits que HIMR0)
+
+0x0308    REG_HIMR1                32     R/W   Host Interrupt Mask Register 1
+            BIT_TXFOVW               BIT(9)      TX FIFO Overflow
+            BIT_FOVW                 BIT(8)      RX FIFO Overflow
+            BIT_RXERR                BIT(7)      RX Error
+            BIT_TXERR                BIT(6)      TX Error
+            BIT_ATIM_CTW_END         BIT(5)      ATIM/CTW End
+            BIT_PSTIMEOUT1           BIT(4)      PS Timeout 1
+            BIT_PSTIMEOUT2           BIT(3)      PS Timeout 2
+            BIT_GTINT5               BIT(2)      General Timer Int 5
+            BIT_GTINT6               BIT(1)      General Timer Int 6
+            BIT_GTINT7               BIT(0)      General Timer Int 7
+
+0x030C    REG_HISR1                32     R/C   Host Interrupt Status Register 1
+
+/* Registros de interrupción específicos de PCIe */
+0x0350    REG_PCIE_HIMR0           32     R/W   PCIe Host Interrupt Mask 0
+0x0354    REG_PCIE_HISR0           32     R/C   PCIe Host Interrupt Status 0
+0x0358    REG_PCIE_HIMR1           32     R/W   PCIe Host Interrupt Mask 1
+0x035C    REG_PCIE_HISR1           32     R/C   PCIe Host Interrupt Status 1
+```
+
+### 5.6 Registros del Firmware Mailbox (H2C/C2H) — Offset `0x01D0–0x01FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x01D0    REG_HMEBOX0              32     W     Host-to-Chip Mailbox 0
+0x01D4    REG_HMEBOX1              32     W     Host-to-Chip Mailbox 1
+0x01D8    REG_HMEBOX2              32     W     Host-to-Chip Mailbox 2
+0x01DC    REG_HMEBOX3              32     W     Host-to-Chip Mailbox 3
+
+0x01CC    REG_HMETFR               32     R/W   H2C Message Transfer
+            BIT_INT_BOX0             BIT(0)      Mailbox 0 Interrupt
+            BIT_INT_BOX1             BIT(1)      Mailbox 1 Interrupt
+            BIT_INT_BOX2             BIT(2)      Mailbox 2 Interrupt
+            BIT_INT_BOX3             BIT(3)      Mailbox 3 Interrupt
+
+/* Extensiones de Mailbox */
+0x0098    REG_HMEBOX_E0_E1        32     W     Extended Mailbox 0/1
+0x009C    REG_HMEBOX_E2_E3        32     W     Extended Mailbox 2/3
+
+/* C2H (Chip-to-Host) Event Report via RX path */
+/* Los eventos C2H se reciben como paquetes especiales en el RX ring */
+```
+
+### 5.7 Registros de Seguridad (Security Engine) — Offset `0x0680–0x06FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0680    REG_CAMCMD               32     R/W   CAM (Content Addressable Memory) Command
+            BIT_CAM_POLLING          BIT(31)     CAM Polling/Busy
+            BIT_CAM_CLR              BIT(30)     Clear All CAM
+            BIT_CAM_WE               BIT(16)     Write Enable
+            BIT_CAM_ADDR             GENMASK(7,0) CAM Address
+
+0x0684    REG_CAMWRITE             32     W     CAM Write Data
+0x0688    REG_CAMREAD              32     R     CAM Read Data
+
+0x068C    REG_CAMDBG               32     R/W   CAM Debug
+0x0690    REG_SECCFG               8      R/W   Security Configuration
+            BIT_SEC_TX_DEC_EN        BIT(0)      TX Decryption Enable
+            BIT_SEC_RX_DEC_EN        BIT(1)      RX Decryption Enable
+            BIT_SEC_TX_ENC_EN        BIT(2)      TX Encryption Enable
+            BIT_SEC_RX_ENC_EN        BIT(3)      RX Encryption Enable
+            BIT_SEC_SKB_ADDR         BIT(4)      SK by Address
+            BIT_SEC_MC_SA            BIT(5)      MC by SA
+            BIT_SEC_BC_SA            BIT(6)      BC by SA
+```
+
+### 5.8 Registros WMAC — Offset `0x0400–0x04FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0400    REG_VOQ_INFO             32     R     VO Queue Information
+0x0404    REG_VIQ_INFO             32     R     VI Queue Information
+0x0408    REG_BEQ_INFO             32     R     BE Queue Information
+0x040C    REG_BKQ_INFO             32     R     BK Queue Information
+0x0410    REG_MGQ_INFO             32     R     Management Queue Information
+0x0414    REG_HGQ_INFO             32     R     HIGH Queue Information
+0x0418    REG_BCNQ_INFO            32     R     Beacon Queue Information
+
+0x0420    REG_TXPKT_EMPTY          32     R     TX Packet Empty Status
+            BIT_HQQ_EMPTY            BIT(7)
+            BIT_MQQ_EMPTY            BIT(6)
+            BIT_BKQ_EMPTY            BIT(5)
+            BIT_BEQ_EMPTY            BIT(4)
+            BIT_VIQ_EMPTY            BIT(3)
+            BIT_VOQ_EMPTY            BIT(2)
+            BIT_BCNQ_EMPTY           BIT(1)
+
+0x0430    REG_CPU_MGQ_INFO         32     R     CPU Management Queue Info
+0x0440    REG_FWHW_TXQ_CTRL       32     R/W   FW/HW TX Queue Control
+            BIT_EN_BCNQ_DL          BIT(22)     Enable Beacon Queue Download
+            BIT_EN_WR_FREE_TAIL     BIT(20)     Enable Write Free Tail
+0x0444    REG_HWSEQ_CTRL           32     R/W   HW Sequence Control
+0x0448    REG_TXPKTBUF_BCNQ1_BDNY  8     R/W   BCN Queue 1 Boundary
+0x044C    REG_TXPKTBUF_HI1Q_BDNY   8     R/W   HI Queue 1 Boundary
+
+0x0460    REG_MACID               48     R/W   MAC Address (Port 0)
+            [0x0460] REG_MACID_L             Lower 32 bits
+            [0x0464] REG_MACID_H             Upper 16 bits
+
+0x0468    REG_BSSID                48     R/W   BSSID (Port 0)
+            [0x0468] REG_BSSID_L             Lower 32 bits
+            [0x046C] REG_BSSID_H             Upper 16 bits
+
+0x0470    REG_MACID1               48     R/W   MAC Address (Port 1)
+0x0478    REG_BSSID1               48     R/W   BSSID (Port 1)
+
+0x0480    REG_CR                   32     R/W   Command Register
+            BIT_HCI_TXDMA_EN         BIT(0)      HCI TX DMA Enable
+            BIT_HCI_RXDMA_EN         BIT(1)      HCI RX DMA Enable
+            BIT_TXDMA_EN             BIT(2)      TX DMA Enable
+            BIT_RXDMA_EN             BIT(3)      RX DMA Enable
+            BIT_PROTOCOL_EN          BIT(4)      Protocol Engine Enable
+            BIT_SCHEDULE_EN          BIT(5)      Scheduler Enable
+            BIT_MAC_TX_EN            BIT(6)      MAC TX Enable
+            BIT_MAC_RX_EN            BIT(7)      MAC RX Enable
+            BIT_ENSWBCN              BIT(8)      Enable SW Beacon
+            BIT_ENSEC                BIT(9)      Enable Security Engine
+            BIT_CALTMR_EN            BIT(10)     Calibration Timer Enable
+
+0x0484    REG_PBP                  8      R/W   Page Size Configuration
+            BIT_PSTX                 GENMASK(7,4) TX Page Size
+            BIT_PSRX                 GENMASK(3,0) RX Page Size
+
+0x0488    REG_TRXDMA_CTRL         16     R/W   TRX DMA Control
+0x048C    REG_TRXFF_BNDY          16     R/W   TRX FIFO Boundary
+0x0490    REG_TRXFF_STATUS        16     R     TRX FIFO Status
+
+0x04A0    REG_RXFF_PTR             16     R     RX FIFO Read Pointer
+0x04A2    REG_RXFF_WTR             16     R     RX FIFO Write Pointer
+0x04C4    REG_RXPKTNUM             32     R     RX Packet Number
+
+0x04D8    REG_BCNQ_BDNY_V1        16     R/W   Beacon Queue Boundary V1
+0x04DE    REG_FIFOPAGE_CTRL_2     32     R/W   FIFO Page Control 2
+0x04E0    REG_RQPN_CTRL_1          32     R/W   Reserved Queue Page Number Ctrl 1
+0x04E4    REG_RQPN_CTRL_2          32     R/W   Reserved Queue Page Number Ctrl 2
+```
+
+### 5.9 Registros del Baseband (BB/PHY) — Offset `0x0800–0x0FFF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0800    REG_FPGA0_RFMOD          32     R/W   FPGA0 RF Mode
+            BIT_CCKEN                BIT(24)     CCK Enable
+            BIT_OFDMEN               BIT(25)     OFDM Enable
+
+0x0804    REG_FPGA0_TXINFO         32     R/W   FPGA0 TX Info
+0x0808    REG_FPGA0_PSD_FUNC      32     R/W   PSD Function
+0x080C    REG_FPGA0_PSD_REPORT    32     R     PSD Report
+
+0x0824    REG_FPGA0_XA_HSSI_PARM1  32    R/W   Path A HSSI Parameter 1
+0x0828    REG_FPGA0_XA_HSSI_PARM2  32    R/W   Path A HSSI Parameter 2
+0x082C    REG_FPGA0_XB_HSSI_PARM1  32    R/W   Path B HSSI Parameter 1
+0x0830    REG_FPGA0_XB_HSSI_PARM2  32    R/W   Path B HSSI Parameter 2
+
+0x0838    REG_FPGA0_XA_LSSI_PARM   32    R/W   Path A LSSI Parameter (RF write)
+0x083C    REG_FPGA0_XB_LSSI_PARM   32    R/W   Path B LSSI Parameter (RF write)
+
+0x0840    REG_FPGA0_RFMOD_EX       32    R/W   RF Mode Extension
+0x0844    REG_FPGA0_XA_RF_OE       32    R/W   Path A RF Output Enable
+0x0848    REG_FPGA0_XB_RF_OE       32    R/W   Path B RF Output Enable
+
+0x08A0    REG_CCK0_SYSTEM          32     R/W   CCK System
+0x08A4    REG_CCK0_AFE_SET        32     R/W   CCK AFE Setting
+0x08B4    REG_CCK0_CCA             32     R/W   CCK CCA
+
+0x0900    REG_OFDM0_TRX_PATH_EN   32     R/W   OFDM TRX Path Enable
+0x0904    REG_OFDM0_TR_MUX_PAR    32     R/W   OFDM TR Mux Parameter
+0x090C    REG_OFDM0_FA_RSTC       32     R/W   OFDM FA Reset Counter
+0x0910    REG_OFDM0_FA_HOLDQ      32     R/W   OFDM FA Hold Count
+
+0x0914    REG_OFDM0_XAAGC_CORE1   32     R/W   Path A AGC Core 1
+0x0918    REG_OFDM0_XAAGC_CORE2   32     R/W   Path A AGC Core 2
+0x091C    REG_OFDM0_XBAGC_CORE1   32     R/W   Path B AGC Core 1
+0x0920    REG_OFDM0_XBAGC_CORE2   32     R/W   Path B AGC Core 2
+
+0x0950    REG_OFDM0_AGC_PARM1     32     R/W   AGC Parameter 1
+0x0954    REG_OFDM0_AGC_RSSITAB   32     R/W   AGC RSSI Table
+
+0x0C00    REG_OFDM1_LSTF           32     R/W   OFDM1 L-STF
+0x0C04    REG_OFDM1_TRX_PATH_EN   32     R/W   OFDM1 TRX Path Enable
+0x0C14    REG_OFDM1_CSI_FIX1      32     R/W   CSI Fix Register 1
+0x0C18    REG_OFDM1_CSI_FIX2      32     R/W   CSI Fix Register 2
+
+0x0C50    REG_OFDM_FA_TYPE1_CNT   32     R     OFDM FA Type 1 Count
+0x0C54    REG_OFDM_FA_TYPE2_CNT   32     R     OFDM FA Type 2 Count
+0x0C58    REG_OFDM_FA_TYPE3_CNT   32     R     OFDM FA Type 3 Count
+0x0C5C    REG_OFDM_FA_TYPE4_CNT   32     R     OFDM FA Type 4 Count
+
+0x0D00    REG_OFDM1_AGC_TABLE     32     R/W   OFDM AGC Table Entry
+```
+
+### 5.10 Registros de RF (acceso indirecto) — Offset `0x0840–0x087F`
+
+Los registros RF se acceden **indirectamente** a través de los registros LSSI/HSSI del Baseband.
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0838    REG_RF_PATH_A_WRITE     32     W     RF Path A Write (LSSI)
+            BIT_RF_ADDR             GENMASK(27,20)  RF Register Address
+            BIT_RF_DATA             GENMASK(19,0)   RF Register Data
+
+0x083C    REG_RF_PATH_B_WRITE     32     W     RF Path B Write (LSSI)
+
+0x08A0    REG_RF_PATH_A_READ      32     R     RF Path A Read
+            BIT_RF_DATA_RD          GENMASK(19,0)   RF Register Read Data
+
+/* RF Register Map (acceso indirecto) */
+RF_REG    Nombre                   Descripción
+────────  ───────────────────────  ──────────────────────────────
+0x00      RF_CTRL                  RF Control/Mode
+0x08      RF_TXLOK                 TX LO Leakage Calibration
+0x0B      RF_PLL_MON               PLL Monitor
+0x0D      RF_DPK_TXAGC             DPK TX AGC
+0x18      RF_CHANNEL               Channel Number / Band
+0x1A      RF_RX_G1                 RX Gain 1
+0x1C      RF_RX_G2                 RX Gain 2
+0x1E      RF_RXA_MIX_GAIN          RXA Mixer Gain
+0x2B      RF_XTAL_CTRL             Crystal Control
+0x30      RF_TX_GAIN               TX Gain Index
+0x33      RF_TXA_PAD               TXA PA Driver
+0x3C      RF_RX_BB_GAIN            RX Baseband Gain
+0x3F      RF_TX_POWER_TRIM         TX Power Trim
+0x43      RF_IQK                   IQ Calibration
+0x51      RF_AGC_TABLE_A           AGC Table A
+0x52      RF_AGC_TABLE_B           AGC Table B
+0x55      RF_RFE_TYPE              RFE Type
+0x57      RF_LNA_OPT               LNA Optimization
+0x58      RF_WLSEL                 WLAN Selection
+0x63      RF_PA_TANK_TUNE          PA Tank Tuning
+0x65      RF_PA_BIAS               PA Bias
+0x7C      RF_DPK                   Digital Pre-Distortion (DPK)
+0x7F      RF_DBG                   RF Debug
+0x85      RF_TX_TRACK_CTRL         TX Tracking Control
+0x8F      RF_TSSI                  TSSI (TX Signal Strength Indicator)
+0xB0      RF_SYNTH_CTRL            Synthesizer Control
+0xDE      RF_T_METER               Temperature Meter
+0xDF      RF_THERMAL               Thermal Sensor
+0xEF      RF_ACCESS_CTRL           Access Control (mode select)
+```
+
+### 5.11 Registros de Coexistencia BT — Offset `0x0764–0x07FF`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+0x0764    REG_BT_COEX_TABLE0      32     R/W   BT Coex Table 0
+0x0768    REG_BT_COEX_TABLE1      32     R/W   BT Coex Table 1
+0x076C    REG_BT_COEX_BRK_TABLE   32     R/W   BT Coex Break Table
+0x0770    REG_BT_COEX_TABLE_H     32     R/W   BT Coex Table High
+0x0774    REG_BT_COEX_V2           32     R/W   BT Coex V2
+
+0x0778    REG_BT_STAT_CTRL        32     R/W   BT Status Control
+0x077C    REG_BT_PATCH_STATUS     32     R     BT Patch Status
+
+0x0790    REG_BT_TDMA_TIME        32     R/W   BT TDMA Timing
+0x0794    REG_BT_ACT_STATS        32     R     BT Activity Statistics
+
+0x0798    REG_LTR_IDLE_LATENCY    32     R/W   LTR Idle Latency
+0x079C    REG_LTR_ACTIVE_LATENCY  32     R/W   LTR Active Latency
+0x07A4    REG_LTR_CTRL_BASIC      32     R/W   LTR Basic Control
+
+0x07C0    REG_BT_ACT_REG          32     R/W   BT Activity Register
+0x07C4    REG_OBFF_CTRL           32     R/W   OBFF Control
+
+0x07D0    REG_WMAC_OPTION_FUNCTION    32  R/W  WMAC Option Function
+0x07D4    REG_WMAC_OPTION_FUNCTION_1  32  R/W  WMAC Option Function 1
+
+/* LTE Coex */
+0x07C8    REG_LTE_COEX_CTRL       32     R/W   LTE Coex Control
+            BIT_LTE_COEX_EN          BIT(7)      LTE Coex Enable
+```
+
+### 5.12 Registros DMA / PCIe específicos — Offset `0x0300–0x033F`
+
+```
+Offset    Nombre                   Bits   R/W   Descripción
+────────  ───────────────────────  ─────  ────  ──────────────────────────────────
+/* TX DMA Ring Addresses (cada ring = base + length) */
+0x0300    REG_PCIE_CTRL            32     R/W   PCIe Control Register
+0x0304    REG_INT_MIG              32     R/W   Interrupt Mitigation
+0x0308    REG_PCIE_MULTIFET_CTRL   32     R/W   Multi-Fetch Control
+
+/* TX Queue Ring Descriptors */
+0x0310    REG_VOQ_TXBD_DESA       32     R/W   VO Queue TX BD Descriptor Addr (Low)
+0x0314    REG_VOQ_TXBD_DESA_H     32     R/W   VO Queue TX BD Descriptor Addr (High)
+0x0318    REG_VOQ_TXBD_NUM        16     R/W   VO Queue TX BD Count
+
+0x0320    REG_VIQ_TXBD_DESA       32     R/W   VI Queue TX BD Descriptor Addr (Low)
+0x0324    REG_VIQ_TXBD_DESA_H     32     R/W   VI Queue TX BD Descriptor Addr (High)
+0x0328    REG_VIQ_TXBD_NUM        16     R/W   VI Queue TX BD Count
+
+0x0330    REG_BEQ_TXBD_DESA       32     R/W   BE Queue TX BD Descriptor Addr
+0x0334    REG_BEQ_TXBD_DESA_H     32     R/W   (High 32-bit)
+0x0338    REG_BEQ_TXBD_NUM        16     R/W   BE Queue TX BD Count
+
+0x0340    REG_BKQ_TXBD_DESA       32     R/W   BK Queue TX BD Descriptor Addr
+0x0344    REG_BKQ_TXBD_DESA_H     32     R/W   (High 32-bit)
+0x0348    REG_BKQ_TXBD_NUM        16     R/W   BK Queue TX BD Count
+
+0x0350    REG_MGQ_TXBD_DESA       32     R/W   Management Queue TX BD Addr
+0x0354    REG_MGQ_TXBD_DESA_H     32     R/W   (High 32-bit)
+0x0358    REG_MGQ_TXBD_NUM        16     R/W   MGT Queue TX BD Count
+
+0x0360    REG_RXQ_RXBD_DESA       32     R/W   RX Queue RX BD Descriptor Addr
+0x0364    REG_RXQ_RXBD_DESA_H     32     R/W   (High 32-bit)
+0x0368    REG_RXQ_RXBD_NUM        16     R/W   RX Queue RX BD Count
+
+0x0370    REG_HIQ_TXBD_DESA       32     R/W   HI Queue TX BD Addr
+0x0374    REG_HIQ_TXBD_DESA_H     32     R/W   (High 32-bit)
+0x0378    REG_HIQ_TXBD_NUM        16     R/W   HI Queue TX BD Count
+
+0x0380    REG_BCNQ_TXBD_DESA      32     R/W   Beacon Queue TX BD Addr
+0x0384    REG_BCNQ_TXBD_DESA_H    32     R/W   (High 32-bit)
+
+/* TX/RX Ring Read/Write Pointers */
+0x03B8    REG_VOQ_TXBD_IDX        32     R/W   VO Queue HW/SW Index
+0x03BC    REG_VIQ_TXBD_IDX        32     R/W   VI Queue HW/SW Index
+0x03C0    REG_BEQ_TXBD_IDX        32     R/W   BE Queue HW/SW Index
+0x03C4    REG_BKQ_TXBD_IDX        32     R/W   BK Queue HW/SW Index
+0x03C8    REG_MGQ_TXBD_IDX        32     R/W   MGT Queue HW/SW Index
+0x03CC    REG_RXQ_RXBD_IDX        32     R/W   RX Queue HW/SW Index
+0x03D0    REG_HIQ_TXBD_IDX        32     R/W   HI Queue HW/SW Index
+0x03D4    REG_BCNQ_TXBD_IDX       32     R/W   Beacon Queue HW/SW Index
+
+/* DMA Control */
+0x03F0    REG_PCIE_DMA_STOP       32     R/W   PCIe DMA Stop Control
+0x03F2    REG_PCIE_HRPWM           8      W     Host Request Power Mode
+0x03F3    REG_PCIE_HCPWM           8      R     Host Confirm Power Mode
+0x03F4    REG_PCIE_CTRL2           32     R/W   PCIe Control 2
+0x03F8    REG_PCIE_HRPWM2          16     W     Host Request Power Mode 2
+0x03FA    REG_PCIE_HCPWM2          16     R     Host Confirm Power Mode 2
+```
+
+---
+
+## 6. SECUENCIA DE POWER-ON / POWER-OFF
+
+Existe una secuencia definida para Power On del RTL8822CE sobre PCIe y USB Bus, con parámetros de timing de PCIE PERST# específicos.
+
+También existe una secuencia de Power Off definida para RTL8822CE-CG con parámetros de timing específicos.
+
+### 6.1 Secuencia de Power On
+
+```c
+int rtw8822ce_power_on(struct rtw_dev *rtwdev)
+{
+    int ret;
+
+    /* ============================================= */
+    /* PASO 1: Verificar estado actual del chip      */
+    /* ============================================= */
+
+    /* Verificar que el chip responde */
+    u32 val = rtw_read32(rtwdev, REG_SYS_CFG1);  /* 0x00FC */
+    if (val == 0xFFFFFFFF)
+        return -ENODEV;  /* Chip no responde */
+
+    /* ============================================= */
+    /* PASO 2: Pre-power on: Preparar reguladores    */
+    /* ============================================= */
+
+    /* Habilitar XTAL (cristal) */
+    rtw_write8(rtwdev, REG_AFE_CTRL1 + 1, 0x82);    /* 0x001F */
+
+    /* Configurar switching regulator */
+    rtw_write32_mask(rtwdev, REG_SYS_SWR_CTRL1, 0x00C00000, 0x01); /* 0x000C */
+
+    /* Habilitar LDO */
+    rtw_write8(rtwdev, REG_LDO_SWR_CTRL, 0x01);  /* 0x0080 */
+
+    /* ============================================= */
+    /* PASO 3: Power on sequence                     */
+    /* ============================================= */
+
+    /* 3a. Habilitar funciones del sistema */
+    u16 sys_func = rtw_read16(rtwdev, REG_SYS_FUNC_EN);  /* 0x0000 */
+    sys_func |= BIT_FEN_MREGEN;       /* BIT(15) - MAC Register Enable */
+    rtw_write16(rtwdev, REG_SYS_FUNC_EN, sys_func);
+
+    /* 3b. Esperar a que el auto-load de EFUSE termine */
+    ret = rtw_poll_reg(rtwdev, REG_SYS_EEPROM_CTRL, /* 0x0006 */
+                       BIT_AUTOLOAD_SUS, BIT_AUTOLOAD_SUS, 1000);
+    if (ret)
+        return ret;
+
+    /* 3c. Habilitar reloj MAC */
+    rtw_write16(rtwdev, REG_SYS_CLK_CTRL,          /* 0x0004 */
+                rtw_read16(rtwdev, REG_SYS_CLK_CTRL) |
+                BIT_MAC_CLK_EN | BIT_ANA8M_EN);
+
+    /* 3d. Habilitar bloque RF */
+    rtw_write8(rtwdev, REG_RF_CTRL, 0x07);         /* 0x001C */
+    /* RF_EN | RF_RSTB | RF_SDM_RSTB */
+
+    /* 3e. Habilitar funciones de BB */
+    sys_func = rtw_read16(rtwdev, REG_SYS_FUNC_EN);
+    sys_func |= BIT_FEN_BBRSTB | BIT_FEN_BB_GLB_RST;
+    rtw_write16(rtwdev, REG_SYS_FUNC_EN, sys_func);
+
+    /* 3f. Habilitar CPU/Firmware */
+    sys_func |= BIT_FEN_CPUEN;
+    rtw_write16(rtwdev, REG_SYS_FUNC_EN, sys_func);
+
+    /* ============================================= */
+    /* PASO 4: Habilitar MAC subsystem               */
+    /* ============================================= */
+
+    /* Escribir Command Register - Habilitar TX/RX DMA y MAC */
+    rtw_write32(rtwdev, REG_CR, 0x000004FF);        /* 0x0480 */
+    /*  BIT_HCI_TXDMA_EN | BIT_HCI_RXDMA_EN |
+        BIT_TXDMA_EN | BIT_RXDMA_EN |
+        BIT_PROTOCOL_EN | BIT_SCHEDULE_EN |
+        BIT_MAC_TX_EN | BIT_MAC_RX_EN |
+        BIT_ENSEC */
+
+    /* ============================================= */
+    /* PASO 5: Verificar que el chip está ON          */
+    /* ============================================= */
+
+    val = rtw_read32(rtwdev, REG_CR);
+    if (!(val & BIT_MAC_TX_EN) || !(val & BIT_MAC_RX_EN))
+        return -EIO;
+
+    return 0;
+}
+```
+
+### 6.2 Secuencia de Power Off
+
+```c
+void rtw8822ce_power_off(struct rtw_dev *rtwdev)
+{
+    /* PASO 1: Parar TX */
+    rtw_write8(rtwdev, REG_TXPAUSE, 0xFF);          /* 0x02F4 */
+
+    /* PASO 2: Deshabilitar interrupciones */
+    rtw_write32(rtwdev, REG_HIMR0, 0x00000000);     /* 0x0300 */
+    rtw_write32(rtwdev, REG_HIMR1, 0x00000000);     /* 0x0308 */
+
+    /* PASO 3: Deshabilitar MAC/DMA */
+    rtw_write32(rtwdev, REG_CR, 0x00000000);         /* 0x0480 */
+
+    /* PASO 4: Deshabilitar BB */
+    u16 sys_func = rtw_read16(rtwdev, REG_SYS_FUNC_EN);
+    sys_func &= ~(BIT_FEN_BBRSTB | BIT_FEN_BB_GLB_RST);
+    rtw_write16(rtwdev, REG_SYS_FUNC_EN, sys_func); /* 0x0000 */
+
+    /* PASO 5: Deshabilitar RF */
+    rtw_write8(rtwdev, REG_RF_CTRL, 0x00);          /* 0x001C */
+
+    /* PASO 6: Deshabilitar CPU */
+    sys_func &= ~BIT_FEN_CPUEN;
+    rtw_write16(rtwdev, REG_SYS_FUNC_EN, sys_func);
+
+    /* PASO 7: Deshabilitar reloj MAC */
+    rtw_write16(rtwdev, REG_SYS_CLK_CTRL,
+                rtw_read16(rtwdev, REG_SYS_CLK_CTRL) & ~BIT_MAC_CLK_EN);
+
+    /* PASO 8: Power down analógico */
+    rtw_write8(rtwdev, REG_RSV_CTRL + 1, 0x00);     /* 0x0019 */
+
+    /* PASO 9: Card disable (PCIe power state transition) */
+    rtw_write8(rtwdev, REG_RSV_CTRL, 0x0E);         /* 0x0018 */
+}
+```
+
+---
+
+## 7. FIRMWARE: CARGA Y COMUNICACIÓN H2C/C2H
+
+La firmware para RTL8822CE se encuentra en linux-firmware como `rtw88/rtw8822c_fw.bin`.
+
+El procedimiento de inicialización contiene registros de secuencia de power on, descarga de firmware, carga de parámetros predefinidos, y registros específicos de mac/bb/rf.
+
+### 7.1 Formato del Firmware
+
+```
+┌────────────────────────────────────────────────┐
+│           Firmware Binary Layout                │
+├────────────────────────────────────────────────┤
+│  Offset 0x00: Signature (4 bytes)              │
+│  Offset 0x04: Category (1 byte)                │
+│  Offset 0x05: Function (1 byte)                │
+│  Offset 0x06: Version (2 bytes)                │
+│  Offset 0x08: Subversion (1 byte)              │
+│  Offset 0x09: Subindex (1 byte)                │
+│  Offset 0x0C: Month (1 byte)                   │
+│  Offset 0x0D: Date (1 byte)                    │
+│  Offset 0x0E: Hour (1 byte)                    │
+│  Offset 0x0F: Minute (1 byte)                  │
+│  Offset 0x10: RAM Code Size (4 bytes)          │
+│  Offset 0x18: DMEM Address (4 bytes)           │
+│  Offset 0x1C: IMEM Address (4 bytes)           │
+│  Offset 0x20: EMEM Address (4 bytes)           │
+│  Offset 0x24: EMEM + DMEM Size (4 bytes)       │
+│  Offset 0x28: IRAM Size (4 bytes)              │
+│  Offset 0x2C: ERAM Size (4 bytes)              │
+│  Offset 0x30: Reserved (variable)              │
+│  Offset 0x40+: Firmware Code Data              │
+└────────────────────────────────────────────────┘
+```
+
+### 7.2 Procedimiento de Descarga de Firmware
+
+```c
+#define FW_HEADER_SIZE           64
+#define FW_BLOCK_SIZE            4        /* Write 4 bytes at a time */
+#define FW_PAGE_SIZE             4096
+#define REG_MCUFW_CTRL           0x0090
+#define REG_8051FW_CTRL          0x0080
+
+struct rtw_fw_header {
+    uint32_t signature;
+    uint8_t  category;
+    uint8_t  function;
+    uint16_t version;
+    uint8_t  subversion;
+    uint8_t  subindex;
+    uint8_t  reserved1[2];
+    uint8_t  month;
+    uint8_t  date;
+    uint8_t  hour;
+    uint8_t  minute;
+    uint32_t ram_code_size;
+    uint32_t reserved2;
+    uint32_t dmem_addr;
+    uint32_t imem_addr;
+    uint32_t emem_addr;
+    uint32_t emem_dmem_size;
+    uint32_t iram_size;
+    uint32_t eram_size;
+    uint8_t  reserved3[8];
+} __packed;
+
+int rtw8822ce_download_firmware(struct rtw_dev *rtwdev,
+                                 const uint8_t *fw_data, uint32_t fw_size)
+{
+    struct rtw_fw_header *hdr = (struct rtw_fw_header *)fw_data;
+    const uint8_t *fw_body = fw_data + FW_HEADER_SIZE;
+    uint32_t body_size = fw_size - FW_HEADER_SIZE;
+    uint32_t val;
+    int ret;
+
+    /* Log firmware version */
+    pr_info("RTL8822CE: Firmware version %u.%u.%u\n",
+            hdr->version, hdr->subversion, hdr->subindex);
+
+    /* ===== PASO 1: Preparar para descarga ===== */
+
+    /* Habilitar CPU para download mode */
+    val = rtw_read32(rtwdev, REG_MCUFW_CTRL);         /* 0x0090 */
+    val |= BIT_MCUFWDL_EN;                             /* BIT(0) */
+    val &= ~BIT_WINTINI_RDY;                           /* ~BIT(6) */
+    rtw_write32(rtwdev, REG_MCUFW_CTRL, val);
+
+    /* Seleccionar RAM download */
+    val = rtw_read32(rtwdev, REG_MCUFW_CTRL);
+    val |= BIT_RAM_DL_SEL;                             /* BIT(7) */
+    rtw_write32(rtwdev, REG_MCUFW_CTRL, val);
+
+    /* ===== PASO 2: Escribir firmware por páginas ===== */
+
+    uint32_t offset = 0;
+    uint32_t page = 0;
+
+    while (offset < body_size) {
+        /* Seleccionar página */
+        uint8_t page_num = (uint8_t)(page & 0xFF);
+        val = rtw_read32(rtwdev, REG_MCUFW_CTRL);
+        val = (val & 0xFFFF00FF) | ((uint32_t)page_num << 8);
+        rtw_write32(rtwdev, REG_MCUFW_CTRL, val);
+
+        /* Escribir datos de firmware (en bloques de 4 bytes) */
+        uint32_t write_size = min(body_size - offset, (uint32_t)FW_PAGE_SIZE);
+        uint32_t i;
+        for (i = 0; i < write_size; i += 4) {
+            uint32_t word = 0;
+            memcpy(&word, &fw_body[offset + i], min(4U, write_size - i));
+            rtw_write32(rtwdev, 0x0180 + i, word);    /* FW download area */
+        }
+
+        offset += write_size;
+        page++;
+    }
+
+    /* ===== PASO 3: Finalizar descarga ===== */
+
+    /* Deshabilitar download mode */
+    val = rtw_read32(rtwdev, REG_MCUFW_CTRL);
+    val &= ~BIT_MCUFWDL_EN;
+    rtw_write32(rtwdev, REG_MCUFW_CTRL, val);
+
+    /* Reset CPU para ejecutar firmware */
+    rtw_write8(rtwdev, REG_8051FW_CTRL + 2, 0x00);   /* 0x0082 */
+    udelay(10);
+    rtw_write8(rtwdev, REG_8051FW_CTRL + 2, 0x01);
+
+    /* ===== PASO 4: Verificar que el firmware arrancó ===== */
+
+    ret = rtw_poll_reg(rtwdev, REG_MCUFW_CTRL,
+                       BIT_WINTINI_RDY, BIT_WINTINI_RDY, 10000);
+    if (ret) {
+        pr_err("RTL8822CE: Firmware failed to boot!\n");
+        return -EBUSY;
+    }
+
+    /* Verificar FWDL check report */
+    val = rtw_read32(rtwdev, REG_MCUFW_CTRL);
+    if (val & BIT_FWDL_CHK_RPT)
+        pr_info("RTL8822CE: Firmware download verified OK\n");
+
+    return 0;
+}
+```
+
+### 7.3 Comunicación H2C (Host-to-Chip)
+
+```c
+/*
+ * H2C Command Format:
+ * ┌─────────┬──────────┬──────────┬──────────┐
+ * │ Byte 0  │ Byte 1-3 │ Byte 4-7 │ (ext)    │
+ * │ CMD ID  │ Content  │ Extended │          │
+ * └─────────┴──────────┴──────────┴──────────┘
+ *
+ * CMD ID [7:0]:
+ *   [6:0] = Sub-command ID
+ *   [7]   = Class bit (0=common, 1=special)
+ */
+
+/* H2C Command IDs */
+#define H2C_CMD_RSVD_PAGE          0x00
+#define H2C_CMD_MEDIA_STATUS_RPT   0x01
+#define H2C_CMD_SET_PWR_MODE       0x20
+#define H2C_CMD_PS_TUNING_PARA     0x21
+#define H2C_CMD_RA_INFO            0x40
+#define H2C_CMD_BT_MP_OPER         0x67
+#define H2C_CMD_BT_WIFI_CTRL       0x69
+#define H2C_CMD_QUERY_BT_INFO      0x60
+#define H2C_CMD_WL_CH_INFO         0x66
+#define H2C_CMD_COEX_TDMA          0x60
+#define H2C_CMD_LPS_PG_INFO        0x2B
+#define H2C_CMD_DEFAULT_PORT       0x2C
+#define H2C_CMD_BCN_OFFLOAD        0x22
+
+/* Función para enviar H2C */
+#define REG_HMETFR    0x01CC
+
+int rtw_fw_send_h2c_command(struct rtw_dev *rtwdev, uint8_t *h2c_cmd)
+{
+    uint32_t box_reg;
+    uint32_t box_ext_reg;
+    uint8_t box;
+    uint32_t val;
+    int ret;
+
+    /* Obtener el mailbox actual */
+    box = rtwdev->h2c_box_num;
+
+    /* Seleccionar registros de mailbox */
+    switch (box) {
+    case 0:
+        box_reg     = REG_HMEBOX0;     /* 0x01D0 */
+        box_ext_reg = 0x0098;           /* REG_HMEBOX_E0_E1 */
+        break;
+    case 1:
+        box_reg     = REG_HMEBOX1;     /* 0x01D4 */
+        box_ext_reg = 0x009A;
+        break;
+    case 2:
+        box_reg     = REG_HMEBOX2;     /* 0x01D8 */
+        box_ext_reg = 0x009C;
+        break;
+    case 3:
+        box_reg     = REG_HMEBOX3;     /* 0x01DC */
+        box_ext_reg = 0x009E;
+        break;
+    default:
+        return -EINVAL;
+    }
+
+    /* Verificar que el mailbox previo fue procesado */
+    ret = rtw_poll_reg(rtwdev, REG_HMETFR, BIT(box), 0, 1000);
+    if (ret) {
+        pr_err("H2C box %d not ready\n", box);
+        return ret;
+    }
+
+    /* Escribir extensión primero (bytes 4-7) */
+    val = le32_to_cpu(*(uint32_t *)&h2c_cmd[4]);
+    rtw_write32(rtwdev, box_ext_reg, val);
+
+    /* Escribir comando (bytes 0-3) - esto dispara el envío */
+    val = le32_to_cpu(*(uint32_t *)&h2c_cmd[0]);
+    rtw_write32(rtwdev, box_reg, val);
+
+    /* Avanzar al siguiente mailbox */
+    rtwdev->h2c_box_num = (box + 1) % 4;
+
+    return 0;
+}
+```
+
+### 7.4 Comunicación C2H (Chip-to-Host)
+
+```c
+/*
+ * C2H Event Format (recibido como paquete RX especial):
+ * ┌──────────┬──────────┬──────────────────┬──────────┐
+ * │ Byte 0   │ Byte 1   │ Byte 2~(N-1)    │ Byte N   │
+ * │ Event ID │ Seq Num  │ Event Payload    │ Trigger  │
+ * └──────────┴──────────┴──────────────────┴──────────┘
+ */
+
+/* C2H Event IDs */
+#define C2H_EVT_DBG                0x00
+#define C2H_EVT_SURVEY             0x01
+#define C2H_EVT_SURVEY_DONE        0x02
+#define C2H_EVT_TX_REPORT          0x03
+#define C2H_EVT_BT_INFO            0x09
+#define C2H_EVT_BT_MP_INFO         0x0B
+#define C2H_EVT_RA_RPT             0x0C
+#define C2H_EVT_SPECIAL_PKT        0x0E
+#define C2H_EVT_COEX               0x10
+#define C2H_EVT_SCAN_RESULT        0x14
+#define C2H_EVT_ADAPTIVITY          0x22
+#define C2H_EVT_WOW_WAKEUP         0x24
+
+void rtw_fw_c2h_handler(struct rtw_dev *rtwdev, uint8_t *c2h_data, uint32_t len)
+{
+    uint8_t event_id = c2h_data[0];
+    uint8_t seq      = c2h_data[1];
+    uint8_t *payload = &c2h_data[2];
+    uint32_t plen    = len - 2;
+
+    switch (event_id) {
+    case C2H_EVT_TX_REPORT:
+        rtw_handle_tx_report(rtwdev, payload, plen);
+        break;
+    case C2H_EVT_BT_INFO:
+        rtw_coex_bt_info_handler(rtwdev, payload, plen);
+        break;
+    case C2H_EVT_RA_RPT:
+        rtw_handle_ra_report(rtwdev, payload, plen);
+        break;
+    case C2H_EVT_COEX:
+        rtw_coex_c2h_handler(rtwdev, payload, plen);
+        break;
+    default:
+        pr_debug("RTL8822CE: Unknown C2H event 0x%02X\n", event_id);
+        break;
+    }
+}
+```
+
+---
+
+## 8. SISTEMA DE TRANSMISIÓN (TX)
+
+### 8.1 TX Descriptor Format (40 bytes para RTL8822CE)
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                     TX Descriptor (40 bytes)                    │
+├──────────┬──────────┬──────────────────────────────────────────┤
+│  DWORD   │  Offset  │  Campos                                 │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD0  │  0x00    │  [31:16] TX PKT SIZE                    │
+│          │          │  [15:14] OFFSET (header offset/4)       │
+│          │          │  [13]    BMC (Broadcast/Multicast)       │
+│          │          │  [12:8]  MACID                           │
+│          │          │  [7:5]   QUEUE_SEL                       │
+│          │          │  [4:2]   RDG_NAV_EXT                     │
+│          │          │  [1]     MORE_DATA                       │
+│          │          │  [0]     LSIG_TXOP_EN                    │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD1  │  0x04    │  [31:24] DATA_RATE (rate index)         │
+│          │          │  [23]    DATA_SHORT (short preamble)     │
+│          │          │  [22:21] DATA_BW (0=20M,1=40M,2=80M)    │
+│          │          │  [20:18] DATA_SC (sub-channel)           │
+│          │          │  [17]    DATA_STBC                       │
+│          │          │  [16]    DATA_LDPC                       │
+│          │          │  [15:14] SEC_TYPE (0=none,1=WEP,2=TKIP,3=AES) │
+│          │          │  [13:8]  RATE_ID                         │
+│          │          │  [7]     AGG_EN                          │
+│          │          │  [6]     AGG_BK                          │
+│          │          │  [5:4]   AMPDU_DENSITY                   │
+│          │          │  [3]     HW_SSN_SEL                      │
+│          │          │  [2]     EN_HWSEQ                        │
+│          │          │  [1]     DIS_DATA_FB                     │
+│          │          │  [0]     USE_RATE                        │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD2  │  0x08    │  [31]    EN_DESC_ID                     │
+│          │          │  [30]    NAV_USE_HDR                     │
+│          │          │  [29:28] BM_CAST                         │
+│          │          │  [27:24] RETRY_LMT                       │
+│          │          │  [23]    RETRY_LMT_EN                    │
+│          │          │  [22:20] RTS_RATE                        │
+│          │          │  [19]    HW_RTS_EN                       │
+│          │          │  [18]    CTS2SELF                        │
+│          │          │  [17]    DISRTSFB                        │
+│          │          │  [16]    DISDATAFB                       │
+│          │          │  [15:8]  AMPDU_MAX_TIME                  │
+│          │          │  [7:0]   PKT_OFFSET                      │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD3  │  0x0C    │  [31:28] NDPA                           │
+│          │          │  [27:24] PWR_OFFSET                      │
+│          │          │  [23]    MORE_FRAG                       │
+│          │          │  [22:8]  SEQ                             │
+│          │          │  [7:4]   TAIL_PAGE_H                     │
+│          │          │  [3:0]   FRAG_NUM                        │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD4  │  0x10    │  [31:0]  TX BUFFER ADDRESS (Low 32)     │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD5  │  0x14    │  [31:0]  TX BUFFER ADDRESS (High 32)    │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD6  │  0x18    │  [31:16] TX BUFFER SIZE                 │
+│          │          │  [15:0]  Next Descriptor Addr Low        │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD7  │  0x1C    │  [31:24] TXDESC_CHECKSUM                │
+│          │          │  [23:16] RTS_SC                          │
+│          │          │  [15:0]  TX BUFF SIZE                    │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD8  │  0x20    │  [31:0]  Payload info / padding         │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD9  │  0x24    │  [31:0]  Reserved / Checksum ext        │
+└──────────┴──────────┴──────────────────────────────────────────┘
+```
+
+### 8.2 TX Queue Selection
+
+```c
+/* Queue IDs y sus registros */
+#define RTW_TX_QUEUE_BCN     0   /* Beacon */
+#define RTW_TX_QUEUE_HI      1   /* High Priority */
+#define RTW_TX_QUEUE_MGT     2   /* Management */
+#define RTW_TX_QUEUE_VO      3   /* Voice (AC_VO) */
+#define RTW_TX_QUEUE_VI      4   /* Video (AC_VI) */
+#define RTW_TX_QUEUE_BE      5   /* Best Effort (AC_BE) */
+#define RTW_TX_QUEUE_BK      6   /* Background (AC_BK) */
+
+/* Mapeo TID → Queue */
+static const uint8_t rtw_tid_to_queue[8] = {
+    RTW_TX_QUEUE_BE,   /* TID 0: Best Effort */
+    RTW_TX_QUEUE_BK,   /* TID 1: Background */
+    RTW_TX_QUEUE_BK,   /* TID 2: Background */
+    RTW_TX_QUEUE_BE,   /* TID 3: Best Effort */
+    RTW_TX_QUEUE_VI,   /* TID 4: Video */
+    RTW_TX_QUEUE_VI,   /* TID 5: Video */
+    RTW_TX_QUEUE_VO,   /* TID 6: Voice */
+    RTW_TX_QUEUE_VO,   /* TID 7: Voice */
+};
+
+/* Rate Index Definitions */
+#define RTW_RATE_CCK1       0x00
+#define RTW_RATE_CCK2       0x01
+#define RTW_RATE_CCK55      0x02
+#define RTW_RATE_CCK11      0x03
+#define RTW_RATE_OFDM6      0x04
+#define RTW_RATE_OFDM9      0x05
+#define RTW_RATE_OFDM12     0x06
+#define RTW_RATE_OFDM18     0x07
+#define RTW_RATE_OFDM24     0x08
+#define RTW_RATE_OFDM36     0x09
+#define RTW_RATE_OFDM48     0x0A
+#define RTW_RATE_OFDM54     0x0B
+#define RTW_RATE_MCS0       0x0C
+#define RTW_RATE_MCS1       0x0D
+/* ... hasta MCS15 */
+#define RTW_RATE_MCS15      0x1B
+#define RTW_RATE_VHT1SS_MCS0   0x2C
+#define RTW_RATE_VHT1SS_MCS9   0x35
+#define RTW_RATE_VHT2SS_MCS0   0x36
+#define RTW_RATE_VHT2SS_MCS9   0x3F
+```
+
+### 8.3 TX Ring Management
+
+```c
+#define RTW_TX_RING_SIZE    256
+#define RTW_TX_DESC_SIZE    40
+
+struct rtw_tx_ring {
+    /* TX Buffer Descriptor (BD) Ring */
+    struct rtw_tx_bd *bd;          /* Virtual address */
+    dma_addr_t        bd_dma;      /* Physical (DMA) address */
+    uint32_t          bd_count;    /* Number of BDs in ring */
+
+    /* Write/Read pointers */
+    uint32_t          wr_idx;      /* Host write index */
+    uint32_t          rd_idx;      /* HW read index (from register) */
+
+    /* SKB tracking */
+    struct sk_buff   *skbs[RTW_TX_RING_SIZE];
+};
+
+/* TX Buffer Descriptor (16 bytes cada uno) */
+struct rtw_tx_bd {
+    uint16_t buf_size;
+    uint16_t flags;
+    uint32_t phy_addr_low;     /* DMA address lower 32-bit */
+    uint32_t phy_addr_high;    /* DMA address upper 32-bit */
+    uint32_t reserved;
+} __packed;
+
+/* Inicializar TX ring */
+int rtw_pci_init_tx_ring(struct rtw_dev *rtwdev, int queue_id)
+{
+    struct rtw_tx_ring *ring = &rtwdev->tx_ring[queue_id];
+    size_t size = RTW_TX_RING_SIZE * sizeof(struct rtw_tx_bd);
+
+    /* Allocar ring de descriptores (DMA coherent) */
+    ring->bd = dma_alloc_coherent(rtwdev->dev, size,
+                                   &ring->bd_dma, GFP_KERNEL);
+    if (!ring->bd)
+        return -ENOMEM;
+
+    memset(ring->bd, 0, size);
+    ring->bd_count = RTW_TX_RING_SIZE;
+    ring->wr_idx = 0;
+    ring->rd_idx = 0;
+
+    /* Programar dirección del ring en hardware */
+    uint32_t addr_reg, addr_h_reg, num_reg;
+    switch (queue_id) {
+    case RTW_TX_QUEUE_VO:
+        addr_reg   = 0x0310;  /* REG_VOQ_TXBD_DESA */
+        addr_h_reg = 0x0314;
+        num_reg    = 0x0318;
+        break;
+    case RTW_TX_QUEUE_VI:
+        addr_reg   = 0x0320;
+        addr_h_reg = 0x0324;
+        num_reg    = 0x0328;
+        break;
+    case RTW_TX_QUEUE_BE:
+        addr_reg   = 0x0330;
+        addr_h_reg = 0x0334;
+        num_reg    = 0x0338;
+        break;
+    case RTW_TX_QUEUE_BK:
+        addr_reg   = 0x0340;
+        addr_h_reg = 0x0344;
+        num_reg    = 0x0348;
+        break;
+    case RTW_TX_QUEUE_MGT:
+        addr_reg   = 0x0350;
+        addr_h_reg = 0x0354;
+        num_reg    = 0x0358;
+        break;
+    case RTW_TX_QUEUE_HI:
+        addr_reg   = 0x0370;
+        addr_h_reg = 0x0374;
+        num_reg    = 0x0378;
+        break;
+    case RTW_TX_QUEUE_BCN:
+        addr_reg   = 0x0380;
+        addr_h_reg = 0x0384;
+        num_reg    = 0;        /* BCN queue no tiene num reg */
+        break;
+    default:
+        return -EINVAL;
+    }
+
+    rtw_write32(rtwdev, addr_reg,   (uint32_t)(ring->bd_dma & 0xFFFFFFFF));
+    rtw_write32(rtwdev, addr_h_reg, (uint32_t)(ring->bd_dma >> 32));
+    if (num_reg)
+        rtw_write16(rtwdev, num_reg, RTW_TX_RING_SIZE);
+
+    return 0;
+}
+
+/* Transmitir un paquete */
+int rtw_pci_tx(struct rtw_dev *rtwdev, struct sk_buff *skb, int queue_id)
+{
+    struct rtw_tx_ring *ring = &rtwdev->tx_ring[queue_id];
+    struct rtw_tx_bd *bd;
+    dma_addr_t dma_addr;
+    uint32_t idx;
+
+    /* Verificar espacio disponible */
+    idx = ring->wr_idx;
+    if (((idx + 1) % ring->bd_count) == ring->rd_idx)
+        return -ENOSPC;  /* Ring full */
+
+    /* Prepend TX descriptor al SKB */
+    /* (ya debe estar prepended por la capa superior) */
+
+    /* Mapear buffer para DMA */
+    dma_addr = dma_map_single(rtwdev->dev, skb->data, skb->len,
+                               DMA_TO_DEVICE);
+    if (dma_mapping_error(rtwdev->dev, dma_addr))
+        return -ENOMEM;
+
+    /* Llenar BD */
+    bd = &ring->bd[idx];
+    bd->buf_size       = skb->len;
+    bd->flags          = 0;  /* OWN bit, etc. */
+    bd->phy_addr_low   = (uint32_t)(dma_addr & 0xFFFFFFFF);
+    bd->phy_addr_high  = (uint32_t)(dma_addr >> 32);
+
+    /* Guardar referencia al SKB */
+    ring->skbs[idx] = skb;
+
+    /* Avanzar write pointer */
+    ring->wr_idx = (idx + 1) % ring->bd_count;
+
+    /* Notificar al hardware: escribir write pointer */
+    uint32_t idx_reg;
+    switch (queue_id) {
+    case RTW_TX_QUEUE_VO:  idx_reg = 0x03B8; break;
+    case RTW_TX_QUEUE_VI:  idx_reg = 0x03BC; break;
+    case RTW_TX_QUEUE_BE:  idx_reg = 0x03C0; break;
+    case RTW_TX_QUEUE_BK:  idx_reg = 0x03C4; break;
+    case RTW_TX_QUEUE_MGT: idx_reg = 0x03C8; break;
+    case RTW_TX_QUEUE_HI:  idx_reg = 0x03D0; break;
+    case RTW_TX_QUEUE_BCN: idx_reg = 0x03D4; break;
+    default: return -EINVAL;
+    }
+    rtw_write32(rtwdev, idx_reg, ring->wr_idx);
+
+    return 0;
+}
+```
+
+---
+
+## 9. SISTEMA DE RECEPCIÓN (RX)
+
+### 9.1 RX Descriptor Format
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                     RX Descriptor (24 bytes)                    │
+├──────────┬──────────┬──────────────────────────────────────────┤
+│  DWORD0  │  0x00    │  [31]    EOR (End of Ring)              │
+│          │          │  [30]    OWN (1=HW owned)               │
+│          │          │  [29]    FS (First Segment)              │
+│          │          │  [28]    LS (Last Segment)               │
+│          │          │  [27:16] TOTAL_LEN                       │
+│          │          │  [15:14] RX DRV INFO SIZE / 8           │
+│          │          │  [13]    PHY STATUS                      │
+│          │          │  [12]    SWDEC                           │
+│          │          │  [11]    EOR                             │
+│          │          │  [10:8]  SHIFT                           │
+│          │          │  [7]     CRC32 error                     │
+│          │          │  [6]     ICV error                       │
+│          │          │  [5:0]   PKT LEN (low bits)             │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD1  │  0x04    │  [31:29] CHANNEL (sub-channel)          │
+│          │          │  [28:24] MACID                           │
+│          │          │  [23:20] TID                             │
+│          │          │  [19]    AMSDU                           │
+│          │          │  [18:16] RXMCS / Rate Index              │
+│          │          │  [15]    HT                              │
+│          │          │  [14]    LDPC                            │
+│          │          │  [13]    STBC                            │
+│          │          │  [12:11] BW (0=20,1=40,2=80)            │
+│          │          │  [10:8]  SEC TYPE                        │
+│          │          │  [7:0]   FRAG                            │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD2  │  0x08    │  [31:0]  TSFL (Low 32-bit)              │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD3  │  0x0C    │  [31:0]  TSFL (High 32-bit / BuffAddr)  │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD4  │  0x10    │  [31:0]  Physical Address (Low)          │
+├──────────┼──────────┼──────────────────────────────────────────┤
+│  DWORD5  │  0x14    │  [31:0]  Physical Address (High)         │
+└──────────┴──────────┴──────────────────────────────────────────┘
+
+Seguido de:
+  - PHY Status Info (si BIT PHY_STATUS = 1): Variable size
+  - WLAN Frame Data (802.11 frame)
+```
+
+### 9.2 RX Ring Management
+
+```c
+#define RTW_RX_RING_SIZE    512
+#define RTW_RX_BUF_SIZE     16384   /* 16 KB per buffer */
+
+struct rtw_rx_ring {
+    struct rtw_rx_bd *bd;
+    dma_addr_t        bd_dma;
+    uint32_t          bd_count;
+    uint32_t          rd_idx;
+
+    /* Pre-allocated buffers */
+    struct {
+        void     *vaddr;
+        dma_addr_t dma;
+    } bufs[RTW_RX_RING_SIZE];
+};
+
+/* RX Buffer Descriptor */
+struct rtw_rx_bd {
+    uint16_t buf_size;
+    uint16_t flags;          /* [15] OWN, [14] EOR */
+    uint32_t phy_addr_low;
+    uint32_t phy_addr_high;
+    uint32_t total_len;
+} __packed;
+
+int rtw_pci_init_rx_ring(struct rtw_dev *rtwdev)
+{
+    struct rtw_rx_ring *ring = &rtwdev->rx_ring;
+    size_t desc_size = RTW_RX_RING_SIZE * sizeof(struct rtw_rx_bd);
+
+    ring->bd = dma_alloc_coherent(rtwdev->dev, desc_size,
+                                   &ring->bd_dma, GFP_KERNEL);
+    if (!ring->bd)
+        return -ENOMEM;
+
+    ring->bd_count = RTW_RX_RING_SIZE;
+    ring->rd_idx = 0;
+
+    /* Pre-allocar buffers */
+    for (int i = 0; i < RTW_RX_RING_SIZE; i++) {
+        ring->bufs[i].vaddr = dma_alloc_coherent(rtwdev->dev,
+                                                   RTW_RX_BUF_SIZE,
+                                                   &ring->bufs[i].dma,
+                                                   GFP_KERNEL);
+        if (!ring->bufs[i].vaddr)
+            goto cleanup;
+
+        /* Configurar BD */
+        ring->bd[i].buf_size      = RTW_RX_BUF_SIZE;
+        ring->bd[i].flags         = (1 << 15);  /* OWN = 1 (HW owns) */
+        ring->bd[i].phy_addr_low  = (uint32_t)(ring->bufs[i].dma & 0xFFFFFFFF);
+        ring->bd[i].phy_addr_high = (uint32_t)(ring->bufs[i].dma >> 32);
+
+        /* Marcar End of Ring en el último BD */
+        if (i == RTW_RX_RING_SIZE - 1)
+            ring->bd[i].flags |= (1 << 14);  /* EOR */
+    }
+
+    /* Programar ring address en hardware */
+    rtw_write32(rtwdev, 0x0360, (uint32_t)(ring->bd_dma & 0xFFFFFFFF));
+    rtw_write32(rtwdev, 0x0364, (uint32_t)(ring->bd_dma >> 32));
+    rtw_write16(rtwdev, 0x0368, RTW_RX_RING_SIZE);
+
+    return 0;
+
+cleanup:
+    /* Limpiar buffers ya alocados */
+    for (int j = 0; j < i; j++)
+        dma_free_coherent(rtwdev->dev, RTW_RX_BUF_SIZE,
+                          ring->bufs[j].vaddr, ring->bufs[j].dma);
+    dma_free_coherent(rtwdev->dev, desc_size, ring->bd, ring->bd_dma);
+    return -ENOMEM;
+}
+
+/* Procesar paquete RX */
+void rtw_pci_rx_handler(struct rtw_dev *rtwdev)
+{
+    struct rtw_rx_ring *ring = &rtwdev->rx_ring;
+
+    while (1) {
+        struct rtw_rx_bd *bd = &ring->bd[ring->rd_idx];
+
+        /* Verificar si hay paquete disponible (OWN = 0 → host owns) */
+        if (bd->flags & (1 << 15))
+            break;  /* HW aún tiene este BD */
+
+        uint32_t pkt_len = bd->total_len;
+        void *buf = ring->bufs[ring->rd_idx].vaddr;
+
+        /* Parsear RX descriptor */
+        uint32_t *rxdesc = (uint32_t *)buf;
+        uint16_t total_len   = (rxdesc[0] >> 16) & 0x3FFF;
+        uint8_t  drv_info_sz = ((rxdesc[0] >> 14) & 0x03) * 8;
+        bool     phy_status  = !!(rxdesc[0] & (1 << 13));
+        bool     crc_error   = !!(rxdesc[0] & (1 << 7));
+        bool     icv_error   = !!(rxdesc[0] & (1 << 6));
+        uint8_t  shift       = (rxdesc[0] >> 8) & 0x07;
+
+        uint32_t desc_sz = 24;  /* RX descriptor size */
+        uint8_t *frame_data = (uint8_t *)buf + desc_sz + drv_info_sz + shift;
+        uint32_t frame_len  = total_len - desc_sz - drv_info_sz - shift;
+
+        if (!crc_error && !icv_error) {
+            /* Entregar frame al stack de red */
+            rtw_rx_deliver(rtwdev, frame_data, frame_len,
+                          phy_status ? (buf + desc_sz) : NULL,
+                          drv_info_sz);
+        }
+
+        /* Devolver BD al hardware */
+        bd->flags = (1 << 15);  /* OWN = 1 */
+        if (ring->rd_idx == RTW_RX_RING_SIZE - 1)
+            bd->flags |= (1 << 14);  /* EOR */
+
+        ring->rd_idx = (ring->rd_idx + 1) % ring->bd_count;
+
+        /* Actualizar RX read pointer */
+        rtw_write32(rtwdev, 0x03CC, ring->rd_idx);
+    }
+}
+```
+
+---
+
+## 10. EFUSE / E-Fuse Map
+
+La EFUSE almacena datos de calibración de fábrica, MAC address, y parámetros del cristal.
+
+### 10.1 Acceso a EFUSE
+
+```c
+#define REG_EFUSE_CTRL     0x0028
+#define REG_EFUSE_ACCESS   0x00CF
+#define EFUSE_MAP_SIZE     512
+#define EFUSE_RAW_SIZE     1024
+
+/* Leer un byte de EFUSE (acceso directo) */
+int rtw_efuse_read_byte(struct rtw_dev *rtwdev, uint16_t addr, uint8_t *data)
+{
+    uint32_t val;
+    int ret;
+
+    /* Habilitar acceso a EFUSE */
+    rtw_write8(rtwdev, REG_EFUSE_ACCESS, 0x69);    /* 0x00CF */
+
+    /* Escribir dirección y trigger lectura */
+    val = rtw_read32(rtwdev, REG_EFUSE_CTRL);       /* 0x0028 */
+    val &= ~(0x3FF << . # 📘 DOCUMENTACIÓN RTL8822CE — CONTINUACIÓN
+
+---
+
+## 10. EFUSE / E-Fuse Map (continuación)
+
+### 10.1 Acceso a EFUSE (continuación)
+
+```c
+int rtw_efuse_read_byte(struct rtw_dev *rtwdev, uint16_t addr, uint8_t *data)
+{
+    uint32_t val;
+    int ret;
+
+    /* Habilitar acceso a EFUSE */
+    rtw_write8(rtwdev, 0x00CF, 0x69);  /* REG_EFUSE_ACCESS = unlock */
+
+    /* Escribir dirección y trigger lectura */
+    val = rtw_read32(rtwdev, 0x0028);  /* REG_EFUSE_CTRL */
+    val &= ~(0x3FF << 16);            /* Limpiar campo de dirección */
+    val |= ((addr & 0x3FF) << 16);    /* Escribir dirección [25:16] */
+    val &= ~BIT(31);                   /* Bit 31 = 0: lectura */
+    rtw_write32(rtwdev, 0x0028, val);
+
+    /* Esperar a que la lectura termine (bit 31 → 1 cuando ready) */
+    ret = rtw_poll_reg(rtwdev, 0x0028, BIT(31), BIT(31), 5000);
+    if (ret) {
+        pr_err("EFUSE read timeout at addr 0x%04X\n", addr);
+        return ret;
+    }
+
+    /* Leer dato */
+    val = rtw_read32(rtwdev, 0x0028);
+    *data = (uint8_t)(val & 0xFF);
+
+    /* Cerrar acceso EFUSE */
+    rtw_write8(rtwdev, 0x00CF, 0x00);
+
+    return 0;
+}
+
+/* Leer el mapa lógico completo de EFUSE */
+int rtw_efuse_read_logical_map(struct rtw_dev *rtwdev, uint8_t *map, uint32_t map_size)
+{
+    /*
+     * EFUSE usa un formato comprimido:
+     * - Header byte: identifica sección (4-bit section id + valid bits)
+     * - Extended header para secciones > 15
+     * - Data bytes: 1-8 bytes de datos por sección
+     *
+     * Formato header normal (1 byte):
+     *   [7:4] = Section ID (0x0 - 0xF)
+     *   [3:0] = Word Enable (bit=0 → word presente, bit=1 → word ausente)
+     *
+     * Formato extended header (2 bytes):
+     *   Byte1: [7:4] = 0xF (marca extended), [3:0] = Section ID bits [3:0]
+     *   Byte2: [7:4] = Section ID bits [7:4], [3:0] = Word Enable
+     */
+
+    memset(map, 0xFF, map_size);  /* Inicializar con 0xFF */
+
+    uint16_t efuse_addr = 0;
+    uint8_t header, word_en;
+    uint16_t section;
+
+    while (efuse_addr < EFUSE_RAW_SIZE) {
+        uint8_t byte;
+        int ret = rtw_efuse_read_byte(rtwdev, efuse_addr++, &byte);
+        if (ret)
+            return ret;
+
+        /* 0xFF indica fin del mapa EFUSE */
+        if (byte == 0xFF)
+            break;
+
+        header = byte;
+
+        if ((header & 0x1F) == 0x0F) {
+            /* Extended header */
+            section = (header >> 5) & 0x07;  /* bits [7:5] → section[2:0] */
+
+            ret = rtw_efuse_read_byte(rtwdev, efuse_addr++, &byte);
+            if (ret)
+                return ret;
+
+            section |= ((byte >> 4) & 0x0F) << 3;  /* bits [7:4] → section[6:3] */
+            word_en = byte & 0x0F;
+        } else {
+            /* Normal header */
+            section = (header >> 4) & 0x0F;
+            word_en = header & 0x0F;
+        }
+
+        /* Offset base en el mapa lógico */
+        uint16_t base = section * 8;
+
+        /* Leer words (cada word = 2 bytes) */
+        for (int i = 0; i < 4; i++) {
+            if (!(word_en & BIT(i))) {
+                /* Word i está presente en EFUSE */
+                uint16_t offset = base + (i * 2);
+
+                uint8_t d0, d1;
+                ret = rtw_efuse_read_byte(rtwdev, efuse_addr++, &d0);
+                if (ret) return ret;
+                ret = rtw_efuse_read_byte(rtwdev, efuse_addr++, &d1);
+                if (ret) return ret;
+
+                if (offset < map_size)
+                    map[offset] = d0;
+                if (offset + 1 < map_size)
+                    map[offset + 1] = d1;
+            }
+        }
+    }
+
+    return 0;
+}
+```
+
+### 10.2 Mapa Lógico de EFUSE (RTL8822CE)
+
+```
+Offset    Tamaño  Nombre                   Descripción
+────────  ──────  ───────────────────────  ──────────────────────────────────
+0x0000    2       RTL_ID                   Realtek ID (0x8129 / chip-dependent)
+0x0002    2       DEVICE_ID                PCI Device ID (0xC822)
+0x0004    2       SUBSYSTEM_VID            Subsystem Vendor ID
+0x0006    2       SUBSYSTEM_DID            Subsystem Device ID
+
+0x000A    1       EEPROM_VERSION           EEPROM/EFUSE Map Version
+0x000B    1       CUSTOMER_ID              Customer ID (OEM)
+0x000C    2       PCI_OPTIONAL_CTRL        PCI Optional Control
+
+0x0010    1       CHANNEL_PLAN             Regulatory Domain / Channel Plan
+                   0x20 = World Wide (13ch)
+                   0x22 = ETSI (13ch)
+                   0x34 = FCC (11ch)
+                   0x3F = Japan (14ch)
+                   0x76 = Global (no restriction)
+
+0x0011    1       RF_TYPE                  RF Type/Antenna Config
+                   0x11 = 1T1R
+                   0x12 = 1T2R
+                   0x21 = 2T1R
+                   0x22 = 2T2R ← (RTL8822CE default)
+
+0x0012    1       BOARD_TYPE               Board Type / RFE Type
+                   Bits [7:5]: External PA type
+                   Bits [4:2]: External LNA type
+                   Bits [1:0]: Board config
+
+0x0013    1       XTAL_K                   Crystal Calibration Value
+
+0x0014    1       THERMAL_METER            Thermal Meter Reference
+                   Valor de fábrica para compensación
+                   térmica de TX power
+
+/* ═══════════════════════════════════════════════════ */
+/*                  MAC ADDRESS                        */
+/* ═══════════════════════════════════════════════════ */
+
+0x0016    6       MAC_ADDR                 MAC Address (WLAN)
+                   [0x0016] = Byte 0 (MSB)
+                   [0x0017] = Byte 1
+                   [0x0018] = Byte 2
+                   [0x0019] = Byte 3
+                   [0x001A] = Byte 4
+                   [0x001B] = Byte 5 (LSB)
+
+/* ═══════════════════════════════════════════════════ */
+/*              TX POWER INDEX (2.4 GHz)               */
+/* ═══════════════════════════════════════════════════ */
+
+/* Path A - CCK */
+0x0020    1       TX_PWR_IDX_CCK_A_1M      Path A CCK 1M
+0x0021    1       TX_PWR_IDX_CCK_A_2M      Path A CCK 2M
+0x0022    1       TX_PWR_IDX_CCK_A_55M     Path A CCK 5.5M
+0x0023    1       TX_PWR_IDX_CCK_A_11M     Path A CCK 11M
+
+/* Path A - OFDM */
+0x0024    1       TX_PWR_IDX_OFDM_A_6M     Path A OFDM 6M
+0x0025    1       TX_PWR_IDX_OFDM_A_9M     Path A OFDM 9M
+0x0026    1       TX_PWR_IDX_OFDM_A_12M    Path A OFDM 12M
+0x0027    1       TX_PWR_IDX_OFDM_A_18M    Path A OFDM 18M
+0x0028    1       TX_PWR_IDX_OFDM_A_24M    Path A OFDM 24M
+0x0029    1       TX_PWR_IDX_OFDM_A_36M    Path A OFDM 36M
+0x002A    1       TX_PWR_IDX_OFDM_A_48M    Path A OFDM 48M
+0x002B    1       TX_PWR_IDX_OFDM_A_54M    Path A OFDM 54M
+
+/* Path A - HT (11n) 2.4 GHz */
+0x002C    1       TX_PWR_IDX_HT_A_MCS0     Path A HT MCS0
+0x002D    1       TX_PWR_IDX_HT_A_MCS1     Path A HT MCS1
+0x002E    1       TX_PWR_IDX_HT_A_MCS2     Path A HT MCS2
+0x002F    1       TX_PWR_IDX_HT_A_MCS3     Path A HT MCS3
+0x0030    1       TX_PWR_IDX_HT_A_MCS4     Path A HT MCS4
+0x0031    1       TX_PWR_IDX_HT_A_MCS5     Path A HT MCS5
+0x0032    1       TX_PWR_IDX_HT_A_MCS6     Path A HT MCS6
+0x0033    1       TX_PWR_IDX_HT_A_MCS7     Path A HT MCS7
+
+/* Path A - VHT (11ac) 2.4 GHz */
+0x0034    1       TX_PWR_IDX_VHT_A_1SS_M0  Path A VHT 1SS MCS0
+0x0035    1       TX_PWR_IDX_VHT_A_1SS_M1  Path A VHT 1SS MCS1
+0x0036    1       TX_PWR_IDX_VHT_A_1SS_M2  Path A VHT 1SS MCS2
+0x0037    1       TX_PWR_IDX_VHT_A_1SS_M3  Path A VHT 1SS MCS3
+0x0038    1       TX_PWR_IDX_VHT_A_1SS_M4  Path A VHT 1SS MCS4
+0x0039    1       TX_PWR_IDX_VHT_A_1SS_M5  Path A VHT 1SS MCS5
+0x003A    1       TX_PWR_IDX_VHT_A_1SS_M6  Path A VHT 1SS MCS6
+0x003B    1       TX_PWR_IDX_VHT_A_1SS_M7  Path A VHT 1SS MCS7
+0x003C    1       TX_PWR_IDX_VHT_A_1SS_M8  Path A VHT 1SS MCS8
+0x003D    1       TX_PWR_IDX_VHT_A_1SS_M9  Path A VHT 1SS MCS9
+
+/* Path B - CCK 2.4 GHz */
+0x003E    1       TX_PWR_IDX_CCK_B_1M      Path B CCK 1M
+0x003F    1       TX_PWR_IDX_CCK_B_2M      Path B CCK 2M
+0x0040    1       TX_PWR_IDX_CCK_B_55M     Path B CCK 5.5M
+0x0041    1       TX_PWR_IDX_CCK_B_11M     Path B CCK 11M
+
+/* Path B - OFDM 2.4 GHz */
+0x0042    1       TX_PWR_IDX_OFDM_B_6M     Path B OFDM 6M
+/* ... (mismo patrón que Path A) ... */
+0x0049    1       TX_PWR_IDX_OFDM_B_54M    Path B OFDM 54M
+
+/* Path B - HT 2.4 GHz */
+0x004A    1       TX_PWR_IDX_HT_B_MCS0     Path B HT MCS0
+/* ... hasta MCS7 ... */
+0x0051    1       TX_PWR_IDX_HT_B_MCS7     Path B HT MCS7
+
+/* Path B - VHT 2.4 GHz */
+0x0052    1       TX_PWR_IDX_VHT_B_1SS_M0  Path B VHT 1SS MCS0
+/* ... hasta MCS9 ... */
+0x005B    1       TX_PWR_IDX_VHT_B_1SS_M9  Path B VHT 1SS MCS9
+
+/* ═══════════════════════════════════════════════════ */
+/*              TX POWER INDEX (5 GHz)                 */
+/* ═══════════════════════════════════════════════════ */
+
+/* 5 GHz Band 1 (ch 36-48) - Path A */
+0x005C    1       TX_PWR_IDX_OFDM5G_A_B1_6M    5G Band1 Path A OFDM 6M
+/* ... OFDM rates ... */
+0x0063    1       TX_PWR_IDX_OFDM5G_A_B1_54M   5G Band1 Path A OFDM 54M
+0x0064    1       TX_PWR_IDX_HT5G_A_B1_MCS0    5G Band1 Path A HT MCS0
+/* ... HT MCS rates ... */
+0x006B    1       TX_PWR_IDX_HT5G_A_B1_MCS7    5G Band1 Path A HT MCS7
+0x006C    1       TX_PWR_IDX_VHT5G_A_B1_1S_M0  5G Band1 Path A VHT 1SS MCS0
+/* ... VHT 1SS rates ... */
+0x0075    1       TX_PWR_IDX_VHT5G_A_B1_1S_M9  5G Band1 Path A VHT 1SS MCS9
+
+/* 5 GHz Band 1 (ch 36-48) - Path B */
+0x0076    1       TX_PWR_IDX_OFDM5G_B_B1_6M    5G Band1 Path B OFDM 6M
+/* ... (same pattern as Path A) ... */
+
+/* 5 GHz Band 2 (ch 52-64) - Path A & B */
+0x0090    ...     TX_PWR_IDX_5G_BAND2_A        Band2 (52-64) Path A
+0x00AA    ...     TX_PWR_IDX_5G_BAND2_B        Band2 (52-64) Path B
+
+/* 5 GHz Band 3 (ch 100-144) - Path A & B */
+0x00C4    ...     TX_PWR_IDX_5G_BAND3_A        Band3 (100-144) Path A
+0x00DE    ...     TX_PWR_IDX_5G_BAND3_B        Band3 (100-144) Path B
+
+/* 5 GHz Band 4 (ch 149-165) - Path A & B */
+0x00F8    ...     TX_PWR_IDX_5G_BAND4_A        Band4 (149-165) Path A
+0x0112    ...     TX_PWR_IDX_5G_BAND4_B        Band4 (149-165) Path B
+
+/* ═══════════════════════════════════════════════════ */
+/*              TX POWER DIFF / LIMITS                 */
+/* ═══════════════════════════════════════════════════ */
+
+0x012C    1       OFDM_DIFF_A                Path A OFDM diff (signed)
+0x012D    1       BW20_DIFF_A                Path A BW20 diff
+0x012E    1       BW40_DIFF_A                Path A BW40 diff
+0x012F    1       BW80_DIFF_A                Path A BW80 diff (5G only)
+
+0x0130    1       OFDM_DIFF_B                Path B OFDM diff
+0x0131    1       BW20_DIFF_B                Path B BW20 diff
+0x0132    1       BW40_DIFF_B                Path B BW40 diff
+0x0133    1       BW80_DIFF_B                Path B BW80 diff
+
+/* 2SS TX Power Diff */
+0x0134    1       TX_PWR_2SS_DIFF_A          Path A 2SS diff
+0x0135    1       TX_PWR_2SS_DIFF_B          Path B 2SS diff
+
+/* ═══════════════════════════════════════════════════ */
+/*              CALIBRACIÓN DE FÁBRICA                 */
+/* ═══════════════════════════════════════════════════ */
+
+0x013C    4       PA_BIAS_A                   Path A PA Bias Calibration
+0x0140    4       PA_BIAS_B                   Path B PA Bias Calibration
+
+0x0144    4       LNA_GAIN_A                  Path A LNA Gain Offset
+0x0148    4       LNA_GAIN_B                  Path B LNA Gain Offset
+
+0x014C    2       RX_GAIN_OFFSET_A            Path A RX Gain Offset
+0x014E    2       RX_GAIN_OFFSET_B            Path B RX Gain Offset
+
+/* ═══════════════════════════════════════════════════ */
+/*              BLUETOOTH                              */
+/* ═══════════════════════════════════════════════════ */
+
+0x0160    6       BT_MAC_ADDR                 Bluetooth MAC Address
+0x0166    1       BT_COEX_SETTING             BT Coexistence Config
+
+/* ═══════════════════════════════════════════════════ */
+/*              COUNTRY CODE / REGULATORY              */
+/* ═══════════════════════════════════════════════════ */
+
+0x0170    2       COUNTRY_CODE                Country Code (ASCII)
+0x0172    1       REGULATORY_DOMAIN           Regulatory Domain
+0x0173    1       BAND_SELECT                 Band Select
+                   BIT(0): 2.4 GHz enabled
+                   BIT(1): 5 GHz enabled
+
+/* ═══════════════════════════════════════════════════ */
+/*              CRYSTAL / KFREE CALIBRATION            */
+/* ═══════════════════════════════════════════════════ */
+
+0x0178    1       XTAL_BIAS_K                 Crystal Bias K-value
+0x0179    1       XTAL_GM_K                   Crystal GM K-value
+0x017A    1       KFREE_THERMAL_K_A           K-Free Thermal K Path A
+0x017B    1       KFREE_THERMAL_K_B           K-Free Thermal K Path B
+
+/* ═══════════════════════════════════════════════════ */
+/*              RFE (RF Front End) TYPE                 */
+/* ═══════════════════════════════════════════════════ */
+
+0x017C    1       RFE_TYPE                    RFE Module Type
+                   0x00 = Internal PA + Internal LNA
+                   0x01 = External PA 2G
+                   0x02 = External LNA 5G
+                   0x03 = External PA 2G + LNA 5G
+                   0x04 = External PA 2G+5G
+                   0x05 = External PA+LNA 2G+5G
+```
+
+---
+
+## 11. GESTIÓN DE ENERGÍA (Power Management)
+
+### 11.1 Power States del RTL8822CE
+
+```
+┌─────────────┐     ┌──────────────┐     ┌──────────────┐
+│  D0 (Active) │────▶│  D1 (Sleep)  │────▶│  D3 (Off)    │
+│  Full Power  │◀────│  LPS / IPS   │◀────│  Radio Off   │
+└──────┬──────┘     └──────────────┘     └──────────────┘
+       │
+       ▼
+┌──────────────┐
+│  D2 (Doze)   │
+│  Low Power   │
+└──────────────┘
+
+LPS = Leisure Power Save (connected idle)
+IPS = Inactive Power Save (disconnected)
+```
+
+### 11.2 Implementación LPS (Leisure Power Save)
+
+```c
+/* ═══════════════════════════════════════════════════ */
+/*        REGISTROS DE POWER MANAGEMENT               */
+/* ═══════════════════════════════════════════════════ */
+#define REG_PCIE_HRPWM       0x03F2   /* Host Request Power Mode */
+#define REG_PCIE_HCPWM       0x03F3   /* Host Confirm Power Mode */
+#define REG_PCIE_HRPWM2      0x03F8   /* Host Request Power Mode 2 */
+#define REG_PCIE_HCPWM2      0x03FA   /* Host Confirm Power Mode 2 */
+
+/* Power mode bits */
+#define PS_MODE_ACTIVE        0x00
+#define PS_MODE_MIN           0x01
+#define PS_MODE_MAX           0x02
+#define PS_MODE_DTIM          0x03
+#define PS_MODE_VOIP          0x04
+#define PS_MODE_UAPSD_WMM     0x05
+
+/* H2C command para set power mode */
+struct h2c_pwr_mode {
+    uint8_t cmd_id;        /* H2C_CMD_SET_PWR_MODE = 0x20 */
+    uint8_t mode;          /* PS_MODE_xxx */
+    uint8_t clk_req;       /* Clock Request: 0=disable, 1=enable */
+    uint8_t rlbm;          /* Rate Limiting Beacon Mode */
+    uint8_t smart_ps;      /* Smart Power Save Mode */
+    uint8_t awake_interval; /* Awake Interval (beacon units) */
+    uint8_t all_queue_uapsd; /* All Queue UAPSD */
+    uint8_t pwr_state;     /* Power State */
+} __packed;
+
+int rtw_pci_enter_lps(struct rtw_dev *rtwdev, uint8_t mode)
+{
+    struct h2c_pwr_mode cmd = {0};
+
+    /* Configurar comando H2C de power mode */
+    cmd.cmd_id         = 0x20;  /* H2C_CMD_SET_PWR_MODE */
+    cmd.mode           = mode;
+    cmd.clk_req        = 1;     /* Mantener clock request activo */
+    cmd.rlbm           = 2;     /* Rate limit by DTIM */
+    cmd.smart_ps       = 2;     /* Smart PS mode 2 */
+    cmd.awake_interval = 1;     /* Despertar cada beacon */
+
+    /* Enviar H2C */
+    int ret = rtw_fw_send_h2c_command(rtwdev, (uint8_t *)&cmd);
+    if (ret)
+        return ret;
+
+    /* Configurar RPWM (Request Power Mode) para el hardware */
+    uint8_t rpwm_val = 0;
+    switch (mode) {
+    case PS_MODE_MIN:
+    case PS_MODE_MAX:
+    case PS_MODE_DTIM:
+        rpwm_val = 0x02;  /* Request sleep */
+        break;
+    default:
+        rpwm_val = 0x0C;  /* Active */
+        break;
+    }
+
+    /* Toggle bit [7] para indicar nuevo request */
+    rpwm_val |= (rtwdev->rpwm_seq++ & 0x01) ? BIT(7) : 0;
+
+    rtw_write8(rtwdev, REG_PCIE_HRPWM, rpwm_val);  /* 0x03F2 */
+
+    return 0;
+}
+
+int rtw_pci_leave_lps(struct rtw_dev *rtwdev)
+{
+    struct h2c_pwr_mode cmd = {0};
+
+    /* Despertar: escribir RPWM primero */
+    uint8_t rpwm_val = 0x0C;  /* Active mode */
+    rpwm_val |= (rtwdev->rpwm_seq++ & 0x01) ? BIT(7) : 0;
+    rtw_write8(rtwdev, REG_PCIE_HRPWM, rpwm_val);
+
+    /* Esperar confirmación */
+    int ret = rtw_poll_reg(rtwdev, REG_PCIE_HCPWM, 0x0C, 0x0C, 5000);
+    if (ret)
+        pr_warn("LPS leave: HCPWM timeout\n");
+
+    /* Enviar H2C active mode */
+    cmd.cmd_id = 0x20;
+    cmd.mode   = PS_MODE_ACTIVE;
+    return rtw_fw_send_h2c_command(rtwdev, (uint8_t *)&cmd);
+}
+```
+
+### 11.3 IPS (Inactive Power Save)
+
+```c
+int rtw_enter_ips(struct rtw_dev *rtwdev)
+{
+    /* PASO 1: Deshabilitar TX */
+    rtw_write8(rtwdev, 0x02F4, 0xFF);         /* REG_TXPAUSE: pausar todo */
+
+    /* PASO 2: Deshabilitar RF */
+    rtw_write8(rtwdev, 0x001C, 0x00);         /* REG_RF_CTRL: RF off */
+
+    /* PASO 3: Deshabilitar BB */
+    u16 sys_func = rtw_read16(rtwdev, 0x0000);
+    sys_func &= ~(BIT(0) | BIT(1));           /* FEN_BBRSTB | FEN_BB_GLB_RST */
+    rtw_write16(rtwdev, 0x0000, sys_func);
+
+    /* PASO 4: Deshabilitar MAC clock */
+    u16 clk = rtw_read16(rtwdev, 0x0004);
+    clk &= ~BIT(11);                           /* ~BIT_MAC_CLK_EN */
+    rtw_write16(rtwdev, 0x0004, clk);
+
+    /* PASO 5: Bajar PCIe a D3 si es posible */
+    rtw_pci_set_power_state(rtwdev, PCI_D3hot);
+
+    rtwdev->power_state = RTW_POWER_IPS;
+    return 0;
+}
+
+int rtw_leave_ips(struct rtw_dev *rtwdev)
+{
+    /* Revertir toda la secuencia */
+    rtw_pci_set_power_state(rtwdev, PCI_D0);
+
+    /* Re-ejecutar power on sequence */
+    int ret = rtw8822ce_power_on(rtwdev);
+    if (ret)
+        return ret;
+
+    /* Re-cargar firmware */
+    ret = rtw8822ce_download_firmware(rtwdev,
+                                      rtwdev->fw_data,
+                                      rtwdev->fw_size);
+    if (ret)
+        return ret;
+
+    /* Re-inicializar MAC/BB/RF */
+    rtw8822ce_init_mac_reg(rtwdev);
+    rtw8822ce_init_bb_reg(rtwdev);
+    rtw8822ce_init_rf_reg(rtwdev);
+
+    rtwdev->power_state = RTW_POWER_ACTIVE;
+    return 0;
+}
+```
+
+### 11.4 PCIe L1/L1.2 Power States
+
+```c
+/* ═══════════════════════════════════════════════════ */
+/*        REGISTROS PCIe LINK POWER MANAGEMENT         */
+/* ═══════════════════════════════════════════════════ */
+
+/* PCIe Config Space — PM Capability (offset 0x40) */
+#define PCI_PM_CAP          0x40
+#define PCI_PM_CTRL         0x44
+#define PCI_PM_CTRL_STATE   0x0003    /* Mask for power state */
+#define PCI_D0              0x00
+#define PCI_D1              0x01
+#define PCI_D2              0x02
+#define PCI_D3hot           0x03
+
+/* PCIe Link Control Register (en PCIe Capability) */
+#define PCIE_LINK_CTRL      0x80      /* Offset puede variar */
+#define PCIE_LINK_L0S_EN    BIT(0)
+#define PCIE_LINK_L1_EN     BIT(1)
+#define PCIE_LINK_CLK_REQ   BIT(8)
+
+/* Realtek-specific ASPM control */
+#define REG_PCIE_PS_CTRL      0x0719
+#define BIT_EN_CLK_REQ         BIT(4)
+#define BIT_EN_ASPM_L1         BIT(3)
+#define BIT_EN_ASPM_L0S        BIT(2)
+#define BIT_DIS_L1_REENTRY     BIT(7)
+
+void rtw_pci_configure_aspm(struct rtw_dev *rtwdev, bool enable_l1)
+{
+    uint8_t val;
+
+    /* Configurar ASPM en el lado Realtek */
+    val = rtw_read8(rtwdev, REG_PCIE_PS_CTRL);  /* 0x0719 */
+
+    if (enable_l1) {
+        val |= BIT_EN_ASPM_L1;      /* Habilitar L1 */
+        val |= BIT_EN_CLK_REQ;      /* Habilitar Clock Request */
+        val &= ~BIT_DIS_L1_REENTRY; /* Permitir re-entry a L1 */
+    } else {
+        val &= ~BIT_EN_ASPM_L1;
+        val &= ~BIT_EN_ASPM_L0S;
+        val &= ~BIT_EN_CLK_REQ;
+    }
+
+    rtw_write8(rtwdev, REG_PCIE_PS_CTRL, val);
+
+    /* Configurar backdoor access para L1 substates */
+    if (enable_l1) {
+        /* Habilitar L1.1 y L1.2 via DBI */
+        rtw_dbi_write8(rtwdev, 0x0718, 0x77);  /* L1 substates enable */
+
+        /* LTR (Latency Tolerance Reporting) */
+        rtw_write32(rtwdev, 0x0798, 0x883C883C); /* LTR idle latency */
+        rtw_write32(rtwdev, 0x079C, 0x880B880B); /* LTR active latency */
+    }
+}
+
+/* DBI (Debug Bus Interface) — acceso a PCIe config space vía MMIO */
+void rtw_dbi_write8(struct rtw_dev *rtwdev, uint16_t addr, uint8_t data)
+{
+    uint32_t val;
+
+    /* Escribir datos en DBI_WDATA */
+    uint16_t addr_aligned = addr & ~0x03;
+    uint8_t  byte_offset  = addr & 0x03;
+
+    rtw_write32(rtwdev, 0x0204, (uint32_t)data << (byte_offset * 8));
+
+    /* Configurar flag: write + byte enable + address */
+    val  = BIT(16);                              /* Write flag */
+    val |= (1 << (byte_offset + 12));           /* Byte enable */
+    val |= (addr_aligned & 0x0FFF);             /* Address */
+    rtw_write32(rtwdev, 0x020C, val);
+
+    /* Wait for completion */
+    rtw_poll_reg(rtwdev, 0x020C, BIT(16), 0, 1000);
+}
+
+uint8_t rtw_dbi_read8(struct rtw_dev *rtwdev, uint16_t addr)
+{
+    uint32_t val;
+
+    uint16_t addr_aligned = addr & ~0x03;
+    uint8_t  byte_offset  = addr & 0x03;
+
+    /* Configurar flag: read + byte enable + address */
+    val  = 0;                                    /* Read flag (bit16=0) */
+    val |= (0x0F << 12);                        /* All bytes enable */
+    val |= (addr_aligned & 0x0FFF);
+    rtw_write32(rtwdev, 0x020C, val);
+
+    /* Wait for completion */
+    rtw_poll_reg(rtwdev, 0x020C, BIT(16), BIT(16), 1000);
+
+    val = rtw_read32(rtwdev, 0x0208);            /* DBI_RDATA */
+    return (uint8_t)(val >> (byte_offset * 8));
+}
+```
+
+---
+
+## 12. COEXISTENCIA BLUETOOTH
+
+El RTL8822CE integra WiFi y Bluetooth en el mismo chip, lo que requiere un mecanismo de coexistencia (BT-Coex) para evitar interferencias.
+
+### 12.1 Arquitectura BT-Coex
+
+```
+┌─────────────────────────────────────────────────┐
+│                   Driver Host                    │
+│                                                  │
+│  ┌─────────────┐        ┌──────────────────┐    │
+│  │  WLAN Driver │◄──────▶│  BT-Coex Module  │    │
+│  │  (rtw88)    │        │  (rtw_coex.c)    │    │
+│  └──────┬──────┘        └────────┬─────────┘    │
+│         │                        │               │
+│  ┌──────▼────────────────────────▼──────────┐   │
+│  │           H2C / C2H Interface             │   │
+│  └──────────────────┬───────────────────────┘   │
+└─────────────────────┼───────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────┐
+│                RTL8822CE Firmware                 │
+│                                                  │
+│  ┌──────────────┐     ┌───────────────────┐     │
+│  │ WLAN FW      │     │ BT-Coex FW Engine │     │
+│  └──────────────┘     └────────┬──────────┘     │
+│                                │                 │
+│  ┌─────────────────────────────▼─────────────┐  │
+│  │         HW Arbitration / TDMA             │  │
+│  │   (GNT_WL / GNT_BT signals)              │  │
+│  └───────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────┘
+```
+
+### 12.2 Registros de Coexistencia
+
+```c
+/* ═══════════════════════════════════════════════════ */
+/*          REGISTROS HARDWARE DE COEXISTENCIA         */
+/* ═══════════════════════════════════════════════════ */
+
+/* BT Coex Table Registers */
+#define REG_BT_COEX_TABLE0      0x0764   /* Break table for WiFi */
+#define REG_BT_COEX_TABLE1      0x0768   /* Break table for BT */
+#define REG_BT_COEX_BRK_TABLE   0x076C   /* Break table combined */
+#define REG_BT_COEX_TABLE_H     0x0770   /* High part */
+
+/* Valores típicos para las tablas de coexistencia */
+#define BT_COEX_TABLE_WIFI_ONLY   0xAAAAAAAA  /* WiFi prioridad total */
+#define BT_COEX_TABLE_BT_ONLY     0x55555555  /* BT prioridad total */
+#define BT_COEX_TABLE_SHARED      0xAAAA5555  /* Compartido */
+#define BT_COEX_TABLE_TDMA        0x66555555  /* TDMA mode */
+
+/* GPIO/Signal para coexistencia */
+#define REG_BT_COEX_V2           0x0774
+#define REG_GPIO_MUXCFG          0x0040
+#define BIT_BT_PAPE_CTRL        BIT(4)
+#define BIT_BT_AOD_GPIO3         BIT(9)
+
+/* Mailbox WL↔BT */
+#define REG_BT_PATCH_STATUS      0x077C
+
+/* Registros de score board (intercambio de info WL ↔ BT) */
+#define REG_WIFI_BT_INFO         0x0891
+#define REG_BT_INFO_CTRL         0x0895
+#define REG_BT_INFO_RPT          0x0C5C
+
+/* Contadores de coexistencia */
+#define REG_BT_ACT_STATS         0x0794
+#define REG_BT_ACT_STATS_H       0x0798
+
+/* ═══════════════════════════════════════════════════ */
+/*          FUNCIONES DE COEXISTENCIA                  */
+/* ═══════════════════════════════════════════════════ */
+
+/* Configurar tabla de coexistencia */
+void rtw_coex_set_table(struct rtw_dev *rtwdev, uint32_t table0,
+                          uint32_t table1, uint32_t brk_table)
+{
+    rtw_write32(rtwdev, REG_BT_COEX_TABLE0, table0);    /* 0x0764 */
+    rtw_write32(rtwdev, REG_BT_COEX_TABLE1, table1);    /* 0x0768 */
+    rtw_write32(rtwdev, REG_BT_COEX_BRK_TABLE, brk_table); /* 0x076C */
+}
+
+/* Configurar TDMA de coexistencia vía firmware */
+struct h2c_coex_tdma {
+    uint8_t cmd_id;      /* 0x60 */
+    uint8_t type;        /* TDMA type */
+    uint8_t byte1;       /* Interval / duration */
+    uint8_t byte2;       /* Switches */
+    uint8_t byte3;       /* BT slot */
+    uint8_t byte4;       /* WL slot */
+    uint8_t byte5;       /* Extra options */
+    uint8_t reserved;
+} __packed;
+
+/* Tipos de TDMA */
+#define COEX_TDMA_OFF            0
+#define COEX_TDMA_FIX_SLOT       1
+#define COEX_TDMA_FLEX_SLOT      2
+#define COEX_TDMA_AUTO           3
+
+/* Perfiles de coexistencia */
+enum rtw_coex_scenario {
+    COEX_SCENARIO_IDLE,            /* No BT activity */
+    COEX_SCENARIO_A2DP,            /* BT audio streaming */
+    COEX_SCENARIO_A2DP_PAN,        /* Audio + PAN */
+    COEX_SCENARIO_HID,             /* HID (mouse/keyboard) */
+    COEX_SCENARIO_HID_A2DP,        /* HID + Audio */
+    COEX_SCENARIO_SCO,             /* Voice call */
+    COEX_SCENARIO_SCO_A2DP,        /* Voice + Audio */
+    COEX_SCENARIO_PAN,             /* Personal Area Network */
+    COEX_SCENARIO_NUM
+};
+
+void rtw_coex_set_tdma(struct rtw_dev *rtwdev, uint8_t type,
+                        uint8_t interval, uint8_t wl_duration,
+                        uint8_t bt_duration)
+{
+    struct h2c_coex_tdma cmd = {0};
+
+    cmd.cmd_id = 0x60;
+    cmd.type   = type;
+    cmd.byte1  = interval;
+    cmd.byte2  = wl_duration;
+    cmd.byte3  = bt_duration;
+    cmd.byte4  = 0x50;           /* Default switches */
+
+    rtw_fw_send_h2c_command(rtwdev, (uint8_t *)&cmd);
+}
+
+/* Aplicar perfil de coexistencia según escenario */
+void rtw_coex_apply_scenario(struct rtw_dev *rtwdev,
+                              enum rtw_coex_scenario scenario)
+{
+    switch (scenario) {
+    case COEX_SCENARIO_IDLE:
+        /* Sin actividad BT: WiFi tiene prioridad total */
+        rtw_coex_set_table(rtwdev,
+                           0xFFFFFFFF,    /* WiFi siempre permitido */
+                           0x00000000,    /* BT no necesita slots */
+                           0x00000000);
+        rtw_coex_set_tdma(rtwdev, COEX_TDMA_OFF, 0, 0, 0);
+        break;
+
+    case COEX_SCENARIO_A2DP:
+        /* Audio BT: TDMA con 60% WiFi, 40% BT */
+        rtw_coex_set_table(rtwdev,
+                           0xAAAA5555,
+                           0x5555AAAA,
+                           0xFFFF);
+        rtw_coex_set_tdma(rtwdev, COEX_TDMA_FIX_SLOT, 100, 60, 40);
+        break;
+
+    case COEX_SCENARIO_HID:
+        /* HID: baja latencia BT necesaria */
+        rtw_coex_set_table(rtwdev,
+                           0xAAAA5555,
+                           0x5A5A5A5A,
+                           0xFFFF);
+        rtw_coex_set_tdma(rtwdev, COEX_TDMA_FLEX_SLOT, 50, 30, 20);
+        break;
+
+    case COEX_SCENARIO_SCO:
+        /* Llamada de voz: BT tiene alta prioridad */
+        rtw_coex_set_table(rtwdev,
+                           0x55555555,    /* WiFi cede más slots */
+                           0xAAAAAAAA,    /* BT prioridad */
+                           0xFFFF);
+        rtw_coex_set_tdma(rtwdev, COEX_TDMA_FIX_SLOT, 50, 15, 35);
+        break;
+
+    default:
+        /* Modo genérico compartido */
+        rtw_coex_set_table(rtwdev,
+                           0x66555555,
+                           0x66555555,
+                           0xFFFF);
+        rtw_coex_set_tdma(rtwdev, COEX_TDMA_AUTO, 100, 50, 50);
+        break;
+    }
+}
+
+/* Handler de info BT (llamado desde C2H) */
+void rtw_coex_bt_info_handler(struct rtw_dev *rtwdev,
+                               uint8_t *payload, uint32_t len)
+{
+    /* payload[0]: BT link info
+     *   BIT(0): SCO exist
+     *   BIT(1): A2DP exist
+     *   BIT(2): HID exist
+     *   BIT(3): PAN exist
+     *
+     * payload[1]: BT retry count
+     * payload[2]: BT RSSI
+     * payload[3]: BT status
+     *   0x00: idle
+     *   0x01: inquiry/page scan
+     *   0x02: connected idle
+     *   0x03: ACL busy
+     *   0x04: SCO busy
+     */
+
+    uint8_t bt_link = payload[0];
+    uint8_t bt_rssi = payload[2];
+    uint8_t bt_status = payload[3];
+
+    /* Determinar escenario */
+    enum rtw_coex_scenario scenario = COEX_SCENARIO_IDLE;
+
+    if (bt_link & BIT(0))       /* SCO */
+        scenario = COEX_SCENARIO_SCO;
+    else if (bt_link & BIT(1))  /* A2DP */
+        scenario = COEX_SCENARIO_A2DP;
+    else if (bt_link & BIT(2))  /* HID */
+        scenario = COEX_SCENARIO_HID;
+    else if (bt_link & BIT(3))  /* PAN */
+        scenario = COEX_SCENARIO_PAN;
+
+    rtw_coex_apply_scenario(rtwdev, scenario);
+}
+```
+
+---
+
+## 13. CALIBRACIÓN RF Y PHY
+
+### 13.1 IQ Calibration (IQK)
+
+```c
+/* ═══════════════════════════════════════════════════ */
+/*         IQ CALIBRATION (IQK) REGISTERS              */
+/* ═══════════════════════════════════════════════════ */
+
+/* IQK se ejecuta para corregir el desbalance I/Q del transceiver */
+
+/* BB Registers para IQK */
+#define REG_IQK_AGC_PTS          0x0E60
+#define REG_IQK_AGC_RSP          0x0E64
+#define REG_TX_IQK               0x0E68
+#define REG_RX_IQK               0x0E6C
+#define REG_IQK_TONE_A           0x0E70
+#define REG_IQK_TONE_B           0x0E74
+#define REG_IQK_RES_TX           0x0E78
+#define REG_IQK_RES_RX           0x0E7C
+
+/* RF Register para IQK */
+#define RF_IQK_REG               0x43
+
+/* Trigger IQK */
+#define REG_IQK_CTRL             0x0E28
+#define BIT_IQK_START            BIT(0)
+
+/* Estado de IQK */
+#define REG_IQK_STATUS           0x0EA0
+#define BIT_IQK_DONE             BIT(0)
+#define BIT_IQK_TX_FAIL          BIT(1)
+#define BIT_IQK_RX_FAIL          BIT(2)
+
+/* Resultados de IQK */
+#define REG_IQK_TX_X             0x0E94    /* TX I result */
+#define REG_IQK_TX_Y             0x0E9C    /* TX Q result */
+#define REG_IQK_RX_X             0x0EA4    /* RX I result */
+#define REG_IQK_RX_Y             0x0EAC    /* RX Q result */
+
+int rtw8822ce_iqk(struct rtw_dev *rtwdev)
+{
+    uint32_t val;
+    int ret;
+
+    pr_info("RTL8822CE: Starting IQ Calibration\n");
+
+    /* ===== PASO 1: Backup registros ===== */
+    uint32_t bb_backup[] = {
+        rtw_read32(rtwdev, 0x0800),    /* REG_FPGA0_RFMOD */
+        rtw_read32(rtwdev, 0x0900),    /* REG_OFDM0_TRX_PATH */
+        rtw_read32(rtwdev, 0x0C00),    /* REG_OFDM1_LSTF */
+        rtw_read32(rtwdev, 0x0E28),    /* REG_IQK_CTRL */
+    };
+
+    uint32_t rf_backup_a = rtw_rf_read(rtwdev, RF_PATH_A, 0x00);
+    uint32_t rf_backup_b = rtw_rf_read(rtwdev, RF_PATH_B, 0x00);
+
+    /* ===== PASO 2: Configurar para IQK ===== */
+
+    /* Deshabilitar transmisión durante calibración */
+    rtw_write8(rtwdev, 0x02F4, 0xFF);    /* TX Pause */
+
+    /* Path A: IQK mode */
+    rtw_write32(rtwdev, 0x0E28, 0x00000000);
+    rtw_write32_mask(rtwdev, 0x0E28, 0x000000FF, 0x08);
+
+    /* ===== TX IQK - Path A ===== */
+
+    /* Configurar TX tone */
+    rtw_write32(rtwdev, REG_IQK_TONE_A, 0x18008C1C);   /* 0x0E70 */
+    rtw_write32(rtwdev, REG_IQK_TONE_B, 0x38008C1C);   /* 0x0E74 */
+    rtw_write32(rtwdev, REG_IQK_AGC_PTS, 0x82110000);  /* 0x0E60 */
+    rtw_write32(rtwdev, REG_IQK_AGC_RSP, 0x68160960);  /* 0x0E64 */
+
+    /* Set TX IQK mode in RF */
+    rtw_rf_write(rtwdev, RF_PATH_A, RF_IQK_REG, 0x00A00);
+
+    /* Trigger TX IQK */
+    rtw_write32(rtwdev, REG_IQK_CTRL, 0x00000001);     /* 0x0E28 */
+
+    /* Esperar IQK completo */
+    ret = rtw_poll_reg(rtwdev, REG_IQK_STATUS, BIT_IQK_DONE,
+                       BIT_IQK_DONE, 10000);
+    if (ret) {
+        pr_err("TX IQK Path A timeout\n");
+        goto restore;
+    }
+
+    /* Verificar resultado */
+    val = rtw_read32(rtwdev, REG_IQK_STATUS);
+    if (val & BIT_IQK_TX_FAIL) {
+        pr_warn("TX IQK Path A failed\n");
+    } else {
+        /* Leer resultados y aplicar corrección */
+        uint32_t tx_x = rtw_read32(rtwdev, REG_IQK_TX_X) & 0x3FF;
+        uint32_t tx_y = rtw_read32(rtwdev, REG_IQK_TX_Y) & 0x3FF;
+        pr_info("TX IQK Path A: X=0x%03X, Y=0x%03X\n", tx_x, tx_y);
+
+        /* Aplicar corrección TX */
+        rtw_write32_mask(rtwdev, 0x0C80, 0x3FF, tx_x);
+        rtw_write32_mask(rtwdev, 0x0C94, 0x3FF, tx_y);
+    }
+
+    /* ===== RX IQK - Path A ===== */
+
+    /* Configurar RX tone */
+    rtw_write32(rtwdev, REG_IQK_TONE_A, 0x28008C1C);
+    rtw_write32(rtwdev, REG_IQK_TONE_B, 0x48008C1C);
+
+    /* Set RX IQK mode */
+    rtw_rf_write(rtwdev, RF_PATH_A, RF_IQK_REG, 0x00C00);
+
+    /* Trigger RX IQK */
+    rtw_write32(rtwdev, REG_IQK_CTRL, 0x00000001);
+
+    ret = rtw_poll_reg(rtwdev, REG_IQK_STATUS, BIT_IQK_DONE,
+                       BIT_IQK_DONE, 10000);
+    if (ret) {
+        pr_err("RX IQK Path A timeout\n");
+        goto restore;
+    }
+
+    val = rtw_read32(rtwdev, REG_IQK_STATUS);
+    if (val & BIT_IQK_RX_FAIL) {
+        pr_warn("RX IQK Path A failed\n");
+    } else {
+        uint32_t rx_x = rtw_read32(rtwdev, REG_IQK_RX_X) & 0x3FF;
+        uint32_t rx_y = rtw_read32(rtwdev, REG_IQK_RX_Y) & 0x3FF;
+        pr_info("RX IQK Path A: X=0x%03X, Y=0x%03X\n", rx_x, rx_y);
+
+        /* Aplicar corrección RX */
+        rtw_write32_mask(rtwdev, 0x0C14, 0x3FF, rx_x);
+        rtw_write32_mask(rtwdev, 0x0C1C, 0x3FF, rx_y);
+    }
+
+    /* ===== Repetir para Path B ===== */
+    /* (misma lógica con registros de Path B) */
+    /* Path B TX IQK: RF_PATH_B, 0x0E78, 0x0E7C, 0x0E80... */
+    /* Path B RX IQK: similar... */
+
+restore:
+    /* ===== PASO 3: Restaurar registros ===== */
+    rtw_write32(rtwdev, 0x0800, bb_backup[0]);
+    rtw_write32(rtwdev, 0x0900, bb_backup[1]);
+    rtw_write32(rtwdev, 0x0C00, bb_backup[2]);
+    rtw_write32(rtwdev, 0x0E28, bb_backup[3]);
+    rtw_rf_write(rtwdev, RF_PATH_A, 0x00, rf_backup_a);
+    rtw_rf_write(rtwdev, RF_PATH_B, 0x00, rf_backup_b);
+
+    /* Reanudar transmisión */
+    rtw_write8(rtwdev, 0x02F4, 0x00);
+
+    return ret;
+}
+```
+
+### 13.2 Acceso Indirecto a Registros RF
+
+```c
+#define RF_PATH_A    0
+#define RF_PATH_B    1
+
+/* Registros de acceso LSSI (Low-Speed Serial Interface) */
+#define REG_LSSI_WRITE_A     0x0838   /* Path A write */
+#define REG_LSSI_WRITE_B     0x083C   /* Path B write */
+#define REG_LSSI_READ_A      0x08A0   /* Path A read */
+#define REG_LSSI_READ_B      0x08A4   /* Path B read */
+
+/* PI (Parallel Interface) Mode Registers */
+#define REG_HSSI_PARM2_A     0x0828
+#define REG_HSSI_PARM2_B     0x0830
+#define BIT_READ_ADDR         GENMASK(27,20)
+#define BIT_READ_DATA         GENMASK(19,0)
+#define BIT_PI_READ_EN        BIT(8)
+
+/* Trigger register for SI mode */
+#define REG_SI_READ_A         0x08B8
+#define REG_SI_READ_B         0x08BC
+
+void rtw_rf_write(struct rtw_dev *rtwdev, uint8_t path,
+                   uint8_t addr, uint32_t data)
+{
+    uint32_t reg;
+    uint32_t val;
+
+    /* Seleccionar registro LSSI de escritura */
+    reg = (path == RF_PATH_A) ? REG_LSSI_WRITE_A : REG_LSSI_WRITE_B;
+
+    /* Formato: [31:20] = address, [19:0] = data */
+    val = ((uint32_t)(addr & 0xFF) << 20) | (data & 0xFFFFF);
+
+    rtw_write32(rtwdev, reg, val);
+
+    /* Delay para que la escritura se propague al RF */
+    udelay(10);
+}
+
+uint32_t rtw_rf_read(struct rtw_dev *rtwdev, uint8_t path, uint8_t addr)
+{
+    uint32_t hssi_reg, read_reg;
+    uint32_t val;
+
+    if (path == RF_PATH_A) {
+        hssi_reg = REG_HSSI_PARM2_A;    /* 0x0828 */
+        read_reg = REG_LSSI_READ_A;     /* 0x08A0 */
+    } else {
+        hssi_reg = REG_HSSI_PARM2_B;    /* 0x0830 */
+        read_reg = REG_LSSI_READ_B;     /* 0x08A4 */
+    }
+
+    /* PASO 1: Escribir dirección RF a leer */
+    val = rtw_read32(rtwdev, hssi_reg);
+    val &= ~BIT_READ_ADDR;                        /* Limpiar addr field */
+    val |= ((uint32_t)(addr & 0xFF) << 20);       /* Set address */
+    rtw_write32(rtwdev, hssi_reg, val);
+
+    /* PASO 2: Trigger lectura */
+    /* Para 8822CE en modo SI: trigger via LSSI */
+    uint32_t trigger_reg = (path == RF_PATH_A) ? REG_SI_READ_A : REG_SI_READ_B;
+    rtw_write32(rtwdev, trigger_reg, 0x00000000);
+
+    /* PASO 3: Esperar y leer resultado */
+    udelay(20);  /* Esperar resultado */
+
+    val = rtw_read32(rtwdev, read_reg);
+    return val & 0xFFFFF;  /* Datos en bits [19:0] */
+}
+```
+
+### 13.3 Compensación Térmica (Thermal Tracking)
+
+```c
+#define RF_T_METER          0xDE     /* RF register: thermal meter */
+#define REG_THERMAL_METER   0x042    /* BB thermal read register */
+
+/* Estructura para tracking térmico */
+struct rtw_thermal_info {
+    uint8_t thermal_ref;        /* Valor de referencia de EFUSE */
+    uint8_t thermal_current;    /* Valor actual */
+    int8_t  delta;              /* Diferencia (current - ref) */
+    uint8_t pwr_trim[2];       /* TX power trim por path */
+};
+
+/* Leer temperatura actual del chip */
+uint8_t rtw_get_thermal(struct rtw_dev *rtwdev)
+{
+    uint32_t val;
+
+    /* Trigger medición térmica */
+    rtw_rf_write(rtwdev, RF_PATH_A, RF_T_METER, 0x00060);
+
+    /* Esperar medición (típicamente 1ms) */
+    msleep(1);
+
+    /* Leer resultado */
+    val = rtw_rf_read(rtwdev, RF_PATH_A, RF_T_METER);
+    return (uint8_t)((val >> 2) & 0x3F);  /* Thermal value en bits [7:2] */
+}
+
+/* Compensación térmica de TX power */
+void rtw_thermal_compensation(struct rtw_dev *rtwdev)
+{
+    struct rtw_thermal_info *therm = &rtwdev->thermal;
+    uint8_t current_thermal;
+    int8_t delta;
+    int8_t pwr_offset;
+
+    /* Leer valor actual */
+    current_thermal = rtw_get_thermal(rtwdev);
+    therm->thermal_current = current_thermal;
+
+    /* Calcular delta respecto a referencia de fábrica */
+    delta = (int8_t)current_thermal - (int8_t)therm->thermal_ref;
+    therm->delta = delta;
+
+    /*
+     * Compensar: cada grado de delta ~ 0.5 dB
+     * El índice de power se ajusta en unidades de 0.5 dB
+     * Fórmula: pwr_offset = -delta (reducir power si temp sube)
+     */
+    pwr_offset = -delta;
+
+    /* Limitar offset */
+    if (pwr_offset > 6) pwr_offset = 6;
+    if (pwr_offset < -6) pwr_offset = -6;
+
+    /* Aplicar offset a Path A y Path B */
+    for (int path = 0; path < 2; path++) {
+        /* Escribir offset de power en BB */
+        uint32_t reg = (path == RF_PATH_A) ? 0x0C54 : 0x0C5C;
+
+        rtw_write32_mask(rtwdev, reg, GENMASK(7,0),
+                         (uint32_t)(pwr_offset & 0xFF));
+    }
+
+    pr_debug("Thermal: ref=%d, cur=%d, delta=%d, pwr_offset=%d\n",
+             therm->thermal_ref, current_thermal, delta, pwr_offset);
+}
+```
+
+### 13.4 Selección de Canal
+
+```c
+/*
+ * Tabla de canales WiFi
+ * 2.4 GHz: Canales 1-14
+ * 5 GHz:   Canales 36-165
+ */
+
+struct rtw_channel_info {
+    uint8_t  channel;
+    uint32_t freq_mhz;
+    uint8_t  band;        /* 0=2.4G, 1=5G */
+    uint32_t rf_reg_val;  /* Valor para RF register 0x18 */
+};
+
+/* Mapeo parcial (ejemplo) */
+static const struct rtw_channel_info channel_table[] = {
+    /* 2.4 GHz */
+    { .channel =  1, .freq_mhz = 2412, .band = 0, .rf_reg_val = 0x00001 },
+    { .channel =  2, .freq_mhz = 2417, .band = 0, .rf_reg_val = 0x00002 },
+    { .channel =  3, .freq_mhz = 2422, .band = 0, .rf_reg_val = 0x00003 },
+    { .channel =  4, .freq_mhz = 2427, .band = 0, .rf_reg_val = 0x00004 },
+    { .channel =  5, .freq_mhz = 2432, .band = 0, .rf_reg_val = 0x00005 },
+    { .channel =  6, .freq_mhz = 2437, .band = 0, .rf_reg_val = 0x00006 },
+    { .channel =  7, .freq_mhz = 2442, .band = 0, .rf_reg_val = 0x00007 },
+    { .channel =  8, .freq_mhz = 2447, .band = 0, .rf_reg_val = 0x00008 },
+    { .channel =  9, .freq_mhz = 2452, .band = 0, .rf_reg_val = 0x00009 },
+    { .channel = 10, .freq_mhz = 2457, .band = 0, .rf_reg_val = 0x0000A },
+    { .channel = 11, .freq_mhz = 2462, .band = 0, .rf_reg_val = 0x0000B },
+    { .channel = 12, .freq_mhz = 2467, .band = 0, .rf_reg_val = 0x0000C },
+    { .channel = 13, .freq_mhz = 2472, .band = 0, .rf_reg_val = 0x0000D },
+    { .channel = 14, .freq_mhz = 2484, .band = 0, .rf_reg_val = 0x0000E },
+
+    /* 5 GHz */
+    { .channel =  36, .freq_mhz = 5180, .band = 1, .rf_reg_val = 0x08024 },
+    { .channel =  40, .freq_mhz = 5200, .band = 1, .rf_reg_val = 0x08028 },
+    { .channel =  44, .freq_mhz = 5220, .band = 1, .rf_reg_val = 0x0802C },
+    { .channel =  48, .freq_mhz = 5240, .band = 1, .rf_reg_val = 0x08030 },
+    { .channel =  52, .freq_mhz = 5260, .band = 1, .rf_reg_val = 0x08034 },
+    { .channel =  56, .freq_mhz = 5280, .band = 1, .rf_reg_val = 0x08038 },
+    { .channel =  60, .freq_mhz = 5300, .band = 1, .rf_reg_val = 0x0803C },
+    { .channel =  64, .freq_mhz = 5320, .band = 1, .rf_reg_val = 0x08040 },
+    { .channel = 100, .freq_mhz = 5500, .band = 1, .rf_reg_val = 0x08064 },
+    { .channel = 104, .freq_mhz = 5520, .band = 1, .rf_reg_val = 0x08068 },
+    { .channel = 108, .freq_mhz = 5540, .band = 1, .rf_reg_val = 0x0806C },
+    { .channel = 112, .freq_mhz = 5560, .band = 1, .rf_reg_val = 0x08070 },
+    { .channel = 116, .freq_mhz = 5580, .band = 1, .rf_reg_val = 0x08074 },
+    { .channel = 120, .freq_mhz = 5600, .band = 1, .rf_reg_val = 0x08078 },
+    { .channel = 124, .freq_mhz = 5620, .band = 1, .rf_reg_val = 0x0807C },
+    { .channel = 128, .freq_mhz = 5640, .band = 1, .rf_reg_val = 0x08080 },
+    { .channel = 132, .freq_mhz = 5660, .band = 1, .rf_reg_val = 0x08084 },
+    { .channel = 136, .freq_mhz = 5680, .band = 1, .rf_reg_val = 0x08088 },
+    { .channel = 140, .freq_mhz = 5700, .band = 1, .rf_reg_val = 0x0808C },
+    { .channel = 144, .freq_mhz = 5720, .band = 1, .rf_reg_val = 0x08090 },
+    { .channel = 149, .freq_mhz = 5745, .band = 1, .rf_reg_val = 0x08095 },
+    { .channel = 153, .freq_mhz = 5765, .band = 1, .rf_reg_val = 0x08099 },
+    { .channel = 157, .freq_mhz = 5785, .band = 1, .rf_reg_val = 0x0809D },
+    { .channel = 161, .freq_mhz = 5805, .band = 1, .rf_reg_val = 0x080A1 },
+    { .channel = 165, .freq_mhz = 5825, .band = 1, .rf_reg_val = 0x080A5 },
+};
+
+int rtw8822ce_set_channel(struct rtw_dev *rtwdev, uint8_t channel,
+                            uint8_t bandwidth)
+{
+    const struct rtw_channel_info *ch_info = NULL;
+
+    /* Buscar canal en la tabla */
+    for (int i = 0; i < ARRAY_SIZE(channel_table); i++) {
+        if (channel_table[i].channel == channel) {
+            ch_info = &channel_table[i];
+            break;
+        }
+    }
+    if (!ch_info)
+        return -EINVAL;
+
+    /* ===== PASO 1: Configurar RF synthesizer ===== */
+    for (int path = 0; path < 2; path++) {
+        rtw_rf_write(rtwdev, path, 0x18, ch_info->rf_reg_val);
+    }
+
+    /* ===== PASO 2: Configurar banda BB ===== */
+    if (ch_info->band == 0) {
+        /* 2.4 GHz */
+        rtw_write32_mask(rtwdev, 0x0800, BIT(24), 1);    /* CCK enable */
+        rtw_write32_mask(rtwdev, 0x0800, BIT(25), 1);    /* OFDM enable */
+        rtw_write32_mask(rtwdev, 0x0900, GENMASK(3,0), 0x3); /* 2G mode */
+    } else {
+        /* 5 GHz */
+        rtw_write32_mask(rtwdev, 0x0800, BIT(24), 0);    /* CCK disable */
+        rtw_write32_mask(rtwdev, 0x0800, BIT(25), 1);    /* OFDM enable */
+        rtw_write32_mask(rtwdev, 0x0900, GENMASK(3,0), 0x1); /* 5G mode */
+    }
+
+    /* ===== PASO 3: Configurar ancho de banda ===== */
+    uint8_t bw_val;
+    switch (bandwidth) {
+    case 0: /* 20 MHz */
+        bw_val = 0x00;
+        rtw_write32_mask(rtwdev, 0x0800, GENMASK(1,0), 0x03);
+        break;
+    case 1: /* 40 MHz */
+        bw_val = 0x01;
+        rtw_write32_mask(rtwdev, 0x0800, GENMASK(1,0), 0x01);
+        break;
+    case 2: /* 80 MHz */
+        bw_val = 0x02;
+        rtw_write32_mask(rtwdev, 0x0800, GENMASK(1,0), 0x00);
+        break;
+    default:
+        return -EINVAL;
+    }
+
+    /* Configurar BW en RF */
+    for (int path = 0; path < 2; path++) {
+        uint32_t rf_val = rtw_rf_read(rtwdev, path, 0x18);
+        rf_val &= ~GENMASK(12,10);
+        rf_val |= ((uint32_t)bw_val << 10);
+        rtw_rf_write(rtwdev, path, 0x18, rf_val);
+    }
+
+    /* ===== PASO 4: AGC Table Select ===== */
+    if (ch_info->band == 1) {
+        /* 5 GHz: seleccionar tabla AGC adecuada */
+        if (channel <= 64)
+            rtw_write32_mask(rtwdev, 0x0958, GENMASK(7,4), 0x01);
+        else if (channel <= 144)
+            rtw_write32_mask(rtwdev, 0x0958, GENMASK(7,4), 0x02);
+        else
+            rtw_write32_mask(rtwdev, 0x0958, GENMASK(7,4), 0x03);
+    } else {
+        rtw_write32_mask(rtwdev, 0x0958, GENMASK(7,4), 0x00);
+    }
+
+    /* ===== PASO 5: Actualizar SIFS timing ===== */
+    if (ch_info->band == 0) {
+        /* 2.4 GHz SIFS */
+        rtw_write16(rtwdev, 0x0516, 0x0A0A);  /* 10μs CCK, 10μs OFDM */
+    } else {
+        /* 5 GHz SIFS */
+        rtw_write16(rtwdev, 0x0516, 0x100A);  /* 16μs OFDM */
+    }
+
+    /* ===== PASO 6: Recalibrar si cambio de banda ===== */
+    if (rtwdev->current_band != ch_info->band) {
+        rtw8822ce_iqk(rtwdev);
+    }
+
+    rtwdev->current_channel = channel;
+    rtwdev->current_band = ch_info->band;
+    rtwdev->current_bw = bandwidth;
+
+    return 0;
+}
+```
+
+---
+
+## 14. ARQUITECTURA DE DRIVER (modelo rtw88)
+
+### 14.1 Estructura General del Driver
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                    User Space (wpa_supplicant)                 │
+└───────────────────────────────┬───────────────────────────────┘
+                                │ nl80211 / cfg80211
+┌───────────────────────────────▼───────────────────────────────┐
+│                        mac80211                                │
+│                (Linux Wireless Subsystem)                       │
+└───────────────────────────────┬───────────────────────────────┘
+                                │
+┌───────────────────────────────▼───────────────────────────────┐
+│                     rtw88 Core (rtw_core.ko)                   │
+│                                                                │
+│  ┌────────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐   │
+│  │ rtw_main.c │ │rtw_mac.c │ │rtw_phy.c │ │ rtw_coex.c   │   │
+│  │ (init/ops) │ │(MAC ctrl)│ │(BB/RF)   │ │ (BT coex)    │   │
+│  └────────────┘ └──────────┘ └──────────┘ └──────────────┘   │
+│  ┌────────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐   │
+│  │ rtw_tx.c   │ │rtw_rx.c  │ │rtw_fw.c  │ │ rtw_efuse.c  │   │
+│  │ (transmit) │ │(receive) │ │(firmware)│ │ (EFUSE)      │   │
+│  └────────────┘ └──────────┘ └──────────┘ └──────────────┘   │
+│  ┌────────────┐ ┌──────────┐ ┌──────────┐                    │
+│  │ rtw_sec.c  │ │rtw_ps.c  │ │rtw_debug │                    │
+│  │ (security) │ │(power)   │ │(debugfs) │                    │
+│  └────────────┘ └──────────┘ └──────────┘                    │
+└───────────────────────────────┬───────────────────────────────┘
+                                │ chip_ops
+┌───────────────────────────────▼───────────────────────────────┐
+│              rtw8822c.ko (Chip-specific module)                │
+│                                                                │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │  rtw8822c.c — Chip-specific operations                  │  │
+│  │  • MAC/BB/RF init tables                                │  │
+│  │  • Channel switching                                    │  │
+│  │  • TX power configuration                               │  │
+│  │  • IQK/LCK/DPK calibration                            │  │
+│  │  • PHY status parsing                                   │  │
+│  │  • Coex tables/TDMA                                     │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└───────────────────────────────┬───────────────────────────────┘
+                                │ bus_ops
+┌───────────────────────────────▼───────────────────────────────┐
+│            rtw8822ce.ko (Bus-specific module: PCIe)            │
+│                                                                │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │  rtw_pci.c — PCIe bus operations                        │  │
+│  │  • PCI probe/remove                                     │  │
+│  │  • DMA ring management                                  │  │
+│  │  • Interrupt handling                                   │  │
+│  │  • MMIO register access                                 │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### 14.2 Estructuras de Datos Principales
+
+```c
+/* ═══════════════════════════════════════════════════ */
+/*           ESTRUCTURA PRINCIPAL DEL DISPOSITIVO      */
+/* ═══════════════════════════════════════════════════ */
+
+/* Forward declarations */
+struct rtw_dev;
+struct rtw_chip_info;
+
+/* Chip-specific operations */
+struct rtw_chip_ops {
+    int  (*mac_init)(struct rtw_dev *rtwdev);
+    int  (*bb_init)(struct rtw_dev *rtwdev);
+    int  (*rf_init)(struct rtw_dev *rtwdev);
+    void (*set_channel)(struct rtw_dev *rtwdev, uint8_t ch, uint8_t bw);
+    void (*set_tx_power)(struct rtw_dev *rtwdev, uint8_t ch);
+    void (*iqk)(struct rtw_dev *rtwdev);
+    void (*read_efuse)(struct rtw_dev *rtwdev);
+    void (*phy_set_param)(struct rtw_dev *rtwdev);
+    void (*coex_set_init)(struct rtw_dev *rtwdev);
+    void (*parse_phystatus)(struct rtw_dev *rtwdev, uint8_t *phy_status,
+                            struct rtw_rx_info *info);
+    void (*fill_txdesc)(struct rtw_dev *rtwdev, struct rtw_tx_pkt_info *pkt_info,
+                        struct sk_buff *skb);
+    void (*config_bfee)(struct rtw_dev *rtwdev, bool enable);
+    void (*adaptivity)(struct rtw_dev *rtwdev);
+    void (*cck_pd)(struct rtw_dev *rtwdev);
+    void (*pwr_track)(struct rtw_dev *rtwdev);
+};
+
+/* Bus-specific operations */
+struct rtw_bus_ops {
+    int  (*probe)(struct rtw_dev *rtwdev);
+    void (*remove)(struct rtw_dev *rtwdev);
+    int  (*start)(struct rtw_dev *rtwdev);
+    void (*stop)(struct rtw_dev *rtwdev);
+    int  (*tx)(struct rtw_dev *rtwdev, struct sk_buff *skb, int queue);
+    void (*enable_interrupt)(struct rtw_dev *rtwdev);
+    void (*disable_interrupt)(struct rtw_dev *rtwdev);
+    uint8_t  (*read8)(struct rtw_dev *rtwdev, uint32_t addr);
+    uint16_t (*read16)(struct rtw_dev *rtwdev, uint32_t addr);
+    uint32_t (*read32)(struct rtw_dev *rtwdev, uint32_t addr);
+    void (*write8)(struct rtw_dev *rtwdev, uint32_t addr, uint8_t val);
+    void (*write16)(struct rtw_dev *rtwdev, uint32_t addr, uint16_t val);
+    void (*write32)(struct rtw_dev *rtwdev, uint32_t addr, uint32_t val);
+};
+
+/* Chip information (constante por modelo) */
+struct rtw_chip_info {
+    const char                *name;
+    uint32_t                   chip_id;
+    uint16_t                   pci_device_id;
+    uint8_t                    tx_desc_size;
+    uint8_t                    rx_desc_size;
+    uint32_t                   fw_fifo_addr;
+    const char                *fw_name;
+    const struct rtw_chip_ops *ops;
+    uint8_t                    tx_pwr_tbl_size;
+    uint8_t                    num_rf_paths;
+    uint8_t                    rf_type;          /* 0x22 = 2T2R */
+    bool                       ht_supported;
+    bool                       vht_supported;
+    uint16_t                   max_tx_cnt;
+    uint8_t                    band_cap;         /* 2G, 5G, or both */
+    uint8_t                    bw_cap;           /* 20, 40, 80, 160 */
+    uint8_t                    sec_cam_entry_num; /* 64 */
+
+    /* Coex */
+    bool                       share_ant;
+    uint8_t                    bt_desired_ver;
+
+    /* Power tables */
+    const struct rtw_pwr_seq  *pwr_on_seq;
+    const struct rtw_pwr_seq  *pwr_off_seq;
+
+    /* Init tables */
+    const struct rtw_table     *mac_tbl;
+    const struct rtw_table     *agc_tbl;
+    const struct rtw_table     *bb_tbl;
+    const struct rtw_table     *rf_tbl_a;
+    const struct rtw_table     *rf_tbl_b;
+};
+
+/* Main device structure */
+struct rtw_dev {
+    struct ieee80211_hw      *hw;
+    struct device            *dev;
+    const struct rtw_chip_info *chip;
+    const struct rtw_bus_ops *bus_ops;
+
+    /* MMIO mapping */
+    void __iomem             *mmio_base;
+    uint32_t                  mmio_len;
+
+    /* PCIe specific */
+    struct pci_dev           *pdev;
+    struct rtw_tx_ring        tx_ring[8];    /* One per queue */
+    struct rtw_rx_ring        rx_ring;
+    int                       irq;
+
+    /* Firmware */
+    const uint8_t            *fw_data;
+    uint32_t                  fw_size;
+    uint8_t                   h2c_box_num;
+
+    /* Estado */
+    uint8_t                   current_channel;
+    uint8_t                   current_band;
+    uint8_t                   current_bw;
+    uint8_t                   power_state;
+    uint8_t                   rpwm_seq;
+
+    /* EFUSE data */
+    uint8_t                   efuse_map[512];
+    uint8_t                   mac_addr[6];
+
+    /* Calibración */
+    struct rtw_thermal_info   thermal;
+
+    /* Coex */
+    struct rtw_coex_info     coex;
+
+    /* Locks */
+    spinlock_t                lock;
+    struct mutex              mutex;
+    struct mutex              rf_lock;
+
+    /* mac80211 */
+    struct ieee80211_vif     *vif;
+    struct ieee80211_sta     *sta;
+
+    /* Workqueues */
+    struct work_struct        fw_work;
+    struct delayed_work       thermal_work;
+    struct delayed_work       watch_dog_work;
+};
+```
+
+### 14.3 Chip Info para RTL8822CE
+
+```c
+static const struct rtw_chip_ops rtw8822c_ops = {
+    .mac_init       = rtw8822c_mac_init,
+    .bb_init        = rtw8822c_bb_init,
+    .rf_init        = rtw8822c_rf_init,
+    .set_channel    = rtw8822ce_set_channel,
+    .set_tx_power   = rtw8822c_set_tx_power,
+    .iqk            = rtw8822ce_iqk,
+    .read_efuse     = rtw8822c_read_efuse,
+    .phy_set_param  = rtw8822c_phy_set_param,
+    .coex_set_init  = rtw8822c_coex_init,
+    .parse_phystatus = rtw8822c_parse_phystatus,
+    .fill_txdesc    = rtw8822c_fill_txdesc,
+    .config_bfee    = rtw8822c_config_bfee,
+    .adaptivity     = rtw8822c_adaptivity,
+    .cck_pd         = rtw8822c_cck_pd,
+    .pwr_track      = rtw8822c_pwr_track,
+};
+
+const struct rtw_chip_info rtw8822c_chip_info = {
+    .name              = "RTL8822CE",
+    .chip_id           = 0x8822C,
+    .pci_device_id     = 0xC822,
+    .tx_desc_size      = 40,
+    .rx_desc_size      = 24,
+    .fw_fifo_addr      = 0x0180,
+    .fw_name           = "rtw88/rtw8822c_fw.bin",
+    .ops               = &rtw8822c_ops,
+    .num_rf_paths      = 2,
+    .rf_type           = 0x22,         /* 2T2R */
+    .ht_supported      = true,
+    .vht_supported     = true,
+    .max_tx_cnt        = 1,
+    .band_cap          = 0x03,         /* 2G + 5G */
+    .bw_cap            = 0x07,         /* 20 + 40 + 80 MHz */
+    .sec_cam_entry_num = 64,
+    .share_ant         = false,
+    .bt_desired_ver    = 0x22,
+};
+```
+
+---
+
+## 15. IMPLEMENTACIÓN PRÁCTICA COMPLETA EN C
+
+### 15.1 Módulo Principal del Driver (Linux)
+
+```c
+/*
+ * rtw8822ce_driver.c — RTL8822CE PCIe WiFi Driver
+ *
+ * Basado en la arquitectura rtw88 del kernel Linux
+ */
+
+#include <linux/module.h>
+#include <linux/pci.h>
+#include <linux/firmware.h>
+#include <linux/interrupt.h>
+#include <linux/dma-mapping.h>
+#include <net/mac80211.h>
+
+/* ═══════════════════════════════════════════════════ */
+/*                     CONSTANTES                      */
+/* ═══════════════════════════════════════════════════ */
+
+#define DRV_NAME           "rtw8822ce"
+#define DRV_VERSION        "1.0.0"
+#define FW_FILE            "rtw88/rtw8822c_fw.bin"
+
+#define PCI_VENDOR_REALTEK   0x10EC
+#define PCI_DEVICE_8822CE    0xC822
+#define PCI_DEVICE_8822CE_2  0xC82F
+
+#define MMIO_SIZE            0x10000   /* 64KB */
+#define TX_RING_SIZE         256
+#define RX_RING_SIZE         512
+#define RX_BUF_SIZE          16384
+
+/* ═══════════════════════════════════════════════════ */
+/*                   PCI ID TABLE                      */
+/* ═══════════════════════════════════════════════════ */
+
+static const struct pci_device_id rtw8822ce_id_table[] = {
+    { PCI_DEVICE(PCI_VENDOR_REALTEK, PCI_DEVICE_8822CE) },
+    { PCI_DEVICE(PCI_VENDOR_REALTEK, PCI_DEVICE_8822CE_2) },
+    { /* sentinel */ }
+};
+MODULE_DEVICE_TABLE(pci, rtw8822ce_id_table);
+
+/* ═══════════════════════════════════════════════════ */
+/*                 INTERRUPT HANDLER                   */
+/* ═══════════════════════════════════════════════════ */
+
+static irqreturn_t rtw8822ce_isr(int irq, void *dev_id)
+{
+    struct rtw_dev *rtwdev = dev_id;
+    uint32_t isr0, isr1;
+
+    /* Leer estado de interrupciones */
+    isr0 = rtw_read32(rtwdev, 0x0304);  /* REG_HISR0 */
+    isr1 = rtw_read32(rtwdev, 0x030C);  /* REG_HISR1 */
+
+    if (isr0 == 0 && isr1 == 0)
+        return IRQ_NONE;  /* No es nuestra interrupción */
+
+    /* Deshabilitar interrupciones mientras procesamos */
+    rtw_write32(rtwdev, 0x0300, 0x00000000);  /* REG_HIMR0 */
+    rtw_write32(rtwdev, 0x0308, 0x00000000);  /* REG_HIMR1 */
+
+    /* Limpiar flags de interrupción (write-1-to-clear) */
+    rtw_write32(rtwdev, 0x0304, isr0);
+    rtw_write32(rtwdev, 0x030C, isr1);
+
+    /* ---- Procesar interrupciones ---- */
+
+    /* RX OK */
+    if (isr0 & BIT(0)) {
+        rtw_pci_rx_handler(rtwdev);
+    }
+
+    /* RX Descriptor Unavailable */
+    if (isr0 & BIT(1)) {
+        pr_warn("RTL8822CE: RX descriptor unavailable\n");
+        /* Reinicializar RX ring si es necesario */
+    }
+
+    /* TX Done por queue */
+    if (isr0 & BIT(2))  /* VO Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_VO);
+    if (isr0 & BIT(3))  /* VI Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_VI);
+    if (isr0 & BIT(4))  /* BE Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_BE);
+    if (isr0 & BIT(5))  /* BK Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_BK);
+    if (isr0 & BIT(6))  /* MGT Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_MGT);
+    if (isr0 & BIT(7))  /* HIGH Done */
+        rtw_pci_tx_done(rtwdev, RTW_TX_QUEUE_HI);
+
+    /* Beacon */
+    if (isr0 & BIT(13))  /* BCN Interrupt */
+        rtw_pci_bcn_handler(rtwdev);
+    if (isr0 & BIT(25))  /* TX Beacon OK */
+        pr_debug("Beacon TX OK\n");
+
+    /* C2H (Firmware event) */
+    if (isr0 & BIT(11)) {
+        /* C2H se recibe como paquete en RX ring
+         * ya fue procesado en rtw_pci_rx_handler */
+    }
+
+    /* FIFO overflow */
+    if (isr1 & BIT(8))
+        pr_warn("RTL8822CE: RX FIFO overflow\n");
+    if (isr1 & BIT(9))
+        pr_warn("RTL8822CE: TX FIFO overflow\n");
+
+    /* Re-habilitar interrupciones */
+    rtw_write32(rtwdev, 0x0300, rtwdev->imr0);  /* REG_HIMR0 */
+    rtw_write32(rtwdev, 0x0308, rtwdev->imr1);  /* REG_HIMR1 */
+
+    return IRQ_HANDLED;
+}
+
+/* TX Done handler — liberar recursos */
+void rtw_pci_tx_done(struct rtw_dev *rtwdev, int queue_id)
+{
+    struct rtw_tx_ring *ring = &rtwdev->tx_ring[queue_id];
+
+    /* Leer HW read pointer desde registro */
+    uint32_t idx_reg;
+    switch (queue_id) {
+    case RTW_TX_QUEUE_VO:  idx_reg = 0x03B8; break;
+    case RTW_TX_QUEUE_VI:  idx_reg = 0x03BC; break;
+    case RTW_TX_QUEUE_BE:  idx_reg = 0x03C0; break;
+    case RTW_TX_QUEUE_BK:  idx_reg = 0x03C4; break;
+    case RTW_TX_QUEUE_MGT: idx_reg = 0x03C8; break;
+    case RTW_TX_QUEUE_HI:  idx_reg = 0x03D0; break;
+    default: return;
+    }
+
+    uint32_t hw_idx = rtw_read32(rtwdev, idx_reg) >> 16;  /* HW idx in upper 16 */
+
+    /* Liberar SKBs entre rd_idx y hw_idx */
+    while (ring->rd_idx != hw_idx) {
+        struct sk_buff *skb = ring->skbs[ring->rd_idx];
+        if (skb) {
+            /* Unmap DMA */
+            dma_unmap_single(rtwdev->dev,
+                             ring->bd[ring->rd_idx].phy_addr_low,
+                             skb->len, DMA_TO_DEVICE);
+            /* Reportar a mac80211 */
+            ieee80211_tx_status_irqsafe(rtwdev->hw, skb);
+            ring->skbs[ring->rd_idx] = NULL;
+        }
+        ring->rd_idx = (ring->rd_idx + 1) % ring->bd_count;
+    }
+}
+
+/* ═══════════════════════════════════════════════════ */
+/*              mac80211 OPERATIONS                    */
+/* ═══════════════════════════════════════════════════ */
+
+static void rtw8822ce_mac80211_tx(struct ieee80211_hw *hw,
+                                   struct ieee80211_tx_control *control,
+                                   struct sk_buff *skb)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+    struct ieee80211_tx_info *tx_info = IEEE80211_SKB_CB(skb);
+    struct ieee80211_hdr *hdr = (struct ieee80211_hdr *)skb->data;
+    int queue_id;
+
+    /* Determinar queue */
+    if (ieee80211_is_mgmt(hdr->frame_control))
+        queue_id = RTW_TX_QUEUE_MGT;
+    else
+        queue_id = rtw_tid_to_queue[skb->priority & 0x7];
+
+    /* Preparar TX descriptor */
+    /* (Prepend TX desc de 40 bytes antes del frame) */
+    uint8_t *txdesc = skb_push(skb, 40);
+    memset(txdesc, 0, 40);
+
+    /* Llenar TX descriptor */
+    uint32_t *dw = (uint32_t *)txdesc;
+
+    /* DWORD0: PKT_SIZE, OFFSET, QUEUE_SEL */
+    uint16_t pkt_size = skb->len - 40;  /* Sin contar descriptor */
+    dw[0]  = (pkt_size & 0xFFFF) << 16;
+    dw[0] |= (10 & 0x1F) << 14;        /* OFFSET = 40/4 = 10 */
+    dw[0] |= (queue_id & 0x1F) << 5;
+
+    /* DWORD1: RATE, AGG, SEC */
+    if (ieee80211_is_data(hdr->frame_control)) {
+        dw[1] |= BIT(7);   /* AGG_EN */
+        dw[1] |= RTW_RATE_MCS7;  /* Default rate (será overridden por RA) */
+    } else {
+        dw[1] |= RTW_RATE_OFDM6; /* Management: OFDM 6M */
+        dw[1] |= BIT(0);          /* USE_RATE (fixed rate) */
+    }
+
+    /* DWORD2: RTS/CTS, retry */
+    dw[2] |= (6 & 0x3F) << 24;   /* RETRY_LMT = 6 */
+    dw[2] |= BIT(23);              /* RETRY_LMT_EN */
+
+    /* Enviar al hardware */
+    int ret = rtw_pci_tx(rtwdev, skb, queue_id);
+    if (ret) {
+        ieee80211_free_txskb(hw, skb);
+    }
+}
+
+static int rtw8822ce_mac80211_start(struct ieee80211_hw *hw)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+    int ret;
+
+    mutex_lock(&rtwdev->mutex);
+
+    /* Power on */
+    ret = rtw8822ce_power_on(rtwdev);
+    if (ret)
+        goto out;
+
+    /* Descargar firmware */
+    ret = rtw8822ce_download_firmware(rtwdev, rtwdev->fw_data, rtwdev->fw_size);
+    if (ret)
+        goto out;
+
+    /* Inicializar MAC */
+    rtwdev->chip->ops->mac_init(rtwdev);
+
+    /* Inicializar BB */
+    rtwdev->chip->ops->bb_init(rtwdev);
+
+    /* Inicializar RF */
+    rtwdev->chip->ops->rf_init(rtwdev);
+
+    /* Configurar canal inicial (canal 1, 20 MHz) */
+    rtwdev->chip->ops->set_channel(rtwdev, 1, 0);
+
+    /* IQK inicial */
+    rtwdev->chip->ops->iqk(rtwdev);
+
+    /* Configurar coexistencia BT */
+    rtwdev->chip->ops->coex_set_init(rtwdev);
+
+    /* Habilitar interrupciones */
+    rtwdev->imr0 = BIT(0)  |  /* RX OK */
+                   BIT(1)  |  /* RDU */
+                   BIT(2)  |  /* VO Done */
+                   BIT(3)  |  /* VI Done */
+                   BIT(4)  |  /* BE Done */
+                   BIT(5)  |  /* BK Done */
+                   BIT(6)  |  /* MGT Done */
+                   BIT(7)  |  /* HIGH Done */
+                   BIT(11) |  /* C2H */
+                   BIT(13) |  /* BCN Int */
+                   BIT(25);   /* TX BCN OK */
+
+    rtwdev->imr1 = BIT(8) | BIT(9);  /* FIFO overflow */
+
+    rtw_write32(rtwdev, 0x0300, rtwdev->imr0);
+    rtw_write32(rtwdev, 0x0308, rtwdev->imr1);
+
+    /* Iniciar work de watchdog */
+    schedule_delayed_work(&rtwdev->watch_dog_work, msecs_to_jiffies(2000));
+
+    ret = 0;
+
+out:
+    mutex_unlock(&rtwdev->mutex);
+    return ret;
+}
+
+static void rtw8822ce_mac80211_stop(struct ieee80211_hw *hw)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+
+    mutex_lock(&rtwdev->mutex);
+
+    cancel_delayed_work_sync(&rtwdev->watch_dog_work);
+    cancel_delayed_work_sync(&rtwdev->thermal_work);
+
+    /* Deshabilitar interrupciones */
+    rtw_write32(rtwdev, 0x0300, 0x00000000);
+    rtw_write32(rtwdev, 0x0308, 0x00000000);
+
+    /* Power off */
+    rtw8822ce_power_off(rtwdev);
+
+    mutex_unlock(&rtwdev->mutex);
+}
+
+static int rtw8822ce_mac80211_add_interface(struct ieee80211_hw *hw,
+                                             struct ieee80211_vif *vif)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+
+    mutex_lock(&rtwdev->mutex);
+
+    rtwdev->vif = vif;
+
+    /* Configurar MAC address del hardware */
+    rtw_write32(rtwdev, 0x0460,
+                get_unaligned_le32(&vif->addr[0]));   /* REG_MACID Low */
+    rtw_write16(rtwdev, 0x0464,
+                get_unaligned_le16(&vif->addr[4]));   /* REG_MACID High */
+
+    /* Configurar RCR según tipo de interfaz */
+    uint32_t rcr = rtw_read32(rtwdev, 0x0600);        /* REG_RCR */
+
+    switch (vif->type) {
+    case NL80211_IFTYPE_STATION:
+        rcr |= BIT(1) | BIT(2) | BIT(3);  /* APM | AM | AB */
+        rcr |= BIT(6) | BIT(7);            /* CBSSID_DATA | CBSSID_BCN */
+        break;
+    case NL80211_IFTYPE_AP:
+        rcr |= BIT(1) | BIT(2) | BIT(3);
+        rcr &= ~(BIT(6) | BIT(7));
+        break;
+    case NL80211_IFTYPE_MONITOR:
+        rcr |= BIT(0);  /* AAP - Accept All Packets */
+        rcr |= BIT(8);  /* Accept CRC errors */
+        break;
+    default:
+        break;
+    }
+
+    rtw_write32(rtwdev, 0x0600, rcr);
+
+    mutex_unlock(&rtwdev->mutex);
+    return 0;
+}
+
+static void rtw8822ce_mac80211_remove_interface(struct ieee80211_hw *hw,
+                                                 struct ieee80211_vif *vif)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+
+    mutex_lock(&rtwdev->mutex);
+    rtwdev->vif = NULL;
+    mutex_unlock(&rtwdev->mutex);
+}
+
+static int rtw8822ce_mac80211_config(struct ieee80211_hw *hw, u32 changed)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+    struct ieee80211_conf *conf = &hw->conf;
+
+    mutex_lock(&rtwdev->mutex);
+
+    if (changed & IEEE80211_CONF_CHANGE_CHANNEL) {
+        uint8_t ch = conf->chandef.chan->hw_value;
+        uint8_t bw = 0;  /* Default 20 MHz */
+
+        switch (conf->chandef.width) {
+        case NL80211_CHAN_WIDTH_20:
+        case NL80211_CHAN_WIDTH_20_NOHT:
+            bw = 0;
+            break;
+        case NL80211_CHAN_WIDTH_40:
+            bw = 1;
+            break;
+        case NL80211_CHAN_WIDTH_80:
+            bw = 2;
+            break;
+        default:
+            bw = 0;
+            break;
+        }
+
+        rtwdev->chip->ops->set_channel(rtwdev, ch, bw);
+        rtwdev->chip->ops->set_tx_power(rtwdev, ch);
+    }
+
+    if (changed & IEEE80211_CONF_CHANGE_PS) {
+        if (conf->flags & IEEE80211_CONF_PS)
+            rtw_pci_enter_lps(rtwdev, PS_MODE_DTIM);
+        else
+            rtw_pci_leave_lps(rtwdev);
+    }
+
+    mutex_unlock(&rtwdev->mutex);
+    return 0;
+}
+
+static void rtw8822ce_mac80211_bss_info_changed(struct ieee80211_hw *hw,
+                                                  struct ieee80211_vif *vif,
+                                                  struct ieee80211_bss_conf *bss,
+                                                  u64 changed)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+
+    mutex_lock(&rtwdev->mutex);
+
+    if (changed & BSS_CHANGED_ASSOC) {
+        if (vif->cfg.assoc) {
+            /* Asociado: configurar BSSID */
+            rtw_write32(rtwdev, 0x0468,
+                        get_unaligned_le32(&bss->bssid[0]));
+            rtw_write16(rtwdev, 0x046C,
+                        get_unaligned_le16(&bss->bssid[4]));
+
+            /* Habilitar TSF update */
+            uint8_t bcn_ctrl = rtw_read8(rtwdev, 0x055A);
+            bcn_ctrl &= ~BIT(4);  /* Enable TSF update */
+            rtw_write8(rtwdev, 0x055A, bcn_ctrl);
+
+            /* Configurar Aid */
+            /* Notificar firmware: media status report */
+            uint8_t h2c[8] = {0};
+            h2c[0] = 0x01;  /* H2C_CMD_MEDIA_STATUS_RPT */
+            h2c[1] = 0x01;  /* Connected */
+            h2c[2] = 0x00;  /* MACID 0 */
+            rtw_fw_send_h2c_command(rtwdev, h2c);
+
+        } else {
+            /* Desasociado */
+            uint8_t h2c[8] = {0};
+            h2c[0] = 0x01;
+            h2c[1] = 0x00;  /* Disconnected */
+            rtw_fw_send_h2c_command(rtwdev, h2c);
+        }
+    }
+
+    if (changed & BSS_CHANGED_BEACON_INT) {
+        rtw_write16(rtwdev, 0x0564, bss->beacon_int);
+    }
+
+    if (changed & BSS_CHANGED_ERP_SLOT) {
+        /* Short slot: 9μs, Long slot: 20μs */
+        rtw_write8(rtwdev, 0x0520, bss->use_short_slot ? 9 : 20);
+    }
+
+    if (changed & BSS_CHANGED_ERP_PREAMBLE) {
+        /* Short/Long preamble setting */
+        uint32_t rrsr = rtw_read32(rtwdev, 0x0228);
+        if (bss->use_short_preamble)
+            rrsr |= BIT(23);
+        else
+            rrsr &= ~BIT(23);
+        rtw_write32(rtwdev, 0x0228, rrsr);
+    }
+
+    mutex_unlock(&rtwdev->mutex);
+}
+
+static void rtw8822ce_mac80211_configure_filter(struct ieee80211_hw *hw,
+                                                  unsigned int changed_flags,
+                                                  unsigned int *total_flags,
+                                                  u64 multicast)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+    uint32_t rcr;
+
+    *total_flags &= (FIF_ALLMULTI | FIF_OTHER_BSS | FIF_FCSFAIL |
+                     FIF_BCN_PRBRESP_PROMISC | FIF_PROBE_REQ);
+
+    mutex_lock(&rtwdev->mutex);
+
+    rcr = rtw_read32(rtwdev, 0x0600);  /* REG_RCR */
+
+    if (*total_flags & FIF_ALLMULTI)
+        rcr |= BIT(2);   /* Accept Multicast */
+    else
+        rcr &= ~BIT(2);
+
+    if (*total_flags & FIF_FCSFAIL)
+        rcr |= BIT(8);   /* Accept CRC32 Error */
+    else
+        rcr &= ~BIT(8);
+
+    if (*total_flags & FIF_OTHER_BSS) {
+        rcr &= ~BIT(6);  /* Don't check BSSID (data) */
+        rcr &= ~BIT(7);  /* Don't check BSSID (beacon) */
+    } else {
+        rcr |= BIT(6) | BIT(7);
+    }
+
+    rtw_write32(rtwdev, 0x0600, rcr);
+
+    /* Configurar multicast filter */
+    if (*total_flags & FIF_ALLMULTI) {
+        rtw_write32(rtwdev, 0x0620, 0xFFFFFFFF);  /* MAR Low */
+        rtw_write32(rtwdev, 0x0624, 0xFFFFFFFF);  /* MAR High */
+    } else {
+        rtw_write32(rtwdev, 0x0620, (uint32_t)(multicast & 0xFFFFFFFF));
+        rtw_write32(rtwdev, 0x0624, (uint32_t)(multicast >> 32));
+    }
+
+    mutex_unlock(&rtwdev->mutex);
+}
+
+static int rtw8822ce_mac80211_set_key(struct ieee80211_hw *hw,
+                                       enum set_key_cmd cmd,
+                                       struct ieee80211_vif *vif,
+                                       struct ieee80211_sta *sta,
+                                       struct ieee80211_key_conf *key)
+{
+    struct rtw_dev *rtwdev = hw->priv;
+    int ret = 0;
+
+    mutex_lock(&rtwdev->mutex);
+
+    switch (cmd) {
+    case SET_KEY:
+        ret = rtw_sec_add_key(rtwdev, vif, sta, key);
+        break;
+    case DISABLE_KEY:
+        ret = rtw_sec_remove_key(rtwdev, vif, sta, key);
+        break;
+    default:
+        ret = -EOPNOTSUPP;
+        break;
+    }
+
+    mutex_unlock(&rtwdev->mutex);
+    return ret;
+}
+
+/* Security CAM operations */
+int rtw_sec_add_key(struct rtw_dev *rtwdev, struct ieee80211_vif *vif,
+                     struct ieee80211_sta *sta,
+                     struct ieee80211_key_conf *key)
+{
+    uint32_t cam_val[2];
+    uint8_t cam_idx;
+    uint8_t sec_type;
+
+    /* Determinar tipo de seguridad */
+    switch (key->cipher) {
+    case WLAN_CIPHER_SUITE_WEP40:
+        sec_type = 1;
+        break;
+    case WLAN_CIPHER_SUITE_WEP104:
+        sec_type = 5;
+        break;
+    case WLAN_CIPHER_SUITE_TKIP:
+        sec_type = 2;
+        break;
+    case WLAN_CIPHER_SUITE_CCMP:
+        sec_type = 4;
+        break;
+    default:
+        return -EOPNOTSUPP;
+    }
+
+    cam_idx = key->keyidx;
+
+    /* Escribir key en Security CAM */
+    /* Cada entrada CAM tiene 8 DWORDs (32 bytes) */
+    /* DWORD0: [15:0] = key info, [31:16] = MAC addr[15:0] */
+    /* DWORD1: [31:0] = MAC addr[47:16] */
+    /* DWORD2-7: Key material (hasta 256 bits) */
+
+    /* Primero escribir key material */
+    for (int i = 0; i < DIV_ROUND_UP(key->keylen, 4); i++) {
+        uint32_t kval = 0;
+        memcpy(&kval, key->key + i * 4, min(4U, key->keylen - i * 4));
+
+        /* CAM Write: address = cam_idx * 8 + 2 + i */
+        rtw_write32(rtwdev, 0x0684, kval);             /* REG_CAMWRITE */
+
+        uint32_t cmd = BIT(31) | BIT(16);               /* Polling | Write */
+        cmd |= ((cam_idx * 8 + 2 + i) & 0xFF);          /* CAM address */
+        rtw_write32(rtwdev, 0x0680, cmd);                /* REG_CAMCMD */
+
+        /* Wait for complete */
+        rtw_poll_reg(rtwdev, 0x0680, BIT(31), 0, 1000);
+    }
+
+    /* Escribir entry header (DWORD0) */
+    cam_val[0]  = BIT(15);                              /* Valid */
+    cam_val[0] |= (sec_type & 0x07) << 2;              /* Encryption type */
+    cam_val[0] |= (key->keyidx & 0x03);                /* Key index */
+
+    if (sta) {
+        cam_val[0] |= ((uint32_t)sta->addr[0] << 16) |
+                       ((uint32_t)sta->addr[1] << 24);
+        cam_val[1]  = ((uint32_t)sta->addr[2])       |
+                       ((uint32_t)sta->addr[3] << 8)  |
+                       ((uint32_t)sta->addr[4] << 16) |
+                       ((uint32_t)sta->addr[5] << 24);
+    } else {
+        cam_val[0] |= 0xFFFF0000;
+        cam_val[1]  = 0xFFFFFFFF;
+    }
+
+    /* Write DWORD1 */
+    rtw_write32(rtwdev, 0x0684, cam_val[1]);
+    rtw_write32(rtwdev, 0x0680, BIT(31) | BIT(16) | (cam_idx * 8 + 1));
+    rtw_poll_reg(rtwdev, 0x0680, BIT(31), 0, 1000);
+
+    /* Write DWORD0 */
+    rtw_write32(rtwdev, 0x0684, cam_val[0]);
+    rtw_write32(rtwdev, 0x0680, BIT(31) | BIT(16) | (cam_idx * 8 + 0));
+    rtw_poll_reg(rtwdev, 0x0680, BIT(31), 0, 1000);
+
+    /* Enable security engine */
+    uint8_t sec_cfg = rtw_read8(rtwdev, 0x0690);       /* REG_SECCFG */
+    sec_cfg |= BIT(0) | BIT(1) | BIT(2) | BIT(3);      /* TX/RX dec/enc */
+    rtw_write8(rtwdev, 0x0690, sec_cfg);
+
+    key->hw_key_idx = cam_idx;
+    key->flags |= IEEE80211_KEY_FLAG_GENERATE_IV;
+
+    return 0;
+}
+
+/* mac80211 ops table */
+static const struct ieee80211_ops rtw8822ce_mac80211_ops = {
+    .tx                  = rtw8822ce_mac80211_tx,
+    .start               = rtw8822ce_mac80211_start,
+    .stop                = rtw8822ce_mac80211_stop,
+    .add_interface       = rtw8822ce_mac80211_add_interface,
+    .remove_interface    = rtw8822ce_mac80211_remove_interface,
+    .config              = rtw8822ce_mac80211_config,
+    .bss_info_changed    = rtw8822ce_mac80211_bss_info_changed,
+    .configure_filter    = rtw8822ce_mac80211_configure_filter,
+    .set_key             = rtw8822ce_mac80211_set_key,
+    .wake_tx_queue       = ieee80211_handle_wake_tx_queue,
+};
+
+/* ═══════════════════════════════════════════════════ */
+/*                  WATCHDOG WORK                      */
+/* ═══════════════════════════════════════════════════ */
+
+static void rtw8822ce_watchdog_work(struct work_struct *work)
+{
+    struct rtw_dev *rtwdev = container_of(work, struct rtw_dev,
+                                           watch_dog_work.work);
+
+    mutex_lock(&rtwdev->mutex);
+
+    /* Compensación térmica periódica */
+    rtw_thermal_compensation(rtwdev);
+
+    /* Estadísticas de tráfico */
+    /* ... */
+
+    /* Ajuste de coexistencia BT */
+    /* ... */
+
+    /* Re-schedule */
+    schedule_delayed_work(&rtwdev->watch_dog_work, msecs_to_jiffies(2000));
+
+    mutex_unlock(&rtwdev->mutex);
+}
+
+/* ═══════════════════════════════════════════════════ */
+/*                 PCI PROBE / REMOVE                  */
+/* ═══════════════════════════════════════════════════ */
+
+static int rtw8822ce_probe(struct pci_dev *pdev,
+                            const struct pci_device_id *id)
+{
+    struct ieee80211_hw *hw;
+    struct rtw_dev *rtwdev;
+    int ret;
+
+    /* ===== PASO 1: Allocar ieee80211_hw + private data ===== */
+    hw = ieee80211_alloc_hw(sizeof(*rtwdev), &rtw8822ce_mac80211_ops);
+    if (!hw)
+        return -ENOMEM;
+
+    rtwdev = hw->priv;
+    rtwdev->hw = hw;
+    rtwdev->pdev = pdev;
+    rtwdev->dev = &pdev->dev;
+    rtwdev->chip = &rtw8822c_chip_info;
+
+    pci_set_drvdata(pdev, hw);
+    SET_IEEE80211_DEV(hw, &pdev->dev);
+
+    mutex_init(&rtwdev->mutex);
+    mutex_init(&rtwdev->rf_lock);
+    spin_lock_init(&rtwdev->lock);
+
+    INIT_DELAYED_WORK(&rtwdev->watch_dog_work, rtw8822ce_watchdog_work);
+
+    /* ===== PASO 2: Habilitar PCI device ===== */
+    ret = pci_enable_device(pdev);
+    if (ret) {
+        pr_err("Failed to enable PCI device\n");
+        goto err_free_hw;
+    }
+
+    /* Habilitar bus mastering */
+    pci_set_master(pdev);
+
+    /* Configurar DMA mask (64-bit) */
+    ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+    if (ret) {
+        ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+        if (ret) {
+            pr_err("DMA not available\n");
+            goto err_disable_pci;
+        }
+    }
+
+    /* ===== PASO 3: Mapear BAR (MMIO) ===== */
+    ret = pci_request_regions(pdev, DRV_NAME);
+    if (ret)
+        goto err_disable_pci;
+
+    /* BAR1 = Memory-Mapped I/O (64-bit) */
+    rtwdev->mmio_base = pci_iomap(pdev, 1, MMIO_SIZE);
+    if (!rtwdev->mmio_base) {
+        /* Intentar BAR0 si BAR1 falla */
+        rtwdev->mmio_base = pci_iomap(pdev, 0, MMIO_SIZE);
+        if (!rtwdev->mmio_base).
+EXTRA: Sí, la documentación incluye **direcciones de memoria (offsets) exactas**, nombres de registros y las máscaras de bits (bitmasks) necesarias para el desarrollo a bajo nivel.
+
+Aquí tienes el detalle de lo que contiene y cómo se aplica a tu driver en Rust:
+
+### 1. Direcciones MMIO Exactas (Offsets)
+
+El documento especifica que el chip utiliza un espacio de memoria mapeada (MMIO) de **64 KB** a través del **BAR1** del bus PCIe. Dentro de ese espacio, los registros están organizados por bloques funcionales con sus direcciones hexadecimales precisas:
+
+* 
+**Bloque de Sistema (SYS):** Rango `0x0000–0x00FF`.
+
+
+* 
+*Ejemplo:* `REG_SYS_FUNC_EN` en `0x0000` para habilitar el reloj del sistema y el firmware.
+
+
+
+
+* 
+**Bloque de Transmisión (MAC TX):** Rango `0x0200–0x03FF`.
+
+
+* 
+*Ejemplo:* `REG_TXDMA_OFFSET_CHK` en `0x0200` para verificar el estado de los descriptores DMA de envío.
+
+
+
+
+* 
+**Bloque de Recepción (MAC RX):** Rango `0x0600–0x06FF`.
+
+
+* 
+*Ejemplo:* `REG_RCR` (Receive Configuration Register) en `0x0600`, que es el corazón de la configuración de red.
+
+
+
+
+
+### 2. Máscaras de Bits (Bitmasks)
+
+No solo tienes la dirección del registro, sino qué significa cada bit individual. Esto es vital en Rust para evitar el uso de "números mágicos". Por ejemplo, para configurar la recepción en el registro `0x0600` (`REG_RCR`), la documentación define:
+
+* **Bit 0 (`BIT(0)`):** `BIT_AAP` - Aceptar todos los paquetes (Modo promiscuo).
+* **Bit 1 (`BIT(1)`):** `BIT_APM` - Aceptar solo unicast dirigido a nuestra MAC.
+* **Bit 3 (`BIT(3)`):** `BIT_AB` - Aceptar paquetes de Broadcast.
+
+### 3. Ejemplo de aplicación en Rust (Bare-Metal)
+
+Con estos datos, puedes definir tus estructuras en Rust de forma segura. Por ejemplo:
+
+```rust
+[cite_start]// Datos extraídos directamente de la documentación [cite: 475, 478]
+const REG_SYS_FUNC_EN: u32 = 0x0000;
+const BIT_FEN_CPUEN: u16 = 1 << 10; // Bit 10: Enable CPU/Firmware
+
+// En bare-metal usarías acceso volátil
+unsafe {
+    let mmio_base = 0x4000_0000 as *mut u16; // Dirección base obtenida del BAR1 PCIe
+    let reg_ptr = mmio_base.add(REG_SYS_FUNC_EN as usize);
+    
+    // Leer, modificar y escribir (Read-Modify-Write)
+    let val = reg_ptr.read_volatile();
+    reg_ptr.write_volatile(val | BIT_FEN_CPUEN);
+}
+
+```
+
+### 4. Estructuras de Descriptores DMA
+
+La documentación también detalla cómo deben ser los descriptores que el hardware lee de la memoria RAM. Describe estructuras como `rtw_tx_bd` y los punteros a las colas de transmisión (TX Queues). Esto te permite usar `#[repr(C, packed)]` en Rust para asegurar que tu estructura en memoria coincida exactamente con lo que el chip Realtek espera encontrar mediante DMA.
+
+### Resumen de utilidad
+
+* 
+**Identificación:** Tienes los IDs de Vendor (`0x10EC`) y Device (`0xC822`) para encontrar la placa en el bus PCIe.
+
+
+* 
+**Inicialización:** Tienes la secuencia exacta para encender el radio y cargar el firmware.
+
+
+* 
+**Control de flujo:** Tienes los registros para gestionar las colas de prioridad (VO, VI, BE, BK) del estándar 802.11e.
+
+
+
+En definitiva, tienes el **"mapa del tesoro"** completo para no tener que adivinar ninguna dirección de memoria durante el desarrollo..
+. Esta documentación es **extremadamente útil (8.5/10)** para desarrollar un driver bare-metal, ya que contiene los detalles de hardware "privados" que Realtek raramente publica de forma abierta.
+
+Para un entorno **bare-metal en Rust**, la utilidad se desglosa de la siguiente manera:
+
+### 1. Lo que la hace valiosa (Los "SÍ")
+
+* **Mapa de Registros MMIO (Sección 5):** Es la pieza central. Proporciona las direcciones exactas (offsets) y los bitmasks para el control del sistema , la transmisión (TX) y la recepción (RX). En Rust, esto te permite definir tus estructuras de registros usando crates como `tock-registers` o simplemente punteros volátiles.
+
+
+* 
+**Gestión de DMA y Descriptores (Sección 8.3):** Describe la estructura física de los descriptores de 16 bytes (`rtw_tx_bd`) que el hardware lee directamente de la memoria. En bare-metal, esto es crítico porque tú mismo deberás gestionar la memoria física y asegurar que las direcciones DMA sean coherentes.
+
+
+* 
+**Secuencias de Inicialización (Secciones 6 y 15):** Incluye los pasos necesarios para el "Power-On" y la configuración del bus PCIe. Sin esto, el chip ni siquiera respondería a comandos básicos.
+
+
+* 
+**Configuración de Radio y Canales (Sección 13):** Proporciona las tablas de frecuencias y cómo configurar el sintetizador de RF, algo que normalmente es una "caja negra" en este tipo de chipsets.
+
+
+
+### 2. Los desafíos en Rust / Bare-Metal (Los "Peros")
+
+* 
+**Dependencia de C y Linux (Sección 15):** La mayoría de los ejemplos prácticos están escritos para el modelo `rtw88` del kernel de Linux. Utilizan tipos como `struct sk_buff` y funciones como `dma_alloc_coherent`. En Rust bare-metal, tendrás que implementar tu propio asignador de memoria y tus propios "buffers" de red desde cero.
+
+
+* 
+**Carga de Firmware (Sección 7):** El chip requiere la carga de un firmware binario para funcionar. En un entorno bare-metal, deberás incluir este binario en tu ejecutable (ej. con `include_bytes!`) y escribir la lógica para transferirlo al chip mediante comandos H2C (Host-to-Card).
+
+
+* **Falta de Stack 802.11:** El driver se encarga de hablar con el hardware, pero para que el Wi-Fi sea funcional, necesitas un **stack de protocolos** (gestión de beacons, asociación, encriptación WPA2/3). La documentación asume el uso de `mac80211` de Linux. Para bare-metal, podrías necesitar una librería como `smoltcp` o desarrollar la lógica de gestión de tramas manualmente.
+
+
+
+### Resumen de Calificación:
+
+* 
+**Información de Hardware:** 10/10 (Tienes los registros y el formato de DMA ).
+
+
+* **Portabilidad a Rust:** 7/10 (Requiere traducir mucha lógica de C y manejar abstracciones de memoria manuales).
+* 
+**Independencia de OS:** 6/10 (Los ejemplos están muy ligados a las APIs del Kernel de Linux ).
+
+
+
+**Recomendación:** Utiliza la sección 5 (Mapa de Registros) como tu "biblia" y la sección 8.3 para definir tus estructuras de datos en Rust con `#[repr(C, packed)]`. Tendrás que ignorar las funciones de Linux y sustituirlas por llamadas a `core::ptr::read_volatile` y `write_volatile`.
