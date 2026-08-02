@@ -1,0 +1,1713 @@
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /home/antonio/Documentos/MesaOS-mainn/MesaOS-main/mesa_kernel/Cargo.toml
+workspace: /home/antonio/Documentos/MesaOS-mainn/MesaOS-main/Cargo.toml
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+   Compiling mesa_kernel v0.1.0 (/home/antonio/Documentos/MesaOS-mainn/MesaOS-main/mesa_kernel)
+error: `<<` is interpreted as a start of generic arguments for `u32`, not a shift
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:577:47
+    |
+577 |                        | (xhci_ep_type as u32 << 3)
+    |                                               ^^ - interpreted as generic arguments
+    |                                               |
+    |                                               not interpreted as shift
+    |
+help: try shifting the cast value
+    |
+577 |                        | ((xhci_ep_type as u32) << 3)
+    |                           +                   +
+
+error: `<<` is interpreted as a start of generic arguments for `u32`, not a shift
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:578:53
+    |
+578 |                        | (ep.max_packet_size as u32 << 16);
+    |                                                     ^^ -- interpreted as generic arguments
+    |                                                     |
+    |                                                     not interpreted as shift
+    |
+help: try shifting the cast value
+    |
+578 |                        | ((ep.max_packet_size as u32) << 16);
+    |                           +                         +
+
+warning: type `EFI_STATUS` should have an upper camel case name
+  --> mesa_kernel/src/arch/x86_64/uefi_nvram.rs:17:12
+   |
+17 | pub struct EFI_STATUS(pub usize);
+   |            ^^^^^^^^^^ help: convert the identifier to upper camel case: `EfiStatus`
+   |
+   = note: `#[warn(non_camel_case_types)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+warning: unused imports: `cosf` and `sinf`
+ --> mesa_kernel/src/drivers/framebuffer/ui.rs:2:12
+  |
+2 | use libm::{cosf, sinf, sqrtf};
+  |            ^^^^  ^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `super::console::Color`
+ --> mesa_kernel/src/drivers/framebuffer/html.rs:1:5
+  |
+1 | use super::console::Color;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `crate::pci::PciDevice`
+ --> mesa_kernel/src/drivers/net/virtio_net.rs:2:5
+  |
+2 | use crate::pci::PciDevice;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `SECTOR_SIZE`
+ --> mesa_kernel/src/drivers/nvme.rs:1:42
+  |
+1 | use crate::drivers::block::{BlockDevice, SECTOR_SIZE};
+  |                                          ^^^^^^^^^^^
+
+warning: unused import: `crate::pci`
+ --> mesa_kernel/src/drivers/nvme.rs:3:5
+  |
+3 | use crate::pci;
+  |     ^^^^^^^^^^
+
+warning: unused import: `alloc::boxed::Box`
+ --> mesa_kernel/src/drivers/nvme.rs:4:5
+  |
+4 | use alloc::boxed::Box;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/drivers/nvme.rs:5:5
+  |
+5 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `MmioPtr`
+ --> mesa_kernel/src/drivers/usb/xhci_native.rs:1:34
+  |
+1 | use crate::memory::xhci_access::{MmioPtr, PmmXhciAdapter, XhciMapper, XhciMemory};
+  |                                  ^^^^^^^
+
+warning: unnecessary parentheses around assigned value
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:217:29
+    |
+217 |         let slot_dw1: u32 = ((port_idx as u32 + 1) << 16);
+    |                             ^                           ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+217 -         let slot_dw1: u32 = ((port_idx as u32 + 1) << 16);
+217 +         let slot_dw1: u32 = (port_idx as u32 + 1) << 16 ;
+    |
+
+warning: unused imports: `PmmXhciAdapter` and `XhciMemory`
+  --> mesa_kernel/src/memory/mod.rs:11:23
+   |
+11 | pub use xhci_access::{PmmXhciAdapter, XhciMemory};
+   |                       ^^^^^^^^^^^^^^  ^^^^^^^^^^
+
+warning: unused import: `virt_to_phys`
+  --> mesa_kernel/src/memory/mod.rs:18:29
+   |
+18 | pub use vmm::{phys_to_virt, virt_to_phys};
+   |                             ^^^^^^^^^^^^
+
+warning: type `completion` should have an upper camel case name
+ --> mesa_kernel/src/linux/completion.rs:4:12
+  |
+4 | pub struct completion {
+  |            ^^^^^^^^^^ help: convert the identifier to upper camel case (notice the capitalization): `Completion`
+
+warning: type `mutex` should have an upper camel case name
+ --> mesa_kernel/src/linux/mutex.rs:4:12
+  |
+4 | pub struct mutex {
+  |            ^^^^^ help: convert the identifier to upper camel case: `Mutex`
+
+warning: unused import: `AtomicU64`
+ --> mesa_kernel/src/linux/timer.rs:1:38
+  |
+1 | use core::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+  |                                      ^^^^^^^^^
+
+warning: type `timer_func_t` should have an upper camel case name
+ --> mesa_kernel/src/linux/timer.rs:3:10
+  |
+3 | pub type timer_func_t = unsafe extern "C" fn(*mut timer_list);
+  |          ^^^^^^^^^^^^ help: convert the identifier to upper camel case: `TimerFuncT`
+
+warning: unused imports: `AtomicBool` and `Ordering`
+ --> mesa_kernel/src/linux/wait.rs:1:26
+  |
+1 | use core::sync::atomic::{AtomicBool, Ordering};
+  |                          ^^^^^^^^^^  ^^^^^^^^
+
+warning: type `wait_queue_entry` should have an upper camel case name
+ --> mesa_kernel/src/linux/wait.rs:4:12
+  |
+4 | pub struct wait_queue_entry {
+  |            ^^^^^^^^^^^^^^^^ help: convert the identifier to upper camel case: `WaitQueueEntry`
+
+warning: type `wait_queue_head` should have an upper camel case name
+  --> mesa_kernel/src/linux/wait.rs:12:12
+   |
+12 | pub struct wait_queue_head {
+   |            ^^^^^^^^^^^^^^^ help: convert the identifier to upper camel case: `WaitQueueHead`
+
+warning: type `work_func_t` should have an upper camel case name
+ --> mesa_kernel/src/linux/workqueue.rs:3:10
+  |
+3 | pub type work_func_t = unsafe extern "C" fn(*mut work_struct);
+  |          ^^^^^^^^^^^ help: convert the identifier to upper camel case: `WorkFuncT`
+
+warning: unused import: `completion::*`
+  --> mesa_kernel/src/linux/mod.rs:12:9
+   |
+12 | pub use completion::*;
+   |         ^^^^^^^^^^^^^
+
+warning: unused import: `mutex::*`
+  --> mesa_kernel/src/linux/mod.rs:16:9
+   |
+16 | pub use mutex::*;
+   |         ^^^^^^^^
+
+warning: unused import: `spinlock::*`
+  --> mesa_kernel/src/linux/mod.rs:18:9
+   |
+18 | pub use spinlock::*;
+   |         ^^^^^^^^^^^
+
+warning: unused import: `timer::*`
+  --> mesa_kernel/src/linux/mod.rs:19:9
+   |
+19 | pub use timer::*;
+   |         ^^^^^^^^
+
+warning: unused import: `wait::*`
+  --> mesa_kernel/src/linux/mod.rs:20:9
+   |
+20 | pub use wait::*;
+   |         ^^^^^^^
+
+warning: unused import: `workqueue::*`
+  --> mesa_kernel/src/linux/mod.rs:21:9
+   |
+21 | pub use workqueue::*;
+   |         ^^^^^^^^^^^^
+
+warning: type `u8` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:39:10
+   |
+39 | pub type u8 = core::primitive::u8;
+   |          ^^ help: convert the identifier to upper camel case (notice the capitalization): `U8`
+
+warning: type `u16` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:40:10
+   |
+40 | pub type u16 = core::primitive::u16;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U16`
+
+warning: type `u32` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:41:10
+   |
+41 | pub type u32 = core::primitive::u32;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U32`
+
+warning: type `u64` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:42:10
+   |
+42 | pub type u64 = core::primitive::u64;
+   |          ^^^ help: convert the identifier to upper camel case (notice the capitalization): `U64`
+
+warning: type `pid_t` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:43:10
+   |
+43 | pub type pid_t = i32;
+   |          ^^^^^ help: convert the identifier to upper camel case: `PidT`
+
+warning: type `bool_t` should have an upper camel case name
+  --> mesa_kernel/src/linux/mod.rs:44:10
+   |
+44 | pub type bool_t = u32;
+   |          ^^^^^^ help: convert the identifier to upper camel case: `BoolT`
+
+warning: unused import: `alloc::format`
+  --> mesa_kernel/src/audio_player/mod.rs:33:5
+   |
+33 | use alloc::format;
+   |     ^^^^^^^^^^^^^
+
+warning: unused import: `SECTOR_SIZE`
+ --> mesa_kernel/src/fs/partition.rs:1:42
+  |
+1 | use crate::drivers::block::{BlockDevice, SECTOR_SIZE};
+  |                                          ^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/linux_compat/abi.rs:1:5
+  |
+1 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/linux_compat/procfs.rs:4:5
+  |
+4 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+ --> mesa_kernel/src/linux_compat/signal.rs:4:5
+  |
+4 | use alloc::string::String;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/linux_compat/signal.rs:5:5
+  |
+5 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused imports: `AtomicU64` and `Ordering`
+ --> mesa_kernel/src/linux_compat/signal.rs:6:26
+  |
+6 | use core::sync::atomic::{AtomicU64, Ordering};
+  |                          ^^^^^^^^^  ^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+ --> mesa_kernel/src/net/dns.rs:4:5
+  |
+4 | use alloc::string::String;
+  |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+  --> mesa_kernel/src/net/mod.rs:11:5
+   |
+11 | use alloc::vec::Vec;
+   |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `spin::Mutex`
+  --> mesa_kernel/src/net/mod.rs:12:5
+   |
+12 | use spin::Mutex;
+   |     ^^^^^^^^^^^
+
+warning: unused import: `alloc::vec::Vec`
+ --> mesa_kernel/src/pipe.rs:3:5
+  |
+3 | use alloc::vec::Vec;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::boxed::Box`
+  --> mesa_kernel/src/security/mod.rs:12:5
+   |
+12 | use alloc::boxed::Box;
+   |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `core::ffi::CStr`
+ --> mesa_kernel/src/shim/bridge.rs:1:5
+  |
+1 | use core::ffi::CStr;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused import: `self`
+ --> mesa_kernel/src/shim/loader.rs:4:21
+  |
+4 |     address_space::{self, flags, AddressSpace},
+  |                     ^^^^
+
+warning: unused import: `crate::printk`
+ --> mesa_kernel/src/shim/loader.rs:7:5
+  |
+7 | use crate::printk;
+  |     ^^^^^^^^^^^^^
+
+warning: unused import: `alloc::boxed::Box`
+ --> mesa_kernel/src/shim/loader.rs:8:5
+  |
+8 | use alloc::boxed::Box;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::boxed::Box`
+ --> mesa_kernel/src/shim/manager.rs:3:5
+  |
+3 | use alloc::boxed::Box;
+  |     ^^^^^^^^^^^^^^^^^
+
+warning: unused import: `alloc::format`
+ --> mesa_kernel/src/shim/symbols.rs:3:5
+  |
+3 | use alloc::format;
+  |     ^^^^^^^^^^^^^
+
+warning: unused import: `bridge::*`
+ --> mesa_kernel/src/shim/mod.rs:7:9
+  |
+7 | pub use bridge::*;
+  |         ^^^^^^^^^
+
+warning: unused import: `loader::*`
+ --> mesa_kernel/src/shim/mod.rs:8:9
+  |
+8 | pub use loader::*;
+  |         ^^^^^^^^^
+
+warning: unused import: `manager::*`
+ --> mesa_kernel/src/shim/mod.rs:9:9
+  |
+9 | pub use manager::*;
+  |         ^^^^^^^^^^
+
+warning: unused import: `scm::*`
+  --> mesa_kernel/src/shim/mod.rs:10:9
+   |
+10 | pub use scm::*;
+   |         ^^^^^^
+
+warning: unused import: `Ordering`
+  --> mesa_kernel/src/syscall/mod.rs:12:37
+   |
+12 | use core::sync::atomic::{AtomicU64, Ordering};
+   |                                     ^^^^^^^^
+
+warning: unused import: `alloc::string::String`
+    --> mesa_kernel/src/main.rs:1478:13
+     |
+1478 |         use alloc::string::String;
+     |             ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `XhciMemory`
+ --> mesa_kernel/src/drivers/usb/xhci_native.rs:1:71
+  |
+1 | use crate::memory::xhci_access::{MmioPtr, PmmXhciAdapter, XhciMapper, XhciMemory};
+  |                                                                       ^^^^^^^^^^
+
+warning: unnecessary `unsafe` block
+  --> mesa_kernel/src/arch/x86_64/mod.rs:22:5
+   |
+22 |     unsafe {
+   |     ^^^^^^ unnecessary `unsafe` block
+   |
+   = note: `#[warn(unused_unsafe)]` (part of `#[warn(unused)]`) on by default
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/arch/x86_64/mod.rs:118:5
+    |
+118 |     unsafe {
+    |     ^^^^^^ unnecessary `unsafe` block
+
+warning: variable `is_h1` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:32:9
+   |
+32 |     let mut is_h1 = false;
+   |         ^^^^^^^^^
+   |
+   = note: consider using `_is_h1` instead
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable `is_bold` is assigned to, but never used
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:33:9
+   |
+33 |     let mut is_bold = false;
+   |         ^^^^^^^^^^^
+   |
+   = note: consider using `_is_bold` instead
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:54:17
+   |
+50 |                 is_h1 = true;
+   |                 ------------ `is_h1` is overwritten here before the previous value is read
+...
+54 |                 is_h1 = false;
+   |                 ^^^^^^^^^^^^^ this value is reassigned later and never used
+   |
+   = note: `#[warn(unused_assignments)]` (part of `#[warn(unused)]`) on by default
+
+warning: value assigned to `is_h1` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:50:17
+   |
+50 |                 is_h1 = true;
+   |                 ^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:65:17
+   |
+62 |                 is_bold = true;
+   |                 -------------- `is_bold` is overwritten here before the previous value is read
+...
+65 |                 is_bold = false;
+   |                 ^^^^^^^^^^^^^^^ this value is reassigned later and never used
+
+warning: value assigned to `is_bold` is never read
+  --> mesa_kernel/src/drivers/framebuffer/html.rs:62:17
+   |
+62 |                 is_bold = true;
+   |                 ^^^^^^^^^^^^^^
+   |
+   = help: maybe it is overwritten before being read?
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+107 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+110 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+120 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+136 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+146 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+148 |                         if wait_write!() {
+    |                            ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+152 |                             if wait_write!() {
+    |                                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+168 |             if wait_write!() {
+    |                ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+175 |                 if wait_write!() {
+    |                    ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:68:24
+    |
+ 68 |                 while (unsafe { status_port.read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+177 |                     if wait_write!() {
+    |                        ------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:79:24
+    |
+ 79 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+122 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:79:24
+    |
+ 79 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+138 |                 if wait_read!() {
+    |                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:79:24
+    |
+ 79 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+154 |                                 if wait_read!() {
+    |                                    ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:79:24
+    |
+ 79 |                 while (unsafe { status_port.read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 87 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+179 |                         if wait_read!() {
+    |                            ------------ in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: value assigned to `final_ccb` is never read
+   --> mesa_kernel/src/drivers/keyboard/mod.rs:135:33
+    |
+135 |             let mut final_ccb = 0;
+    |                                 ^ this value is reassigned later and never used
+...
+155 |                                     final_ccb = data_port.read();
+    |                                     ---------------------------- `final_ccb` is overwritten here before the previous value is read
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+100 |             if wait_write!(sp) {
+    |                --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+106 |             if wait_write!(sp) {
+    |                --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+112 |                     if wait_write!(sp) {
+    |                        --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+114 |                         if wait_write!(sp) {
+    |                            --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+141 |             if wait_write!(sp) {
+    |                --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+143 |                 if wait_write!(sp) {
+    |                    --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+160 |             if wait_write!(sp) {
+    |                --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:49:24
+    |
+ 49 |                 while (unsafe { ($sp).read() } & 0x02) != 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+162 |                 if wait_write!(sp) {
+    |                    --------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_write` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:60:24
+    |
+ 60 |                 while (unsafe { ($sp).read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+108 |                 if wait_read!(sp) {
+    |                    -------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:60:24
+    |
+ 60 |                 while (unsafe { ($sp).read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+126 |                     if wait_read!(sp) {
+    |                        -------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/mouse/mod.rs:60:24
+    |
+ 60 |                 while (unsafe { ($sp).read() } & 0x01) == 0 && timeout > 0 {
+    |                        ^^^^^^ unnecessary `unsafe` block
+...
+ 68 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+130 |                     if wait_read!(sp) {
+    |                        -------------- in this macro invocation
+    |
+    = note: this warning originates in the macro `wait_read` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:340:21
+    |
+300 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+340 |                     unsafe { core::ptr::read_volatile((rx_virt_base + off) as *const u32) }
+    |                     ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:346:36
+    |
+300 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+346 |                         bytes[i] = unsafe {
+    |                                    ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/net/rtl8139.rs:395:27
+    |
+300 |         unsafe {
+    |         ------ because it's nested under this `unsafe` block
+...
+395 |                     .push(unsafe { core::ptr::read_volatile((rx_virt_base + b_off) as *const u8) });
+    |                           ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/touchpad/mod.rs:115:5
+    |
+115 |     unsafe {
+    |     ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `abort`
+   --> mesa_kernel/src/drivers/touchpad/mod.rs:206:21
+    |
+206 |                 let abort = mmio_readl(base, DW_IC_TX_ABRT_SOURCE);
+    |                     ^^^^^ help: if this is intentional, prefix it with an underscore: `_abort`
+
+warning: unused variable: `addr_trb`
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:250:9
+    |
+250 |     let addr_trb: [u32; 4] = [
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_addr_trb`
+
+warning: unused variable: `setup_trb`
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:319:9
+    |
+319 |     let setup_trb: [u32; 4] = [
+    |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_setup_trb`
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:699:5
+    |
+699 |     unsafe {
+    |     ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:766:5
+    |
+766 |     unsafe { while regs.operational.usbsts.read_volatile().hc_halted() { core::hint::spin_loop(); } }
+    |     ^^^^^^ unnecessary `unsafe` block
+
+warning: variable does not need to be mutable
+   --> mesa_kernel/src/drivers/usb/xhci_native.rs:868:9
+    |
+868 |     let mut regs = unsafe { Registers::new(bar0 as usize, mapper) };
+    |         ----^^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+   --> mesa_kernel/src/memory/address_space.rs:448:33
+    |
+448 | ...                   let mut pte = (src_pt_virt as *const u64).add(pt_idx).read();
+    |                           ----^^^
+    |                           |
+    |                           help: remove this `mut`
+
+warning: unused variable: `phys`
+  --> mesa_kernel/src/linux/dma.rs:41:42
+   |
+41 | pub unsafe fn dma_sync_single_for_device(phys: u64) {
+   |                                          ^^^^ help: if this is intentional, prefix it with an underscore: `_phys`
+
+warning: unused variable: `phys`
+  --> mesa_kernel/src/linux/dma.rs:45:39
+   |
+45 | pub unsafe fn dma_sync_single_for_cpu(phys: u64) {
+   |                                       ^^^^ help: if this is intentional, prefix it with an underscore: `_phys`
+
+warning: unused variable: `wq`
+  --> mesa_kernel/src/linux/wait.rs:41:33
+   |
+41 | pub unsafe fn remove_wait_queue(wq: *mut wait_queue_head, entry: *mut wait_queue_entry) {
+   |                                 ^^ help: if this is intentional, prefix it with an underscore: `_wq`
+
+warning: unused variable: `meta`
+   --> mesa_kernel/src/audio_player/wav.rs:236:9
+    |
+236 |     let meta = parse_wav(&data).ok()?;
+    |         ^^^^ help: if this is intentional, prefix it with an underscore: `_meta`
+
+warning: unused variable: `perms`
+   --> mesa_kernel/src/fs/mod.rs:530:39
+    |
+530 | pub fn update_permissions(path: &str, perms: Permissions) -> FsResult<()> {
+    |                                       ^^^^^ help: if this is intentional, prefix it with an underscore: `_perms`
+
+warning: unused variable: `free`
+   --> mesa_kernel/src/linux_compat/abi.rs:372:10
+    |
+372 |     let (free, total) = crate::memory::pmm::stats();
+    |          ^^^^ help: if this is intentional, prefix it with an underscore: `_free`
+
+warning: unused variable: `total_mb`
+   --> mesa_kernel/src/linux_compat/abi.rs:373:9
+    |
+373 |     let total_mb = (total * crate::memory::PAGE_SIZE) / 1024 / 1024;
+    |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_total_mb`
+
+warning: unused variable: `cpu_count`
+  --> mesa_kernel/src/linux_compat/procfs.rs:95:9
+   |
+95 |     let cpu_count = crate::limine_req::cpu_count();
+   |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_cpu_count`
+
+warning: unused variable: `uss`
+   --> mesa_kernel/src/linux_compat/signal.rs:302:23
+    |
+302 | pub fn do_sigaltstack(uss: u64, uoss: u64) -> i64 {
+    |                       ^^^ help: if this is intentional, prefix it with an underscore: `_uss`
+
+warning: unused variable: `is_rdonly`
+   --> mesa_kernel/src/linux_compat/syscalls.rs:496:9
+    |
+496 |     let is_rdonly = (flags & 3) == 0;
+    |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_is_rdonly`
+
+warning: unused variable: `offset`
+   --> mesa_kernel/src/linux_compat/syscalls.rs:675:54
+    |
+675 | fn linux_sys_pwrite64(fd: i32, buf: u64, count: u64, offset: u64) -> i64 {
+    |                                                      ^^^^^^ help: if this is intentional, prefix it with an underscore: `_offset`
+
+warning: variable does not need to be mutable
+   --> mesa_kernel/src/linux_compat/syscalls.rs:868:17
+    |
+868 |             let mut candidate = mmap_get_unused_addr(page_aligned_len);
+    |                 ----^^^^^^^^^
+    |                 |
+    |                 help: remove this `mut`
+
+warning: unused variable: `map_private`
+   --> mesa_kernel/src/linux_compat/syscalls.rs:849:9
+    |
+849 |     let map_private = (flags as u32 & 0x02) != 0;
+    |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_map_private`
+
+warning: unused variable: `clock_id`
+    --> mesa_kernel/src/linux_compat/syscalls.rs:1578:28
+     |
+1578 | fn linux_sys_clock_gettime(clock_id: i32, tp_ptr: u64) -> i64 {
+     |                            ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_clock_id`
+
+warning: unused variable: `resource`
+    --> mesa_kernel/src/linux_compat/syscalls.rs:1710:24
+     |
+1710 | fn linux_sys_getrlimit(resource: i32, rlim_ptr: u64) -> i64 {
+     |                        ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_resource`
+
+warning: unused variable: `name`
+    --> mesa_kernel/src/linux_compat/syscalls.rs:1842:9
+     |
+1842 |     let name = alloc::format!("{}", path.split('/').last().unwrap_or(&path));
+     |         ^^^^ help: if this is intentional, prefix it with an underscore: `_name`
+
+warning: unused variable: `mode`
+    --> mesa_kernel/src/linux_compat/syscalls.rs:1925:49
+     |
+1925 | fn linux_sys_mkdirat(dirfd: i32, path_ptr: u64, mode: i32) -> i64 {
+     |                                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_mode`
+
+warning: unused variable: `fd`
+    --> mesa_kernel/src/linux_compat/syscalls.rs:2079:22
+     |
+2079 | fn linux_sys_fstatfs(fd: i32, buf: u64) -> i64 {
+     |                      ^^ help: if this is intentional, prefix it with an underscore: `_fd`
+
+warning: unused variable: `free`
+   --> mesa_kernel/src/linux_compat/sysfs.rs:106:10
+    |
+106 |     let (free, total) = crate::memory::pmm::stats();
+    |          ^^^^ help: if this is intentional, prefix it with an underscore: `_free`
+
+warning: unused variable: `i`
+   --> mesa_kernel/src/net/arp.rs:130:9
+    |
+130 |     for i in 0..iterations {
+    |         ^
+    |
+help: you might have meant to pattern match on the similarly named constant `W`
+    |
+130 -     for i in 0..iterations {
+130 +     for cmd_snake::W in 0..iterations {
+    |
+help: if this is intentional, prefix it with an underscore
+    |
+130 |     for _i in 0..iterations {
+    |         +
+
+warning: variable does not need to be mutable
+   --> mesa_kernel/src/net/tcp.rs:107:5
+    |
+107 |     mut header: TcpHeader,
+    |     ----^^^^^^
+    |     |
+    |     help: remove this `mut`
+
+warning: unused variable: `elf`
+   --> mesa_kernel/src/shim/loader.rs:149:21
+    |
+149 | fn get_section_name(elf: &[u8], shdr: &Elf64Shdr, shstrtab: &[u8]) -> String {
+    |                     ^^^ help: if this is intentional, prefix it with an underscore: `_elf`
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/shim/symbols.rs:1072:9
+     |
+1072 |         unsafe {
+     |         ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `wq`
+    --> mesa_kernel/src/shim/symbols.rs:1241:9
+     |
+1241 |     let wq = wq as *mut crate::linux::wait::wait_queue_head;
+     |         ^^ help: if this is intentional, prefix it with an underscore: `_wq`
+
+warning: unused variable: `wq`
+    --> mesa_kernel/src/shim/symbols.rs:1253:33
+     |
+1253 | extern "C" fn __shim_wait_event(wq: *mut u8, condition: i32) -> i32 {
+     |                                 ^^ help: if this is intentional, prefix it with an underscore: `_wq`
+
+warning: unused variable: `size`
+    --> mesa_kernel/src/shim/symbols.rs:1286:67
+     |
+1286 | extern "C" fn __shim_dma_map_single(_dev: *mut u8, cpu_addr: u64, size: usize, dir: i32) -> u64 {
+     |                                                                   ^^^^ help: if this is intentional, prefix it with an underscore: `_size`
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/shim/symbols.rs:1379:5
+     |
+1379 |     unsafe {
+     |     ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/shim/symbols.rs:1852:20
+     |
+1852 |     let name_str = unsafe { core::str::from_utf8(&hname).unwrap_or("?") };
+     |                    ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `mac`
+    --> mesa_kernel/src/shim/symbols.rs:1977:21
+     |
+1977 |         if let Some(mac) = crate::drivers::net::virtio_net::get_mac() {
+     |                     ^^^ help: if this is intentional, prefix it with an underscore: `_mac`
+
+warning: unused variable: `mac`
+    --> mesa_kernel/src/shim/symbols.rs:1979:28
+     |
+1979 |         } else if let Some(mac) = crate::drivers::net::rtl8139::get_mac() {
+     |                            ^^^ help: if this is intentional, prefix it with an underscore: `_mac`
+
+warning: variable does not need to be mutable
+    --> mesa_kernel/src/shim/symbols.rs:2500:17
+     |
+2500 |             let mut drvs = USB_DRIVERS.lock();
+     |                 ----^^^^
+     |                 |
+     |                 help: remove this `mut`
+
+warning: unused variable: `name`
+    --> mesa_kernel/src/shim/symbols.rs:2485:5
+     |
+2485 |     name: *const u8,
+     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_name`
+
+warning: unused variable: `dev`
+    --> mesa_kernel/src/shim/symbols.rs:2926:51
+     |
+2926 | extern "C" fn __shim_eth_type_trans(skb: *mut u8, dev: *mut u8) -> u16 {
+     |                                                   ^^^ help: if this is intentional, prefix it with an underscore: `_dev`
+
+warning: unused variable: `sta`
+    --> mesa_kernel/src/shim/symbols.rs:3559:53
+     |
+3559 | extern "C" fn __shim_ieee80211_rx_napi(hw: *mut u8, sta: *mut u8, skb: *mut u8, napi: *mut u8) {
+     |                                                     ^^^ help: if this is intentional, prefix it with an underscore: `_sta`
+
+warning: unused variable: `napi`
+    --> mesa_kernel/src/shim/symbols.rs:3559:81
+     |
+3559 | extern "C" fn __shim_ieee80211_rx_napi(hw: *mut u8, sta: *mut u8, skb: *mut u8, napi: *mut u8) {
+     |                                                                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_napi`
+
+warning: unused variable: `mac`
+    --> mesa_kernel/src/shim/symbols.rs:3567:29
+     |
+3567 |                 if let Some(mac) = crate::drivers::net::virtio_net::get_mac() {
+     |                             ^^^ help: if this is intentional, prefix it with an underscore: `_mac`
+
+warning: unused variable: `mac`
+    --> mesa_kernel/src/shim/symbols.rs:3569:36
+     |
+3569 |                 } else if let Some(mac) = crate::drivers::net::rtl8139::get_mac() {
+     |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_mac`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3595:41
+     |
+3595 | extern "C" fn __shim_ieee80211_find_sta(vif: *mut u8, addr: *const u8) -> *mut u8 {
+     |                                         ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `addr`
+    --> mesa_kernel/src/shim/symbols.rs:3595:55
+     |
+3595 | extern "C" fn __shim_ieee80211_find_sta(vif: *mut u8, addr: *const u8) -> *mut u8 {
+     |                                                       ^^^^ help: if this is intentional, prefix it with an underscore: `_addr`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3600:5
+     |
+3600 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `addr1`
+    --> mesa_kernel/src/shim/symbols.rs:3601:5
+     |
+3601 |     addr1: *const u8,
+     |     ^^^^^ help: if this is intentional, prefix it with an underscore: `_addr1`
+
+warning: unused variable: `addr2`
+    --> mesa_kernel/src/shim/symbols.rs:3602:5
+     |
+3602 |     addr2: *const u8,
+     |     ^^^^^ help: if this is intentional, prefix it with an underscore: `_addr2`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3607:56
+     |
+3607 | extern "C" fn __shim_ieee80211_iterate_stations_atomic(hw: *mut u8, iterator: u64, data: *mut u8) {}
+     |                                                        ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `iterator`
+    --> mesa_kernel/src/shim/symbols.rs:3607:69
+     |
+3607 | extern "C" fn __shim_ieee80211_iterate_stations_atomic(hw: *mut u8, iterator: u64, data: *mut u8) {}
+     |                                                                     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_iterator`
+
+warning: unused variable: `data`
+    --> mesa_kernel/src/shim/symbols.rs:3607:84
+     |
+3607 | extern "C" fn __shim_ieee80211_iterate_stations_atomic(hw: *mut u8, iterator: u64, data: *mut u8) {}
+     |                                                                                    ^^^^ help: if this is intentional, prefix it with an underscore: `_data`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3610:5
+     |
+3610 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `iterator`
+    --> mesa_kernel/src/shim/symbols.rs:3611:5
+     |
+3611 |     iterator: u64,
+     |     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_iterator`
+
+warning: unused variable: `data`
+    --> mesa_kernel/src/shim/symbols.rs:3612:5
+     |
+3612 |     data: *mut u8,
+     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_data`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3617:5
+     |
+3617 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3618:5
+     |
+3618 |     vif: *mut u8,
+     |     ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `tim_offset`
+    --> mesa_kernel/src/shim/symbols.rs:3619:5
+     |
+3619 |     tim_offset: *mut u32,
+     |     ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_tim_offset`
+
+warning: unused variable: `tim_length`
+    --> mesa_kernel/src/shim/symbols.rs:3620:5
+     |
+3620 |     tim_length: *mut u32,
+     |     ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_tim_length`
+
+warning: unused variable: `info`
+    --> mesa_kernel/src/shim/symbols.rs:3625:60
+     |
+3625 | extern "C" fn __shim_ieee80211_scan_completed(hw: *mut u8, info: *const u8) {
+     |                                                            ^^^^ help: if this is intentional, prefix it with an underscore: `_info`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3629:48
+     |
+3629 | extern "C" fn __shim_ieee80211_connection_loss(vif: *mut u8) {}
+     |                                                ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3631:43
+     |
+3631 | extern "C" fn __shim_ieee80211_queue_work(hw: *mut u8, work: *mut u8) {
+     |                                           ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3640:51
+     |
+3640 | extern "C" fn __shim_ieee80211_queue_delayed_work(hw: *mut u8, dwork: *mut u8, delay: u32) {
+     |                                                   ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `delay`
+    --> mesa_kernel/src/shim/symbols.rs:3640:80
+     |
+3640 | extern "C" fn __shim_ieee80211_queue_delayed_work(hw: *mut u8, dwork: *mut u8, delay: u32) {
+     |                                                                                ^^^^^ help: if this is intentional, prefix it with an underscore: `_delay`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3679:43
+     |
+3679 | extern "C" fn __shim_ieee80211_free_txskb(hw: *mut u8, skb: *mut u8) {
+     |                                           ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3687:43
+     |
+3687 | extern "C" fn __shim_ieee80211_tx_dequeue(hw: *mut u8, txq: *mut u8) -> *mut u8 {
+     |                                           ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `txq`
+    --> mesa_kernel/src/shim/symbols.rs:3687:56
+     |
+3687 | extern "C" fn __shim_ieee80211_tx_dequeue(hw: *mut u8, txq: *mut u8) -> *mut u8 {
+     |                                                        ^^^ help: if this is intentional, prefix it with an underscore: `_txq`
+
+warning: unused variable: `status`
+    --> mesa_kernel/src/shim/symbols.rs:3691:53
+     |
+3691 | extern "C" fn __shim_ieee80211_tx_info_clear_status(status: *mut u8) {}
+     |                                                     ^^^^^^ help: if this is intentional, prefix it with an underscore: `_status`
+
+warning: unused variable: `txq`
+    --> mesa_kernel/src/shim/symbols.rs:3693:46
+     |
+3693 | extern "C" fn __shim_ieee80211_txq_get_depth(txq: *mut u8, frame_cnt: *mut u32) {
+     |                                              ^^^ help: if this is intentional, prefix it with an underscore: `_txq`
+
+warning: unused variable: `sta`
+    --> mesa_kernel/src/shim/symbols.rs:3701:52
+     |
+3701 | extern "C" fn __shim_ieee80211_start_tx_ba_session(sta: *mut u8, tid: u16, timeout: u16) -> i32 {
+     |                                                    ^^^ help: if this is intentional, prefix it with an underscore: `_sta`
+
+warning: unused variable: `tid`
+    --> mesa_kernel/src/shim/symbols.rs:3701:66
+     |
+3701 | extern "C" fn __shim_ieee80211_start_tx_ba_session(sta: *mut u8, tid: u16, timeout: u16) -> i32 {
+     |                                                                  ^^^ help: if this is intentional, prefix it with an underscore: `_tid`
+
+warning: unused variable: `timeout`
+    --> mesa_kernel/src/shim/symbols.rs:3701:76
+     |
+3701 | extern "C" fn __shim_ieee80211_start_tx_ba_session(sta: *mut u8, tid: u16, timeout: u16) -> i32 {
+     |                                                                            ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_timeout`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3705:54
+     |
+3705 | extern "C" fn __shim_ieee80211_stop_tx_ba_cb_irqsafe(vif: *mut u8, addr: *const u8, tid: u16) {}
+     |                                                      ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `addr`
+    --> mesa_kernel/src/shim/symbols.rs:3705:68
+     |
+3705 | extern "C" fn __shim_ieee80211_stop_tx_ba_cb_irqsafe(vif: *mut u8, addr: *const u8, tid: u16) {}
+     |                                                                    ^^^^ help: if this is intentional, prefix it with an underscore: `_addr`
+
+warning: unused variable: `tid`
+    --> mesa_kernel/src/shim/symbols.rs:3705:85
+     |
+3705 | extern "C" fn __shim_ieee80211_stop_tx_ba_cb_irqsafe(vif: *mut u8, addr: *const u8, tid: u16) {}
+     |                                                                                     ^^^ help: if this is intentional, prefix it with an underscore: `_tid`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3707:47
+     |
+3707 | extern "C" fn __shim_ieee80211_purge_tx_queue(hw: *mut u8, txq: *mut u8) {}
+     |                                               ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `txq`
+    --> mesa_kernel/src/shim/symbols.rs:3707:60
+     |
+3707 | extern "C" fn __shim_ieee80211_purge_tx_queue(hw: *mut u8, txq: *mut u8) {}
+     |                                                            ^^^ help: if this is intentional, prefix it with an underscore: `_txq`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3713:45
+     |
+3713 | extern "C" fn __shim_ieee80211_request_smps(vif: *mut u8, link_id: u32, smps_mode: u32) -> i32 {
+     |                                             ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `link_id`
+    --> mesa_kernel/src/shim/symbols.rs:3713:59
+     |
+3713 | extern "C" fn __shim_ieee80211_request_smps(vif: *mut u8, link_id: u32, smps_mode: u32) -> i32 {
+     |                                                           ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_link_id`
+
+warning: unused variable: `smps_mode`
+    --> mesa_kernel/src/shim/symbols.rs:3713:73
+     |
+3713 | extern "C" fn __shim_ieee80211_request_smps(vif: *mut u8, link_id: u32, smps_mode: u32) -> i32 {
+     |                                                                         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_smps_mode`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3717:48
+     |
+3717 | extern "C" fn __shim_ieee80211_cqm_rssi_notify(vif: *mut u8, event: u32, sig: i32, gfp: u32) {}
+     |                                                ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `event`
+    --> mesa_kernel/src/shim/symbols.rs:3717:62
+     |
+3717 | extern "C" fn __shim_ieee80211_cqm_rssi_notify(vif: *mut u8, event: u32, sig: i32, gfp: u32) {}
+     |                                                              ^^^^^ help: if this is intentional, prefix it with an underscore: `_event`
+
+warning: unused variable: `sig`
+    --> mesa_kernel/src/shim/symbols.rs:3717:74
+     |
+3717 | extern "C" fn __shim_ieee80211_cqm_rssi_notify(vif: *mut u8, event: u32, sig: i32, gfp: u32) {}
+     |                                                                          ^^^ help: if this is intentional, prefix it with an underscore: `_sig`
+
+warning: unused variable: `gfp`
+    --> mesa_kernel/src/shim/symbols.rs:3717:84
+     |
+3717 | extern "C" fn __shim_ieee80211_cqm_rssi_notify(vif: *mut u8, event: u32, sig: i32, gfp: u32) {}
+     |                                                                                    ^^^ help: if this is intentional, prefix it with an underscore: `_gfp`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3719:53
+     |
+3719 | extern "C" fn __shim_ieee80211_report_wowlan_wakeup(vif: *mut u8, wakeup: *mut u8, gfp: u32) {}
+     |                                                     ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `wakeup`
+    --> mesa_kernel/src/shim/symbols.rs:3719:67
+     |
+3719 | extern "C" fn __shim_ieee80211_report_wowlan_wakeup(vif: *mut u8, wakeup: *mut u8, gfp: u32) {}
+     |                                                                   ^^^^^^ help: if this is intentional, prefix it with an underscore: `_wakeup`
+
+warning: unused variable: `gfp`
+    --> mesa_kernel/src/shim/symbols.rs:3719:84
+     |
+3719 | extern "C" fn __shim_ieee80211_report_wowlan_wakeup(vif: *mut u8, wakeup: *mut u8, gfp: u32) {}
+     |                                                                                    ^^^ help: if this is intentional, prefix it with an underscore: `_gfp`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3722:5
+     |
+3722 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `flags`
+    --> mesa_kernel/src/shim/symbols.rs:3723:5
+     |
+3723 |     flags: u32,
+     |     ^^^^^ help: if this is intentional, prefix it with an underscore: `_flags`
+
+warning: unused variable: `blink_set`
+    --> mesa_kernel/src/shim/symbols.rs:3724:5
+     |
+3724 |     blink_set: u64,
+     |     ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_blink_set`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3729:43
+     |
+3729 | extern "C" fn __shim_ieee80211_pspoll_get(hw: *mut u8, vif: *mut u8) -> *mut u8 {
+     |                                           ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3729:56
+     |
+3729 | extern "C" fn __shim_ieee80211_pspoll_get(hw: *mut u8, vif: *mut u8) -> *mut u8 {
+     |                                                        ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3734:5
+     |
+3734 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3735:5
+     |
+3735 |     vif: *mut u8,
+     |     ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `link_id`
+    --> mesa_kernel/src/shim/symbols.rs:3736:5
+     |
+3736 |     link_id: i32,
+     |     ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_link_id`
+
+warning: unused variable: `qos`
+    --> mesa_kernel/src/shim/symbols.rs:3737:5
+     |
+3737 |     qos: bool,
+     |     ^^^ help: if this is intentional, prefix it with an underscore: `_qos`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3742:46
+     |
+3742 | extern "C" fn __shim_ieee80211_proberesp_get(hw: *mut u8, vif: *mut u8) -> *mut u8 {
+     |                                              ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `vif`
+    --> mesa_kernel/src/shim/symbols.rs:3742:59
+     |
+3742 | extern "C" fn __shim_ieee80211_proberesp_get(hw: *mut u8, vif: *mut u8) -> *mut u8 {
+     |                                                           ^^^ help: if this is intentional, prefix it with an underscore: `_vif`
+
+warning: unused variable: `hw`
+    --> mesa_kernel/src/shim/symbols.rs:3747:5
+     |
+3747 |     hw: *mut u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_hw`
+
+warning: unused variable: `addr`
+    --> mesa_kernel/src/shim/symbols.rs:3748:5
+     |
+3748 |     addr: *const u8,
+     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_addr`
+
+warning: unused variable: `ssid`
+    --> mesa_kernel/src/shim/symbols.rs:3749:5
+     |
+3749 |     ssid: *const u8,
+     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_ssid`
+
+warning: unused variable: `ssid_len`
+    --> mesa_kernel/src/shim/symbols.rs:3750:5
+     |
+3750 |     ssid_len: usize,
+     |     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_ssid_len`
+
+warning: unused variable: `tailroom`
+    --> mesa_kernel/src/shim/symbols.rs:3751:5
+     |
+3751 |     tailroom: usize,
+     |     ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_tailroom`
+
+warning: unused variable: `dev`
+    --> mesa_kernel/src/shim/symbols.rs:3763:37
+     |
+3763 | extern "C" fn __shim_netif_napi_add(dev: *mut u8, napi: *mut u8, poll: u64, weight: i32) {
+     |                                     ^^^ help: if this is intentional, prefix it with an underscore: `_dev`
+
+warning: unused variable: `napi`
+    --> mesa_kernel/src/shim/symbols.rs:3774:34
+     |
+3774 | extern "C" fn __shim_napi_enable(napi: *mut u8) {}
+     |                                  ^^^^ help: if this is intentional, prefix it with an underscore: `_napi`
+
+warning: unused variable: `napi`
+    --> mesa_kernel/src/shim/symbols.rs:3776:35
+     |
+3776 | extern "C" fn __shim_napi_disable(napi: *mut u8) {}
+     |                                   ^^^^ help: if this is intentional, prefix it with an underscore: `_napi`
+
+warning: unused variable: `rate`
+    --> mesa_kernel/src/shim/symbols.rs:3778:49
+     |
+3778 | extern "C" fn __shim_cfg80211_calculate_bitrate(rate: *const u8) -> u32 {
+     |                                                 ^^^^ help: if this is intentional, prefix it with an underscore: `_rate`
+
+warning: unused variable: `a`
+    --> mesa_kernel/src/shim/symbols.rs:3782:39
+     |
+3782 | extern "C" fn __shim_cfg80211_ssid_eq(a: *const u8, b: *const u8) -> bool {
+     |                                       ^ help: if this is intentional, prefix it with an underscore: `_a`
+
+warning: unused variable: `b`
+    --> mesa_kernel/src/shim/symbols.rs:3782:53
+     |
+3782 | extern "C" fn __shim_cfg80211_ssid_eq(a: *const u8, b: *const u8) -> bool {
+     |                                                     ^ help: if this is intentional, prefix it with an underscore: `_b`
+
+warning: unused variable: `ie`
+    --> mesa_kernel/src/shim/symbols.rs:3787:5
+     |
+3787 |     ie: *const u8,
+     |     ^^ help: if this is intentional, prefix it with an underscore: `_ie`
+
+warning: unused variable: `ielen`
+    --> mesa_kernel/src/shim/symbols.rs:3788:5
+     |
+3788 |     ielen: usize,
+     |     ^^^^^ help: if this is intentional, prefix it with an underscore: `_ielen`
+
+warning: unused variable: `band`
+    --> mesa_kernel/src/shim/symbols.rs:3789:5
+     |
+3789 |     band: u32,
+     |     ^^^^ help: if this is intentional, prefix it with an underscore: `_band`
+
+warning: unused variable: `ap`
+    --> mesa_kernel/src/shim/symbols.rs:4452:79
+     |
+4452 | pub extern "C" fn __shim_vsnprintf(buf: *mut u8, size: usize, fmt: *const u8, ap: u64) -> i32 {
+     |                                                                               ^^ help: if this is intentional, prefix it with an underscore: `_ap`
+
+warning: unused variable: `buf`
+    --> mesa_kernel/src/shim/symbols.rs:4803:36
+     |
+4803 | pub extern "C" fn __shim_scnprintf(buf: *mut u8, size: usize, fmt: *const u8) -> i32 {
+     |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_buf`
+
+warning: unused variable: `size`
+    --> mesa_kernel/src/shim/symbols.rs:4803:50
+     |
+4803 | pub extern "C" fn __shim_scnprintf(buf: *mut u8, size: usize, fmt: *const u8) -> i32 {
+     |                                                  ^^^^ help: if this is intentional, prefix it with an underscore: `_size`
+
+warning: unused variable: `fmt`
+    --> mesa_kernel/src/shim/symbols.rs:4803:63
+     |
+4803 | pub extern "C" fn __shim_scnprintf(buf: *mut u8, size: usize, fmt: *const u8) -> i32 {
+     |                                                               ^^^ help: if this is intentional, prefix it with an underscore: `_fmt`
+
+warning: unused variable: `addr_trb`
+    --> mesa_kernel/src/shim/symbols.rs:6056:9
+     |
+6056 |     let addr_trb = [
+     |         ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_addr_trb`
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/shim/symbols.rs:6399:5
+     |
+6399 |     unsafe { __shim_kzalloc(4096, 0x2000) }
+     |     ^^^^^^ unnecessary `unsafe` block
+
+warning: value assigned to `bio_evt_ring_phys` is never read
+    --> mesa_kernel/src/shim/symbols.rs:6630:33
+     |
+6630 |     let mut bio_evt_ring_phys = 0u64;
+     |                                 ^^^^ this value is reassigned later and never used
+...
+6639 |         bio_evt_ring_phys = ctrl.evt_ring_phys;
+     |         -------------------------------------- `bio_evt_ring_phys` is overwritten here before the previous value is read
+
+warning: value assigned to `bio_evt_ring_virt` is never read
+    --> mesa_kernel/src/shim/symbols.rs:6631:42
+     |
+6631 |     let mut bio_evt_ring_virt: *mut u8 = core::ptr::null_mut();
+     |                                          ^^^^^^^^^^^^^^^^^^^^^ this value is reassigned later and never used
+...
+6640 |         bio_evt_ring_virt = ctrl.evt_ring_virt;
+     |         -------------------------------------- `bio_evt_ring_virt` is overwritten here before the previous value is read
+
+warning: value assigned to `bio_erst_phys` is never read
+    --> mesa_kernel/src/shim/symbols.rs:6632:29
+     |
+6632 |     let mut bio_erst_phys = 0u64;
+     |                             ^^^^ this value is reassigned later and never used
+...
+6641 |         bio_erst_phys = ctrl.erst_phys;
+     |         ------------------------------ `bio_erst_phys` is overwritten here before the previous value is read
+
+warning: value assigned to `bio_evt_deq_idx` is never read
+    --> mesa_kernel/src/shim/symbols.rs:6633:31
+     |
+6633 |     let mut bio_evt_deq_idx = 0u32;
+     |                               ^^^^ this value is reassigned later and never used
+...
+6642 |         bio_evt_deq_idx = ctrl.evt_deq_idx;
+     |         ---------------------------------- `bio_evt_deq_idx` is overwritten here before the previous value is read
+
+warning: value assigned to `bio_evt_cycle` is never read
+    --> mesa_kernel/src/shim/symbols.rs:6634:29
+     |
+6634 |     let mut bio_evt_cycle = 0u32;
+     |                             ^^^^ this value is reassigned later and never used
+...
+6643 |         bio_evt_cycle = ctrl.evt_cycle;
+     |         ------------------------------ `bio_evt_cycle` is overwritten here before the previous value is read
+
+warning: unused variable: `setup_cfg`
+    --> mesa_kernel/src/shim/symbols.rs:7401:9
+     |
+7401 |     let setup_cfg = [
+     |         ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_setup_cfg`
+
+warning: value assigned to `tag` is never read
+    --> mesa_kernel/src/shim/symbols.rs:7595:5
+     |
+7595 |     tag += 1;
+     |     ^^^^^^^^
+     |
+     = help: maybe it is overwritten before being read?
+
+warning: unused variable: `speed_str`
+  --> mesa_kernel/src/usb.rs:61:14
+   |
+61 |         let (speed_str, class_str) = match desc.b_device_class {
+   |              ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speed_str`
+
+warning: unused variable: `speed_str`
+   --> mesa_kernel/src/usb.rs:108:13
+    |
+108 |         let speed_str = match desc.b_device_class {
+    |             ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speed_str`
+
+warning: unused variable: `disk_available`
+   --> mesa_kernel/src/main.rs:434:9
+    |
+434 |     let disk_available = false;
+    |         ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_disk_available`
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/main.rs:3030:18
+     |
+3030 |     let vendor = unsafe {
+     |                  ^^^^^^ unnecessary `unsafe` block
+
+warning: unnecessary `unsafe` block
+    --> mesa_kernel/src/main.rs:3050:20
+     |
+3050 |     let features = unsafe {
+     |                    ^^^^^^ unnecessary `unsafe` block
+
+warning: unused variable: `line_num`
+    --> mesa_kernel/src/main.rs:4096:10
+     |
+4096 |     for (line_num, raw_line) in content.lines().enumerate() {
+     |          ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_line_num`
+
+warning: variable does not need to be mutable
+    --> mesa_kernel/src/main.rs:4158:9
+     |
+4158 |     let mut path = args[0];
+     |         ----^^^^
+     |         |
+     |         help: remove this `mut`
+
+warning: value assigned to `food` is never read
+    --> mesa_kernel/src/main.rs:4313:36
+     |
+4313 |     let mut food: (usize, usize) = (5, 5);
+     |                                    ^^^^^^ this value is reassigned later and never used
+...
+4376 |     food = place_food(&snake, W, H);
+     |     ------------------------------- `food` is overwritten here before the previous value is read
+
+warning: value assigned to `f` is never read
+    --> mesa_kernel/src/main.rs:4319:21
+     |
+4319 |         let mut f = (0, 0);
+     |                     ^^^^^^ this value is reassigned later and never used
+...
+4324 |                 f = (fx, fy);
+     |                 ------------ `f` is overwritten here before the previous value is read
+
+warning: `mesa_kernel` (bin "mesa_kernel") generated 229 warnings
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+warning: mesa_kernel@0.1.0: Inherited flag "-mcmodel=kernel" is not supported by the currently used CC
+error: could not compile `mesa_kernel` (bin "mesa_kernel") due to 2 previous errors; 229 warnings emitted

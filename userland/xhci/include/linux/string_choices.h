@@ -1,0 +1,4 @@
+#ifndef _LINUX_STRING_CHOICES_H
+#define _LINUX_STRING_CHOICES_H
+
+#endif

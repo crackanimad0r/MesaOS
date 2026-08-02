@@ -1,0 +1,2376 @@
+gcc -m64 -mcmodel=kernel -nostdinc -I include -fno-pic -fno-stack-protector -fno-builtin -fno-omit-frame-pointer -O2 -Wall -Werror -Wno-error -c -DCONFIG_USB_XHCI_PCI -Wno-error=incompatible-pointer-types -Wno-error=maybe-uninitialized -Wno-error=pointer-sign -Wno-error=unused-variable -Wno-error=unused-function -Wno-error=implicit-function-declaration xhci.c -o xhci.o
+In file included from xhci.c:22:
+include/linux/dma-mapping.h:1:19: warning: extra tokens at end of #ifndef directive
+    1 | #ifndef _LINUX_DMA-MAPPING_H
+      |                   ^
+include/linux/dma-mapping.h:2:9: warning: ISO C99 requires whitespace after the macro name
+    2 | #define _LINUX_DMA-MAPPING_H
+      |         ^~~~~~~~~~
+In file included from xhci.c:23:
+include/linux/usb/xhci-sideband.h:1:24: warning: extra tokens at end of #ifndef directive
+    1 | #ifndef _LINUX_USB_XHCI-SIDEBAND_H
+      |                        ^
+include/linux/usb/xhci-sideband.h:2:9: warning: ISO C99 requires whitespace after the macro name
+    2 | #define _LINUX_USB_XHCI-SIDEBAND_H
+      |         ^~~~~~~~~~~~~~~
+In file included from xhci.h:18,
+                 from xhci.c:25:
+include/linux/usb/hcd.h:8:23: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+    8 |     int (*irq)(struct usb_hcd *hcd);
+      |                       ^~~~~~~
+include/linux/usb/hcd.h:10:25: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   10 |     int (*reset)(struct usb_hcd *hcd);
+      |                         ^~~~~~~
+include/linux/usb/hcd.h:11:25: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   11 |     int (*start)(struct usb_hcd *hcd);
+      |                         ^~~~~~~
+include/linux/usb/hcd.h:12:31: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   12 |     int (*pci_suspend)(struct usb_hcd *hcd, bool do_wakeup);
+      |                               ^~~~~~~
+include/linux/usb/hcd.h:13:30: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   13 |     int (*pci_resume)(struct usb_hcd *hcd, bool hibernated);
+      |                              ^~~~~~~
+include/linux/usb/hcd.h:14:25: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   14 |     void (*stop)(struct usb_hcd *hcd);
+      |                         ^~~~~~~
+include/linux/usb/hcd.h:15:29: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   15 |     void (*shutdown)(struct usb_hcd *hcd);
+      |                             ^~~~~~~
+include/linux/usb/hcd.h:16:52: warning: ‘struct urb’ declared inside parameter list will not be visible outside of this definition or declaration
+   16 |     int (*urb_enqueue)(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
+      |                                                    ^~~
+include/linux/usb/hcd.h:16:31: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   16 |     int (*urb_enqueue)(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
+      |                               ^~~~~~~
+include/linux/usb/hcd.h:17:52: warning: ‘struct urb’ declared inside parameter list will not be visible outside of this definition or declaration
+   17 |     int (*urb_dequeue)(struct usb_hcd *hcd, struct urb *urb, int status);
+      |                                                    ^~~
+include/linux/usb/hcd.h:17:31: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   17 |     int (*urb_dequeue)(struct usb_hcd *hcd, struct urb *urb, int status);
+      |                               ^~~~~~~
+include/linux/usb/hcd.h:18:57: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   18 |     int (*endpoint_disable)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                                         ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:18:36: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   18 |     int (*endpoint_disable)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                    ^~~~~~~
+include/linux/usb/hcd.h:19:55: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   19 |     int (*endpoint_reset)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                                       ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:19:34: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   19 |     int (*endpoint_reset)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                  ^~~~~~~
+include/linux/usb/hcd.h:21:16: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   21 |         struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:20:54: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   20 |     int (*alloc_streams)(struct usb_hcd *hcd, struct usb_device *udev,
+      |                                                      ^~~~~~~~~~
+include/linux/usb/hcd.h:20:33: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   20 |     int (*alloc_streams)(struct usb_hcd *hcd, struct usb_device *udev,
+      |                                 ^~~~~~~
+include/linux/usb/hcd.h:24:16: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   24 |         struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:23:53: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   23 |     int (*free_streams)(struct usb_hcd *hcd, struct usb_device *udev,
+      |                                                     ^~~~~~~~~~
+include/linux/usb/hcd.h:23:32: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   23 |     int (*free_streams)(struct usb_hcd *hcd, struct usb_device *udev,
+      |                                ^~~~~~~
+include/linux/usb/hcd.h:26:50: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   26 |     void (*free_dev)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                  ^~~~~~~~~~
+include/linux/usb/hcd.h:26:29: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   26 |     void (*free_dev)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                             ^~~~~~~
+include/linux/usb/hcd.h:27:50: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   27 |     int (*alloc_dev)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                  ^~~~~~~~~~
+include/linux/usb/hcd.h:27:29: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   27 |     int (*alloc_dev)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                             ^~~~~~~
+include/linux/usb/hcd.h:28:79: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   28 |     void (*add_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                                                               ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:28:54: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   28 |     void (*add_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                                      ^~~~~~~~~~
+include/linux/usb/hcd.h:28:33: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   28 |     void (*add_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                 ^~~~~~~
+include/linux/usb/hcd.h:29:80: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   29 |     void (*drop_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                                                                ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:29:55: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   29 |     void (*drop_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                                       ^~~~~~~~~~
+include/linux/usb/hcd.h:29:34: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   29 |     void (*drop_endpoint)(struct usb_hcd *hcd, struct usb_device *udev, struct usb_host_endpoint *ep);
+      |                                  ^~~~~~~
+include/linux/usb/hcd.h:30:56: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   30 |     int (*check_bandwidth)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                        ^~~~~~~~~~
+include/linux/usb/hcd.h:30:35: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   30 |     int (*check_bandwidth)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                   ^~~~~~~
+include/linux/usb/hcd.h:31:57: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   31 |     void (*reset_bandwidth)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                         ^~~~~~~~~~
+include/linux/usb/hcd.h:31:36: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   31 |     void (*reset_bandwidth)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                    ^~~~~~~
+include/linux/usb/hcd.h:32:31: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   32 |     int (*hub_control)(struct usb_hcd *hcd, u16 typeReq, u16 wValue, u16 wIndex, char *buf, u16 wLength);
+      |                               ^~~~~~~
+include/linux/usb/hcd.h:33:35: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   33 |     int (*hub_status_data)(struct usb_hcd *hcd, char *buf);
+      |                                   ^~~~~~~
+include/linux/usb/hcd.h:34:31: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   34 |     int (*bus_suspend)(struct usb_hcd *hcd);
+      |                               ^~~~~~~
+include/linux/usb/hcd.h:35:30: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   35 |     int (*bus_resume)(struct usb_hcd *hcd);
+      |                              ^~~~~~~
+include/linux/usb/hcd.h:36:38: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   36 |     int (*get_resuming_ports)(struct usb_hcd *hcd);
+      |                                      ^~~~~~~
+include/linux/usb/hcd.h:37:83: warning: ‘struct usb_tt’ declared inside parameter list will not be visible outside of this definition or declaration
+   37 |     int (*update_hub_device)(struct usb_hcd *hcd, struct usb_device *hdev, struct usb_tt *tt, gfp_t mem_flags);
+      |                                                                                   ^~~~~~
+include/linux/usb/hcd.h:37:58: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   37 |     int (*update_hub_device)(struct usb_hcd *hcd, struct usb_device *hdev, struct usb_tt *tt, gfp_t mem_flags);
+      |                                                          ^~~~~~~~~~
+include/linux/usb/hcd.h:37:37: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   37 |     int (*update_hub_device)(struct usb_hcd *hcd, struct usb_device *hdev, struct usb_tt *tt, gfp_t mem_flags);
+      |                                     ^~~~~~~
+include/linux/usb/hcd.h:38:55: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   38 |     void (*update_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                       ^~~~~~~~~~
+include/linux/usb/hcd.h:38:34: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   38 |     void (*update_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                  ^~~~~~~
+include/linux/usb/hcd.h:39:53: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   39 |     int (*reset_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                     ^~~~~~~~~~
+include/linux/usb/hcd.h:39:32: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   39 |     int (*reset_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                ^~~~~~~
+include/linux/usb/hcd.h:40:36: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   40 |     int (*get_frame_number)(struct usb_hcd *hcd);
+      |                                    ^~~~~~~
+include/linux/usb/hcd.h:41:56: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   41 |     int (*set_usb2_hw_lpm)(struct usb_hcd *hcd, struct usb_device *udev, int enable);
+      |                                                        ^~~~~~~~~~
+include/linux/usb/hcd.h:41:35: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   41 |     int (*set_usb2_hw_lpm)(struct usb_hcd *hcd, struct usb_device *udev, int enable);
+      |                                   ^~~~~~~
+include/linux/usb/hcd.h:42:87: warning: ‘enum usb3_link_state’ declared inside parameter list will not be visible outside of this definition or declaration
+   42 |     int (*enable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                                                                       ^~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:42:64: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   42 |     int (*enable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                                                ^~~~~~~~~~
+include/linux/usb/hcd.h:42:43: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   42 |     int (*enable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                           ^~~~~~~
+include/linux/usb/hcd.h:43:88: warning: ‘enum usb3_link_state’ declared inside parameter list will not be visible outside of this definition or declaration
+   43 |     int (*disable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                                                                        ^~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:43:65: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   43 |     int (*disable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                                                 ^~~~~~~~~~
+include/linux/usb/hcd.h:43:44: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   43 |     int (*disable_usb3_lpm_timeout)(struct usb_hcd *hcd, struct usb_device *udev, enum usb3_link_state state);
+      |                                            ^~~~~~~
+include/linux/usb/hcd.h:44:40: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   44 |     int (*find_raw_port_number)(struct usb_hcd *hcd, int port1);
+      |                                        ^~~~~~~
+include/linux/usb/hcd.h:45:66: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+   45 |     void (*clear_tt_buffer_complete)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                                                  ^~~~~~~~~~~~~~~~~
+include/linux/usb/hcd.h:45:45: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   45 |     void (*clear_tt_buffer_complete)(struct usb_hcd *hcd, struct usb_host_endpoint *ep);
+      |                                             ^~~~~~~
+include/linux/usb/hcd.h:46:57: warning: ‘struct urb’ declared inside parameter list will not be visible outside of this definition or declaration
+   46 |     void (*map_urb_for_dma)(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
+      |                                                         ^~~
+include/linux/usb/hcd.h:46:36: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   46 |     void (*map_urb_for_dma)(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flags);
+      |                                    ^~~~~~~
+include/linux/usb/hcd.h:47:59: warning: ‘struct urb’ declared inside parameter list will not be visible outside of this definition or declaration
+   47 |     void (*unmap_urb_for_dma)(struct usb_hcd *hcd, struct urb *urb);
+      |                                                           ^~~
+include/linux/usb/hcd.h:47:38: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   47 |     void (*unmap_urb_for_dma)(struct usb_hcd *hcd, struct urb *urb);
+      |                                      ^~~~~~~
+include/linux/usb/hcd.h:48:55: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   48 |     int (*address_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                       ^~~~~~~~~~
+include/linux/usb/hcd.h:48:34: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   48 |     int (*address_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                  ^~~~~~~
+include/linux/usb/hcd.h:49:54: warning: ‘struct usb_device’ declared inside parameter list will not be visible outside of this definition or declaration
+   49 |     int (*enable_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                                      ^~~~~~~~~~
+include/linux/usb/hcd.h:49:33: warning: ‘struct usb_hcd’ declared inside parameter list will not be visible outside of this definition or declaration
+   49 |     int (*enable_device)(struct usb_hcd *hcd, struct usb_device *udev);
+      |                                 ^~~~~~~
+In file included from xhci.h:19:
+include/linux/io-64-nonatomic-lo-hi.h:1:18: warning: extra tokens at end of #ifndef directive
+    1 | #ifndef _LINUX_IO-64-NONATOMIC-LO-HI_H
+      |                  ^
+include/linux/io-64-nonatomic-lo-hi.h:2:9: warning: ISO C99 requires whitespace after the macro name
+    2 | #define _LINUX_IO-64-NONATOMIC-LO-HI_H
+      |         ^~~~~~~~~
+In file included from xhci.h:20:
+include/linux/io-64-nonatomic-hi-lo.h:1:18: warning: extra tokens at end of #ifndef directive
+    1 | #ifndef _LINUX_IO-64-NONATOMIC-HI-LO_H
+      |                  ^
+xhci.h:583:41: error: field ‘trb_address_map’ has incomplete type
+  583 |         struct radix_tree_root          trb_address_map;
+      |                                         ^~~~~~~~~~~~~~~
+xhci.h:1409:30: error: expected ‘:’, ‘,’, ‘;’, ‘}’ or ‘__attribute__’ before ‘__counted_by’
+ 1409 |         struct  xhci_td td[] __counted_by(num_tds);
+      |                              ^~~~~~~~~~~~
+xhci.h:1511:9: error: unknown type name ‘__u32’
+ 1511 |         __u32           hcs_params2;
+      |         ^~~~~
+xhci.h:1512:9: error: unknown type name ‘__u32’
+ 1512 |         __u32           hcs_params3;
+      |         ^~~~~
+xhci.h:1513:9: error: unknown type name ‘__u32’
+ 1513 |         __u32           hcc_params;
+      |         ^~~~~
+xhci.h:1514:9: error: unknown type name ‘__u32’
+ 1514 |         __u32           hcc_params2;
+      |         ^~~~~
+xhci.h:1684:36: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1684 |                             struct usb_host_endpoint *ep);
+      |                                    ^~~~~~~~~~~~~~~~~
+xhci.h:1686:37: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1686 |                              struct usb_host_endpoint *ep);
+      |                                     ^~~~~~~~~~~~~~~~~
+xhci.h:1690:36: warning: ‘struct usb_tt’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1690 |                             struct usb_tt *tt, gfp_t mem_flags);
+      |                                    ^~~~~~
+xhci.h: In function ‘hcd_to_xhci’:
+xhci.h:1702:13: warning: implicit declaration of function ‘usb_hcd_is_primary_hcd’ [-Wimplicit-function-declaration]
+ 1702 |         if (usb_hcd_is_primary_hcd(hcd))
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+xhci.h:1705:34: error: ‘struct usb_hcd’ has no member named ‘primary_hcd’
+ 1705 |                 primary_hcd = hcd->primary_hcd;
+      |                                  ^~
+xhci.h: In function ‘xhci_read_64’:
+xhci.h:1760:16: warning: implicit declaration of function ‘lo_hi_readq’ [-Wimplicit-function-declaration]
+ 1760 |         return lo_hi_readq(regs);
+      |                ^~~~~~~~~~~
+xhci.h: In function ‘xhci_write_64’:
+xhci.h:1765:9: warning: implicit declaration of function ‘lo_hi_writeq’ [-Wimplicit-function-declaration]
+ 1765 |         lo_hi_writeq(val, regs);
+      |         ^~~~~~~~~~~~
+xhci.h: At top level:
+xhci.h:1788:65: warning: ‘struct va_format’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1788 | void xhci_dbg_trace(struct xhci_hcd *xhci, void (*trace)(struct va_format *),
+      |                                                                 ^~~~~~~~~
+xhci.h:1799:45: warning: ‘struct usb_endpoint_descriptor’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1799 | unsigned int xhci_get_endpoint_index(struct usb_endpoint_descriptor *desc);
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.h:1801:90: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1801 | void xhci_endpoint_zero(struct xhci_hcd *xhci, struct xhci_virt_device *virt_dev, struct usb_host_endpoint *ep);
+      |                                                                                          ^~~~~~~~~~~~~~~~~
+xhci.h:1818:49: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1818 |                 struct usb_device *udev, struct usb_host_endpoint *ep,
+      |                                                 ^~~~~~~~~~~~~~~~~
+xhci.h:1883:30: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1883 |                       struct usb_host_endpoint *ep);
+      |                              ^~~~~~~~~~~~~~~~~
+xhci.h:1885:31: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1885 |                        struct usb_host_endpoint *ep);
+      |                               ^~~~~~~~~~~~~~~~~
+xhci.h:1889:35: warning: ‘struct usb_tt’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1889 |                            struct usb_tt *tt, gfp_t mem_flags);
+      |                                   ^~~~~~
+xhci.h:1903:24: warning: ‘struct usb_tt’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1903 |                 struct usb_tt *tt, gfp_t mem_flags);
+      |                        ^~~~~~
+xhci.h:1962:35: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1962 |                            struct usb_host_endpoint *host_ep);
+      |                                   ^~~~~~~~~~~~~~~~~
+xhci.h: In function ‘xhci_urb_to_transfer_ring’:
+xhci.h:2005:53: error: invalid use of undefined type ‘struct urb’
+ 2005 |         return xhci_triad_to_transfer_ring(xhci, urb->dev->slot_id,
+      |                                                     ^~
+xhci.h:2006:69: error: invalid use of undefined type ‘struct urb’
+ 2006 |                                         xhci_get_endpoint_index(&urb->ep->desc),
+      |                                                                     ^~
+xhci.h:2007:44: error: invalid use of undefined type ‘struct urb’
+ 2007 |                                         urb->stream_id);
+      |                                            ^~
+xhci.h: In function ‘xhci_urb_suitable_for_idt’:
+xhci.h:2017:14: warning: implicit declaration of function ‘usb_endpoint_xfer_isoc’ [-Wimplicit-function-declaration]
+ 2017 |         if (!usb_endpoint_xfer_isoc(&urb->ep->desc) && usb_urb_dir_out(urb) &&
+      |              ^~~~~~~~~~~~~~~~~~~~~~
+xhci.h:2017:41: error: invalid use of undefined type ‘struct urb’
+ 2017 |         if (!usb_endpoint_xfer_isoc(&urb->ep->desc) && usb_urb_dir_out(urb) &&
+      |                                         ^~
+xhci.h:2017:56: warning: implicit declaration of function ‘usb_urb_dir_out’ [-Wimplicit-function-declaration]
+ 2017 |         if (!usb_endpoint_xfer_isoc(&urb->ep->desc) && usb_urb_dir_out(urb) &&
+      |                                                        ^~~~~~~~~~~~~~~
+xhci.h:2018:13: warning: implicit declaration of function ‘usb_endpoint_maxp’; did you mean ‘xhci_usb_endpoint_maxp’? [-Wimplicit-function-declaration]
+ 2018 |             usb_endpoint_maxp(&urb->ep->desc) >= TRB_IDT_MAX_SIZE &&
+      |             ^~~~~~~~~~~~~~~~~
+      |             xhci_usb_endpoint_maxp
+xhci.h:2018:35: error: invalid use of undefined type ‘struct urb’
+ 2018 |             usb_endpoint_maxp(&urb->ep->desc) >= TRB_IDT_MAX_SIZE &&
+      |                                   ^~
+xhci.h:2019:16: error: invalid use of undefined type ‘struct urb’
+ 2019 |             urb->transfer_buffer_length <= TRB_IDT_MAX_SIZE &&
+      |                ^~
+xhci.h:2020:18: error: invalid use of undefined type ‘struct urb’
+ 2020 |             !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) &&
+      |                  ^~
+xhci.h:2020:37: error: ‘URB_NO_TRANSFER_DMA_MAP’ undeclared (first use in this function)
+ 2020 |             !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP) &&
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.h:2020:37: note: each undeclared identifier is reported only once for each function it appears in
+xhci.h:2021:17: error: invalid use of undefined type ‘struct urb’
+ 2021 |             !urb->num_sgs)
+      |                 ^~
+xhci.h: In function ‘xhci_decode_ctrl_ctx’:
+xhci.h:2288:17: warning: implicit declaration of function ‘for_each_set_bit’ [-Wimplicit-function-declaration]
+ 2288 |                 for_each_set_bit(bit, &drop, 32)
+      |                 ^~~~~~~~~~~~~~~~
+xhci.h:2288:49: error: expected ‘;’ before ‘ret’
+ 2288 |                 for_each_set_bit(bit, &drop, 32)
+      |                                                 ^
+      |                                                 ;
+ 2289 |                         ret += sprintf(str + ret, " %d%s",
+      |                         ~~~                      
+xhci.h:2300:48: error: expected ‘;’ before ‘ret’
+ 2300 |                 for_each_set_bit(bit, &add, 32)
+      |                                                ^
+      |                                                ;
+ 2301 |                         ret += sprintf(str + ret, " %d%s",
+      |                         ~~~                     
+In file included from xhci-trace.h:26,
+                 from xhci.c:26:
+xhci-dbgcap.h: At top level:
+xhci-dbgcap.h:84:30: error: ‘USB_MAX_STRING_LEN’ undeclared here (not in a function); did you mean ‘USB_MAX_STRING_DESC_LEN’?
+   84 |         char    manufacturer[USB_MAX_STRING_LEN+1];
+      |                              ^~~~~~~~~~~~~~~~~~
+      |                              USB_MAX_STRING_DESC_LEN
+xhci-dbgcap.h:120:41: error: field ‘port’ has incomplete type
+  120 |         struct tty_port                 port;
+      |                                         ^~~~
+xhci-dbgcap.h:127:41: error: field ‘push’ has incomplete type
+  127 |         struct tasklet_struct           push;
+      |                                         ^~~~
+xhci-trace.h:29:17: error: expected ‘)’ before ‘(’ token
+   29 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:39:17: error: expected ‘)’ before ‘(’ token
+   39 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:44:17: error: expected ‘)’ before ‘(’ token
+   44 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:49:17: error: expected ‘)’ before ‘(’ token
+   49 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:54:17: error: expected ‘)’ before ‘(’ token
+   54 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:59:17: error: expected ‘)’ before ‘(’ token
+   59 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:64:17: error: expected ‘)’ before ‘(’ token
+   64 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:69:17: error: expected ‘)’ before ‘(’ token
+   69 |         TP_PROTO(struct va_format *vaf),
+      |                 ^
+      |                 )
+xhci-trace.h:74:17: error: expected ‘)’ before ‘(’ token
+   74 |         TP_PROTO(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:96:17: error: expected ‘)’ before ‘(’ token
+   96 |         TP_PROTO(struct xhci_hcd *xhci, struct xhci_container_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:101:17: error: expected ‘)’ before ‘(’ token
+  101 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:127:17: error: expected ‘)’ before ‘(’ token
+  127 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:132:17: error: expected ‘)’ before ‘(’ token
+  132 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:137:17: error: expected ‘)’ before ‘(’ token
+  137 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:142:17: error: expected ‘)’ before ‘(’ token
+  142 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:148:17: error: expected ‘)’ before ‘(’ token
+  148 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:153:17: error: expected ‘)’ before ‘(’ token
+  153 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:158:17: error: expected ‘)’ before ‘(’ token
+  158 |         TP_PROTO(struct xhci_ring *ring, struct xhci_generic_trb *trb, dma_addr_t dma),
+      |                 ^
+      |                 )
+xhci-trace.h:163:17: error: expected ‘)’ before ‘(’ token
+  163 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:187:17: error: expected ‘)’ before ‘(’ token
+  187 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:192:17: error: expected ‘)’ before ‘(’ token
+  192 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:224:17: error: expected ‘)’ before ‘(’ token
+  224 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:229:17: error: expected ‘)’ before ‘(’ token
+  229 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:234:17: error: expected ‘)’ before ‘(’ token
+  234 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:239:17: error: expected ‘)’ before ‘(’ token
+  239 |         TP_PROTO(struct xhci_virt_device *vdev),
+      |                 ^
+      |                 )
+xhci-trace.h:244:17: error: expected ‘)’ before ‘(’ token
+  244 |         TP_PROTO(struct urb *urb),
+      |                 ^
+      |                 )
+xhci-trace.h:293:17: error: expected ‘)’ before ‘(’ token
+  293 |         TP_PROTO(struct urb *urb),
+      |                 ^
+      |                 )
+xhci-trace.h:298:17: error: expected ‘)’ before ‘(’ token
+  298 |         TP_PROTO(struct urb *urb),
+      |                 ^
+      |                 )
+xhci-trace.h:303:17: error: expected ‘)’ before ‘(’ token
+  303 |         TP_PROTO(struct urb *urb),
+      |                 ^
+      |                 )
+xhci-trace.h:308:17: error: expected ‘)’ before ‘(’ token
+  308 |         TP_PROTO(struct xhci_stream_info *info, unsigned int stream_id),
+      |                 ^
+      |                 )
+xhci-trace.h:329:17: error: expected ‘)’ before ‘(’ token
+  329 |         TP_PROTO(struct xhci_stream_info *info, unsigned int stream_id),
+      |                 ^
+      |                 )
+xhci-trace.h:334:17: error: expected ‘)’ before ‘(’ token
+  334 |         TP_PROTO(struct xhci_stream_info *info, unsigned int stream_id),
+      |                 ^
+      |                 )
+xhci-trace.h:339:17: error: expected ‘)’ before ‘(’ token
+  339 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:359:17: error: expected ‘)’ before ‘(’ token
+  359 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:364:17: error: expected ‘)’ before ‘(’ token
+  364 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:369:17: error: expected ‘)’ before ‘(’ token
+  369 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:374:17: error: expected ‘)’ before ‘(’ token
+  374 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:379:17: error: expected ‘)’ before ‘(’ token
+  379 |         TP_PROTO(struct xhci_ep_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:384:17: error: expected ‘)’ before ‘(’ token
+  384 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:405:17: error: expected ‘)’ before ‘(’ token
+  405 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:410:17: error: expected ‘)’ before ‘(’ token
+  410 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:415:17: error: expected ‘)’ before ‘(’ token
+  415 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:420:17: error: expected ‘)’ before ‘(’ token
+  420 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:425:17: error: expected ‘)’ before ‘(’ token
+  425 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:430:17: error: expected ‘)’ before ‘(’ token
+  430 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:435:17: error: expected ‘)’ before ‘(’ token
+  435 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:440:17: error: expected ‘)’ before ‘(’ token
+  440 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:445:17: error: expected ‘)’ before ‘(’ token
+  445 |         TP_PROTO(struct xhci_slot_ctx *ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:450:17: error: expected ‘)’ before ‘(’ token
+  450 |         TP_PROTO(struct xhci_input_control_ctx *ctrl_ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:465:17: error: expected ‘)’ before ‘(’ token
+  465 |         TP_PROTO(struct xhci_input_control_ctx *ctrl_ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:470:17: error: expected ‘)’ before ‘(’ token
+  470 |         TP_PROTO(struct xhci_input_control_ctx *ctrl_ctx),
+      |                 ^
+      |                 )
+xhci-trace.h:475:17: error: expected ‘)’ before ‘(’ token
+  475 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:509:17: error: expected ‘)’ before ‘(’ token
+  509 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:514:17: error: expected ‘)’ before ‘(’ token
+  514 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:519:17: error: expected ‘)’ before ‘(’ token
+  519 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:524:17: error: expected ‘)’ before ‘(’ token
+  524 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:529:17: error: expected ‘)’ before ‘(’ token
+  529 |         TP_PROTO(struct xhci_ring *ring),
+      |                 ^
+      |                 )
+xhci-trace.h:534:17: error: expected ‘)’ before ‘(’ token
+  534 |         TP_PROTO(struct xhci_port *port, u32 portsc),
+      |                 ^
+      |                 )
+xhci-trace.h:554:22: error: expected ‘)’ before ‘(’ token
+  554 |              TP_PROTO(struct xhci_port *port, u32 portsc),
+      |                      ^
+      |                      )
+xhci-trace.h:559:22: error: expected ‘)’ before ‘(’ token
+  559 |              TP_PROTO(struct xhci_port *port, u32 portsc),
+      |                      ^
+      |                      )
+xhci-trace.h:564:22: error: expected ‘)’ before ‘(’ token
+  564 |              TP_PROTO(struct xhci_port *port, u32 portsc),
+      |                      ^
+      |                      )
+xhci-trace.h:569:22: error: expected ‘)’ before ‘(’ token
+  569 |              TP_PROTO(struct xhci_port *port, u32 portsc),
+      |                      ^
+      |                      )
+xhci-trace.h:574:17: error: expected ‘)’ before ‘(’ token
+  574 |         TP_PROTO(u32 slot, u32 doorbell),
+      |                 ^
+      |                 )
+xhci-trace.h:590:22: error: expected ‘)’ before ‘(’ token
+  590 |              TP_PROTO(u32 slot, u32 doorbell),
+      |                      ^
+      |                      )
+xhci-trace.h:595:22: error: expected ‘)’ before ‘(’ token
+  595 |              TP_PROTO(u32 slot, u32 doorbell),
+      |                      ^
+      |                      )
+xhci-trace.h:600:17: error: expected ‘)’ before ‘(’ token
+  600 |         TP_PROTO(struct dbc_request *req),
+      |                 ^
+      |                 )
+xhci-trace.h:624:17: error: expected ‘)’ before ‘(’ token
+  624 |         TP_PROTO(struct dbc_request *req),
+      |                 ^
+      |                 )
+xhci-trace.h:629:17: error: expected ‘)’ before ‘(’ token
+  629 |         TP_PROTO(struct dbc_request *req),
+      |                 ^
+      |                 )
+xhci-trace.h:634:17: error: expected ‘)’ before ‘(’ token
+  634 |         TP_PROTO(struct dbc_request *req),
+      |                 ^
+      |                 )
+xhci-trace.h:639:17: error: expected ‘)’ before ‘(’ token
+  639 |         TP_PROTO(struct dbc_request *req),
+      |                 ^
+      |                 )
+In file included from xhci.c:27:
+xhci-debugfs.h:81:33: error: field ‘regset’ has incomplete type
+   81 |         struct debugfs_regset32 regset;
+      |                                 ^~~~~~
+xhci.c: In function ‘xhci_portsc_writel’:
+xhci.c:46:9: warning: implicit declaration of function ‘trace_xhci_portsc_writel’; did you mean ‘xhci_portsc_writel’? [-Wimplicit-function-declaration]
+   46 |         trace_xhci_portsc_writel(port, val);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_portsc_writel
+In file included from include/linux/jiffies.h:4,
+                 from xhci.c:11:
+xhci.c: In function ‘xhci_handshake’:
+xhci.c:92:51: error: ‘U32_MAX’ undeclared (first use in this function); did you mean ‘U8_MAX’?
+   92 |                                         result == U32_MAX,
+      |                                                   ^~~~~~~
+include/linux/../mesaos_compat.h:1079:16: note: in definition of macro ‘read_poll_timeout_atomic’
+ 1079 |            if (cond) break; \
+      |                ^~~~
+xhci.c:90:15: note: in expansion of macro ‘readl_poll_timeout_atomic’
+   90 |         ret = readl_poll_timeout_atomic(ptr, result,
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_halt’:
+xhci.c:131:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  131 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "// Halt the HC");
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_start’:
+xhci.c:158:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  158 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "// Turn on HC, cmd = 0x%x.",
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_reset’:
+xhci.c:207:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  207 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "// Reset the HC");
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c:227:75: error: ‘struct usb_hcd’ has no member named ‘self’
+  227 |                 usb_asmedia_modifyflowcontrol(to_pci_dev(xhci_to_hcd(xhci)->self.controller));
+      |                                                                           ^~
+include/linux/../mesaos_compat.h:50:50: note: in definition of macro ‘container_of’
+   50 |     const typeof(((type *)0)->member) *__mptr = (ptr); \
+      |                                                  ^~~
+xhci.c:227:47: note: in expansion of macro ‘to_pci_dev’
+  227 |                 usb_asmedia_modifyflowcontrol(to_pci_dev(xhci_to_hcd(xhci)->self.controller));
+      |                                               ^~~~~~~~~~
+xhci.c: In function ‘xhci_zero_64b_regs’:
+xhci.c:249:47: error: ‘struct usb_hcd’ has no member named ‘self’
+  249 |         struct device *dev = xhci_to_hcd(xhci)->self.sysdev;
+      |                                               ^~
+xhci.c:268:18: warning: implicit declaration of function ‘iommu_get_domain_for_dev’ [-Wimplicit-function-declaration]
+  268 |         domain = iommu_get_domain_for_dev(dev);
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:268:16: warning: assignment to ‘struct iommu_domain *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  268 |         domain = iommu_get_domain_for_dev(dev);
+      |                ^
+xhci.c:270:19: error: invalid use of undefined type ‘struct iommu_domain’
+  270 |             domain->type == IOMMU_DOMAIN_IDENTITY)
+      |                   ^~
+xhci.c:270:29: error: ‘IOMMU_DOMAIN_IDENTITY’ undeclared (first use in this function)
+  270 |             domain->type == IOMMU_DOMAIN_IDENTITY)
+      |                             ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:287:13: warning: implicit declaration of function ‘upper_32_bits’ [-Wimplicit-function-declaration]
+  287 |         if (upper_32_bits(val))
+      |             ^~~~~~~~~~~~~
+xhci.c: In function ‘xhci_set_interrupter_moderation’:
+xhci.c:359:25: warning: implicit declaration of function ‘umin’; did you mean ‘min’? [-Wimplicit-function-declaration]
+  359 |         imod_interval = umin(imod_interval / 250, IMODI_MASK);
+      |                         ^~~~
+      |                         min
+xhci.c: In function ‘compliance_mode_recovery’:
+xhci.c:386:47: error: ‘USB_SS_PORT_LS_COMP_MOD’ undeclared (first use in this function)
+  386 |                 if ((temp & PORT_PLS_MASK) == USB_SS_PORT_LS_COMP_MOD) {
+      |                                               ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:391:46: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+  391 |                         xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                              ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:397:32: error: ‘struct usb_hcd’ has no member named ‘state’
+  397 |                         if (hcd->state == HC_STATE_SUSPENDED)
+      |                                ^~
+xhci.c:397:43: error: ‘HC_STATE_SUSPENDED’ undeclared (first use in this function)
+  397 |                         if (hcd->state == HC_STATE_SUSPENDED)
+      |                                           ^~~~~~~~~~~~~~~~~~
+xhci.c:398:33: warning: implicit declaration of function ‘usb_hcd_resume_root_hub’ [-Wimplicit-function-declaration]
+  398 |                                 usb_hcd_resume_root_hub(hcd);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:400:25: warning: implicit declaration of function ‘usb_hcd_poll_rh_status’ [-Wimplicit-function-declaration]
+  400 |                         usb_hcd_poll_rh_status(hcd);
+      |                         ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘compliance_mode_recovery_timer_init’:
+xhci.c:428:30: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+  428 |         xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_compliance_mode_recovery_timer_quirk_check’:
+xhci.c:442:28: warning: implicit declaration of function ‘dmi_get_system_info’ [-Wimplicit-function-declaration]
+  442 |         dmi_product_name = dmi_get_system_info(DMI_PRODUCT_NAME);
+      |                            ^~~~~~~~~~~~~~~~~~~
+xhci.c:442:48: error: ‘DMI_PRODUCT_NAME’ undeclared (first use in this function); did you mean ‘DBC_PRODUCT_ID’?
+  442 |         dmi_product_name = dmi_get_system_info(DMI_PRODUCT_NAME);
+      |                                                ^~~~~~~~~~~~~~~~
+      |                                                DBC_PRODUCT_ID
+xhci.c:443:46: error: ‘DMI_SYS_VENDOR’ undeclared (first use in this function)
+  443 |         dmi_sys_vendor = dmi_get_system_info(DMI_SYS_VENDOR);
+      |                                              ^~~~~~~~~~~~~~
+xhci.c:447:15: warning: implicit declaration of function ‘strstr’ [-Wimplicit-function-declaration]
+  447 |         if (!(strstr(dmi_sys_vendor, "Hewlett-Packard")))
+      |               ^~~~~~
+xhci.c:28:1: note: ‘strstr’ is defined in header ‘<string.h>’; did you forget to ‘#include <string.h>’?
+   27 | #include "xhci-debugfs.h"
+  +++ |+#include <string.h>
+   28 | #include "xhci-dbgcap.h"
+xhci.c: In function ‘xhci_hcd_page_size’:
+xhci.c:469:14: warning: implicit declaration of function ‘is_power_of_2’ [-Wimplicit-function-declaration]
+  469 |         if (!is_power_of_2(page_size)) {
+      |              ^~~~~~~~~~~~~
+xhci.c:476:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  476 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "HCD page size set to %iK",
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_enable_max_dev_slots’:
+xhci.c:484:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  484 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "xHC can handle at most %d device slots",
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_set_cmd_ring_deq’:
+xhci.c:511:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  511 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Setting command ring address to 0x%llx", crcr);
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_set_doorbell_ptr’:
+xhci.c:521:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  521 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_init’:
+xhci.c:551:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  551 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Starting %s", __func__);
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_run_finished’:
+xhci.c:607:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  607 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "Enable interrupts");
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_run’:
+xhci.c:653:12: error: ‘struct usb_hcd’ has no member named ‘uses_new_polling’
+  653 |         hcd->uses_new_polling = 1;
+      |            ^~
+xhci.c:654:16: error: ‘struct usb_hcd’ has no member named ‘msi_enabled’
+  654 |         if (hcd->msi_enabled)
+      |                ^~
+xhci.c:660:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  660 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init, "xhci_run");
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c:691:17: error: ‘HCD_FLAG_DEFER_RH_REGISTER’ undeclared (first use in this function)
+  691 |         set_bit(HCD_FLAG_DEFER_RH_REGISTER, &hcd->flags);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:691:49: error: ‘struct usb_hcd’ has no member named ‘flags’
+  691 |         set_bit(HCD_FLAG_DEFER_RH_REGISTER, &hcd->flags);
+      |                                                 ^~
+xhci.c: In function ‘xhci_stop’:
+xhci.c:722:9: warning: implicit declaration of function ‘spin_lock_irq’; did you mean ‘spin_lock_bh’? [-Wimplicit-function-declaration]
+  722 |         spin_lock_irq(&xhci->lock);
+      |         ^~~~~~~~~~~~~
+      |         spin_lock_bh
+xhci.c:727:9: warning: implicit declaration of function ‘spin_unlock_irq’; did you mean ‘spin_unlock_bh’? [-Wimplicit-function-declaration]
+  727 |         spin_unlock_irq(&xhci->lock);
+      |         ^~~~~~~~~~~~~~~
+      |         spin_unlock_bh
+xhci.c:733:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+  733 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:741:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  741 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_shutdown’:
+xhci.c:771:54: error: ‘struct usb_hcd’ has no member named ‘self’
+  771 |                 usb_disable_xhci_ports(to_pci_dev(hcd->self.sysdev));
+      |                                                      ^~
+include/linux/../mesaos_compat.h:50:50: note: in definition of macro ‘container_of’
+   50 |     const typeof(((type *)0)->member) *__mptr = (ptr); \
+      |                                                  ^~~
+xhci.c:771:40: note: in expansion of macro ‘to_pci_dev’
+  771 |                 usb_disable_xhci_ports(to_pci_dev(hcd->self.sysdev));
+      |                                        ^~~~~~~~~~
+xhci.c:775:38: error: ‘struct usb_hcd’ has no member named ‘self’
+  775 |                         __func__, hcd->self.busnum);
+      |                                      ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:774:9: note: in expansion of macro ‘xhci_dbg’
+  774 |         xhci_dbg(xhci, "%s: stopping usb%d port polling.\n",
+      |         ^~~~~~~~
+xhci.c:776:19: error: ‘HCD_FLAG_POLL_RH’ undeclared (first use in this function)
+  776 |         clear_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+      |                   ^~~~~~~~~~~~~~~~
+xhci.c:776:41: error: ‘struct usb_hcd’ has no member named ‘flags’
+  776 |         clear_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+      |                                         ^~
+xhci.c:777:31: error: ‘struct usb_hcd’ has no member named ‘rh_timer’
+  777 |         timer_delete_sync(&hcd->rh_timer);
+      |                               ^~
+xhci.c:780:62: error: ‘struct usb_hcd’ has no member named ‘flags’
+  780 |                 clear_bit(HCD_FLAG_POLL_RH, &xhci->shared_hcd->flags);
+      |                                                              ^~
+xhci.c:781:52: error: ‘struct usb_hcd’ has no member named ‘rh_timer’
+  781 |                 timer_delete_sync(&xhci->shared_hcd->rh_timer);
+      |                                                    ^~
+xhci.c:797:30: error: ‘trace_xhci_dbg_init’ undeclared (first use in this function); did you mean ‘xhci_dbc_init’?
+  797 |         xhci_dbg_trace(xhci, trace_xhci_dbg_init,
+      |                              ^~~~~~~~~~~~~~~~~~~
+      |                              xhci_dbc_init
+xhci.c: In function ‘xhci_map_temp_buffer’:
+xhci.c:1303:33: error: storage size of ‘dir’ isn’t known
+ 1303 |         enum dma_data_direction dir;
+      |                                 ^~~
+xhci.c:1305:15: warning: implicit declaration of function ‘usb_urb_dir_in’ [-Wimplicit-function-declaration]
+ 1305 |         dir = usb_urb_dir_in(urb) ? DMA_FROM_DEVICE : DMA_TO_DEVICE;
+      |               ^~~~~~~~~~~~~~
+xhci.c:1306:22: error: invalid use of undefined type ‘struct urb’
+ 1306 |         buf_len = urb->transfer_buffer_length;
+      |                      ^~
+xhci.c:1308:16: warning: implicit declaration of function ‘kzalloc_node’; did you mean ‘kzalloc_obj’? [-Wimplicit-function-declaration]
+ 1308 |         temp = kzalloc_node(buf_len, GFP_ATOMIC,
+      |                ^~~~~~~~~~~~
+      |                kzalloc_obj
+xhci.c:1309:29: warning: implicit declaration of function ‘dev_to_node’ [-Wimplicit-function-declaration]
+ 1309 |                             dev_to_node(hcd->self.sysdev));
+      |                             ^~~~~~~~~~~
+xhci.c:1309:44: error: ‘struct usb_hcd’ has no member named ‘self’
+ 1309 |                             dev_to_node(hcd->self.sysdev));
+      |                                            ^~
+xhci.c:1314:17: warning: implicit declaration of function ‘sg_pcopy_to_buffer’ [-Wimplicit-function-declaration]
+ 1314 |                 sg_pcopy_to_buffer(urb->sg, urb->num_sgs,
+      |                 ^~~~~~~~~~~~~~~~~~
+xhci.c:1314:39: error: invalid use of undefined type ‘struct urb’
+ 1314 |                 sg_pcopy_to_buffer(urb->sg, urb->num_sgs,
+      |                                       ^~
+xhci.c:1314:48: error: invalid use of undefined type ‘struct urb’
+ 1314 |                 sg_pcopy_to_buffer(urb->sg, urb->num_sgs,
+      |                                                ^~
+xhci.c:1317:12: error: invalid use of undefined type ‘struct urb’
+ 1317 |         urb->transfer_buffer = temp;
+      |            ^~
+xhci.c:1318:12: error: invalid use of undefined type ‘struct urb’
+ 1318 |         urb->transfer_dma = dma_map_single(hcd->self.sysdev,
+      |            ^~
+xhci.c:1318:47: error: ‘struct usb_hcd’ has no member named ‘self’
+ 1318 |         urb->transfer_dma = dma_map_single(hcd->self.sysdev,
+      |                                               ^~
+xhci.c:1319:47: error: invalid use of undefined type ‘struct urb’
+ 1319 |                                            urb->transfer_buffer,
+      |                                               ^~
+xhci.c:1320:47: error: invalid use of undefined type ‘struct urb’
+ 1320 |                                            urb->transfer_buffer_length,
+      |                                               ^~
+xhci.c:1323:34: error: ‘struct usb_hcd’ has no member named ‘self’
+ 1323 |         if (dma_mapping_error(hcd->self.sysdev,
+      |                                  ^~
+xhci.c:1324:34: error: invalid use of undefined type ‘struct urb’
+ 1324 |                               urb->transfer_dma)) {
+      |                                  ^~
+xhci.c:1328:20: error: invalid use of undefined type ‘struct urb’
+ 1328 |                 urb->transfer_flags |= URB_DMA_MAP_SINGLE;
+      |                    ^~
+xhci.c:1328:40: error: ‘URB_DMA_MAP_SINGLE’ undeclared (first use in this function)
+ 1328 |                 urb->transfer_flags |= URB_DMA_MAP_SINGLE;
+      |                                        ^~~~~~~~~~~~~~~~~~
+xhci.c:1303:33: warning: unused variable ‘dir’ [-Wunused-variable]
+ 1303 |         enum dma_data_direction dir;
+      |                                 ^~~
+xhci.c: In function ‘xhci_urb_temp_buffer_required’:
+xhci.c:1345:22: error: invalid use of undefined type ‘struct urb’
+ 1345 |         tail_sg = urb->sg;
+      |                      ^~
+xhci.c:1346:45: error: invalid use of undefined type ‘struct urb’
+ 1346 |         max_pkt = xhci_usb_endpoint_maxp(urb->dev, urb->ep);
+      |                                             ^~
+xhci.c:1346:55: error: invalid use of undefined type ‘struct urb’
+ 1346 |         max_pkt = xhci_usb_endpoint_maxp(urb->dev, urb->ep);
+      |                                                       ^~
+xhci.c:1348:17: error: invalid use of undefined type ‘struct urb’
+ 1348 |         if (!urb->num_sgs)
+      |                 ^~
+xhci.c:1351:16: error: invalid use of undefined type ‘struct urb’
+ 1351 |         if (urb->dev->speed >= USB_SPEED_SUPER)
+      |                ^~
+xhci.c:1351:32: error: ‘USB_SPEED_SUPER’ undeclared (first use in this function)
+ 1351 |         if (urb->dev->speed >= USB_SPEED_SUPER)
+      |                                ^~~~~~~~~~~~~~~
+xhci.c:1356:16: error: invalid use of undefined type ‘struct urb’
+ 1356 |         if (urb->transfer_buffer_length != 0 &&
+      |                ^~
+xhci.c:1357:18: error: invalid use of undefined type ‘struct urb’
+ 1357 |             !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
+      |                  ^~
+xhci.c:1357:37: error: ‘URB_NO_TRANSFER_DMA_MAP’ undeclared (first use in this function)
+ 1357 |             !(urb->transfer_flags & URB_NO_TRANSFER_DMA_MAP)) {
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1358:17: warning: implicit declaration of function ‘for_each_sg’ [-Wimplicit-function-declaration]
+ 1358 |                 for_each_sg(urb->sg, sg, urb->num_sgs, i) {
+      |                 ^~~~~~~~~~~
+xhci.c:1358:32: error: invalid use of undefined type ‘struct urb’
+ 1358 |                 for_each_sg(urb->sg, sg, urb->num_sgs, i) {
+      |                                ^~
+xhci.c:1358:45: error: invalid use of undefined type ‘struct urb’
+ 1358 |                 for_each_sg(urb->sg, sg, urb->num_sgs, i) {
+      |                                             ^~
+xhci.c:1358:58: error: expected ‘;’ before ‘{’ token
+ 1358 |                 for_each_sg(urb->sg, sg, urb->num_sgs, i) {
+      |                                                          ^~
+      |                                                          ;
+xhci.c:1343:29: warning: variable ‘tail_sg’ set but not used [-Wunused-but-set-variable]
+ 1343 |         struct scatterlist *tail_sg;
+      |                             ^~~~~~~
+xhci.c:1341:22: warning: variable ‘max_pkt’ set but not used [-Wunused-but-set-variable]
+ 1341 |         unsigned int max_pkt;
+      |                      ^~~~~~~
+xhci.c:1340:22: warning: variable ‘trb_size’ set but not used [-Wunused-but-set-variable]
+ 1340 |         unsigned int trb_size;
+      |                      ^~~~~~~~
+xhci.c:1339:22: warning: unused variable ‘len’ [-Wunused-variable]
+ 1339 |         unsigned int len = 0;
+      |                      ^~~
+xhci.c: In function ‘xhci_unmap_temp_buf’:
+xhci.c:1378:33: error: storage size of ‘dir’ isn’t known
+ 1378 |         enum dma_data_direction dir;
+      |                                 ^~~
+xhci.c:1382:22: error: invalid use of undefined type ‘struct urb’
+ 1382 |         buf_len = urb->transfer_buffer_length;
+      |                      ^~
+xhci.c:1384:13: warning: implicit declaration of function ‘IS_ENABLED’ [-Wimplicit-function-declaration]
+ 1384 |         if (IS_ENABLED(CONFIG_HAS_DMA) &&
+      |             ^~~~~~~~~~
+xhci.c:1384:24: error: ‘CONFIG_HAS_DMA’ undeclared (first use in this function)
+ 1384 |         if (IS_ENABLED(CONFIG_HAS_DMA) &&
+      |                        ^~~~~~~~~~~~~~
+xhci.c:1385:17: error: invalid use of undefined type ‘struct urb’
+ 1385 |             (urb->transfer_flags & URB_DMA_MAP_SINGLE))
+      |                 ^~
+xhci.c:1385:36: error: ‘URB_DMA_MAP_SINGLE’ undeclared (first use in this function)
+ 1385 |             (urb->transfer_flags & URB_DMA_MAP_SINGLE))
+      |                                    ^~~~~~~~~~~~~~~~~~
+xhci.c:1386:37: error: ‘struct usb_hcd’ has no member named ‘self’
+ 1386 |                 dma_unmap_single(hcd->self.sysdev,
+      |                                     ^~
+xhci.c:1387:37: error: invalid use of undefined type ‘struct urb’
+ 1387 |                                  urb->transfer_dma,
+      |                                     ^~
+xhci.c:1388:37: error: invalid use of undefined type ‘struct urb’
+ 1388 |                                  urb->transfer_buffer_length,
+      |                                     ^~
+xhci.c:1392:23: warning: implicit declaration of function ‘sg_pcopy_from_buffer’; did you mean ‘copy_from_user’? [-Wimplicit-function-declaration]
+ 1392 |                 len = sg_pcopy_from_buffer(urb->sg, urb->num_sgs,
+      |                       ^~~~~~~~~~~~~~~~~~~~
+      |                       copy_from_user
+xhci.c:1392:47: error: invalid use of undefined type ‘struct urb’
+ 1392 |                 len = sg_pcopy_from_buffer(urb->sg, urb->num_sgs,
+      |                                               ^~
+xhci.c:1392:56: error: invalid use of undefined type ‘struct urb’
+ 1392 |                 len = sg_pcopy_from_buffer(urb->sg, urb->num_sgs,
+      |                                                        ^~
+xhci.c:1393:47: error: invalid use of undefined type ‘struct urb’
+ 1393 |                                            urb->transfer_buffer,
+      |                                               ^~
+xhci.c:1399:28: error: invalid use of undefined type ‘struct urb’
+ 1399 |                         urb->actual_length = len;
+      |                            ^~
+xhci.c:1402:12: error: invalid use of undefined type ‘struct urb’
+ 1402 |         urb->transfer_flags &= ~URB_DMA_MAP_SINGLE;
+      |            ^~
+xhci.c:1403:18: error: invalid use of undefined type ‘struct urb’
+ 1403 |         kfree(urb->transfer_buffer);
+      |                  ^~
+xhci.c:1404:12: error: invalid use of undefined type ‘struct urb’
+ 1404 |         urb->transfer_buffer = NULL;
+      |            ^~
+xhci.c:1378:33: warning: unused variable ‘dir’ [-Wunused-variable]
+ 1378 |         enum dma_data_direction dir;
+      |                                 ^~~
+xhci.c: In function ‘xhci_map_urb_for_dma’:
+xhci.c:1427:16: warning: implicit declaration of function ‘usb_hcd_map_urb_for_dma’; did you mean ‘xhci_map_urb_for_dma’? [-Wimplicit-function-declaration]
+ 1427 |         return usb_hcd_map_urb_for_dma(hcd, urb, mem_flags);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~
+      |                xhci_map_urb_for_dma
+xhci.c: In function ‘xhci_unmap_urb_for_dma’:
+xhci.c:1437:16: error: invalid use of undefined type ‘struct urb’
+ 1437 |         if (urb->num_sgs && (urb->transfer_flags & URB_DMA_MAP_SINGLE))
+      |                ^~
+xhci.c:1437:33: error: invalid use of undefined type ‘struct urb’
+ 1437 |         if (urb->num_sgs && (urb->transfer_flags & URB_DMA_MAP_SINGLE))
+      |                                 ^~
+xhci.c:1437:52: error: ‘URB_DMA_MAP_SINGLE’ undeclared (first use in this function)
+ 1437 |         if (urb->num_sgs && (urb->transfer_flags & URB_DMA_MAP_SINGLE))
+      |                                                    ^~~~~~~~~~~~~~~~~~
+xhci.c:1443:17: warning: implicit declaration of function ‘usb_hcd_unmap_urb_for_dma’; did you mean ‘xhci_unmap_urb_for_dma’? [-Wimplicit-function-declaration]
+ 1443 |                 usb_hcd_unmap_urb_for_dma(hcd, urb);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+      |                 xhci_unmap_urb_for_dma
+xhci.c: At top level:
+xhci.c:1457:45: warning: ‘struct usb_endpoint_descriptor’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1457 | unsigned int xhci_get_endpoint_index(struct usb_endpoint_descriptor *desc)
+      |                                             ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1457:14: error: conflicting types for ‘xhci_get_endpoint_index’; have ‘unsigned int(struct usb_endpoint_descriptor *)’
+ 1457 | unsigned int xhci_get_endpoint_index(struct usb_endpoint_descriptor *desc)
+      |              ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.h:1799:14: note: previous declaration of ‘xhci_get_endpoint_index’ with type ‘unsigned int(struct usb_endpoint_descriptor *)’
+ 1799 | unsigned int xhci_get_endpoint_index(struct usb_endpoint_descriptor *desc);
+      |              ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_get_endpoint_index’:
+xhci.c:1460:13: warning: implicit declaration of function ‘usb_endpoint_xfer_control’ [-Wimplicit-function-declaration]
+ 1460 |         if (usb_endpoint_xfer_control(desc))
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1461:41: warning: implicit declaration of function ‘usb_endpoint_num’ [-Wimplicit-function-declaration]
+ 1461 |                 index = (unsigned int) (usb_endpoint_num(desc)*2);
+      |                                         ^~~~~~~~~~~~~~~~
+xhci.c:1464:26: warning: implicit declaration of function ‘usb_endpoint_dir_in’ [-Wimplicit-function-declaration]
+ 1464 |                         (usb_endpoint_dir_in(desc) ? 1 : 0) - 1;
+      |                          ^~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_get_endpoint_address’:
+xhci.c:1475:49: error: ‘USB_DIR_OUT’ undeclared (first use in this function)
+ 1475 |         unsigned int direction = ep_index % 2 ? USB_DIR_OUT : USB_DIR_IN;
+      |                                                 ^~~~~~~~~~~
+xhci.c:1475:63: error: ‘USB_DIR_IN’ undeclared (first use in this function); did you mean ‘TRB_DIR_IN’?
+ 1475 |         unsigned int direction = ep_index % 2 ? USB_DIR_OUT : USB_DIR_IN;
+      |                                                               ^~~~~~~~~~
+      |                                                               TRB_DIR_IN
+xhci.c: At top level:
+xhci.c:1483:51: warning: ‘struct usb_endpoint_descriptor’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1483 | static unsigned int xhci_get_endpoint_flag(struct usb_endpoint_descriptor *desc)
+      |                                                   ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_get_endpoint_flag’:
+xhci.c:1485:46: warning: passing argument 1 of ‘xhci_get_endpoint_index’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 1485 |         return 1 << (xhci_get_endpoint_index(desc) + 1);
+      |                                              ^~~~
+      |                                              |
+      |                                              struct usb_endpoint_descriptor *
+xhci.c:1457:70: note: expected ‘struct usb_endpoint_descriptor *’ but argument is of type ‘struct usb_endpoint_descriptor *’
+ 1457 | unsigned int xhci_get_endpoint_index(struct usb_endpoint_descriptor *desc)
+      |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+xhci.c: In function ‘xhci_last_valid_endpoint’:
+xhci.c:1496:16: warning: implicit declaration of function ‘fls’ [-Wimplicit-function-declaration]
+ 1496 |         return fls(added_ctxs) - 1;
+      |                ^~~
+xhci.c: At top level:
+xhci.c:1503:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1503 |                 struct usb_host_endpoint *ep, int check_ep, bool check_virt_dev,
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_check_args’:
+xhci.c:1512:18: error: invalid use of undefined type ‘struct usb_device’
+ 1512 |         if (!udev->parent) {
+      |                  ^~
+xhci.c:1519:26: error: invalid use of undefined type ‘struct usb_device’
+ 1519 |                 if (!udev->slot_id || !xhci->devs[udev->slot_id]) {
+      |                          ^~
+xhci.c:1519:55: error: invalid use of undefined type ‘struct usb_device’
+ 1519 |                 if (!udev->slot_id || !xhci->devs[udev->slot_id]) {
+      |                                                       ^~
+xhci.c:1525:43: error: invalid use of undefined type ‘struct usb_device’
+ 1525 |                 virt_dev = xhci->devs[udev->slot_id];
+      |                                           ^~
+xhci.c: In function ‘xhci_check_ep0_maxpacket’:
+xhci.c:1560:56: error: invalid use of undefined type ‘struct usb_device’
+ 1560 |         max_packet_size = usb_endpoint_maxp(&vdev->udev->ep0.desc);
+      |                                                        ^~
+xhci.c:1567:39: error: ‘trace_xhci_dbg_context_change’ undeclared (first use in this function)
+ 1567 |                 xhci_dbg_trace(xhci,  trace_xhci_dbg_context_change,
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_urb_enqueue’:
+xhci.c:1632:48: error: invalid use of undefined type ‘struct urb’
+ 1632 |         ep_index = xhci_get_endpoint_index(&urb->ep->desc);
+      |                                                ^~
+xhci.c:1634:40: error: invalid use of undefined type ‘struct urb’
+ 1634 |         if (usb_endpoint_xfer_isoc(&urb->ep->desc))
+      |                                        ^~
+xhci.c:1635:30: error: invalid use of undefined type ‘struct urb’
+ 1635 |                 num_tds = urb->number_of_packets;
+      |                              ^~
+xhci.c:1636:18: warning: implicit declaration of function ‘usb_endpoint_is_bulk_out’ [-Wimplicit-function-declaration]
+ 1636 |         else if (usb_endpoint_is_bulk_out(&urb->ep->desc) &&
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1636:47: error: invalid use of undefined type ‘struct urb’
+ 1636 |         else if (usb_endpoint_is_bulk_out(&urb->ep->desc) &&
+      |                                               ^~
+xhci.c:1637:16: error: invalid use of undefined type ‘struct urb’
+ 1637 |             urb->transfer_buffer_length > 0 &&
+      |                ^~
+xhci.c:1638:16: error: invalid use of undefined type ‘struct urb’
+ 1638 |             urb->transfer_flags & URB_ZERO_PACKET &&
+      |                ^~
+xhci.c:1638:35: error: ‘URB_ZERO_PACKET’ undeclared (first use in this function)
+ 1638 |             urb->transfer_flags & URB_ZERO_PACKET &&
+      |                                   ^~~~~~~~~~~~~~~
+xhci.c:1639:18: error: invalid use of undefined type ‘struct urb’
+ 1639 |             !(urb->transfer_buffer_length % usb_endpoint_maxp(&urb->ep->desc)))
+      |                  ^~
+xhci.c:1639:67: error: invalid use of undefined type ‘struct urb’
+ 1639 |             !(urb->transfer_buffer_length % usb_endpoint_maxp(&urb->ep->desc)))
+      |                                                                   ^~
+xhci.c:1644:20: warning: implicit declaration of function ‘kzalloc_flex’; did you mean ‘kzalloc_obj’? [-Wimplicit-function-declaration]
+ 1644 |         urb_priv = kzalloc_flex(*urb_priv, td, num_tds, mem_flags);
+      |                    ^~~~~~~~~~~~
+      |                    kzalloc_obj
+xhci.c:1644:44: error: ‘td’ undeclared (first use in this function)
+ 1644 |         urb_priv = kzalloc_flex(*urb_priv, td, num_tds, mem_flags);
+      |                                            ^~
+xhci.c:1650:12: error: invalid use of undefined type ‘struct urb’
+ 1650 |         urb->hcpriv = urb_priv;
+      |            ^~
+xhci.c:1652:9: warning: implicit declaration of function ‘trace_xhci_urb_enqueue’; did you mean ‘xhci_urb_enqueue’? [-Wimplicit-function-declaration]
+ 1652 |         trace_xhci_urb_enqueue(urb);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_urb_enqueue
+xhci.c:1656:39: error: invalid use of undefined type ‘struct urb’
+ 1656 |         ret = xhci_check_args(hcd, urb->dev, urb->ep,
+      |                                       ^~
+xhci.c:1656:49: error: invalid use of undefined type ‘struct urb’
+ 1656 |         ret = xhci_check_args(hcd, urb->dev, urb->ep,
+      |                                                 ^~
+xhci.c:1663:22: error: invalid use of undefined type ‘struct urb’
+ 1663 |         slot_id = urb->dev->slot_id;
+      |                      ^~
+xhci.c:1665:14: warning: implicit declaration of function ‘HCD_HW_ACCESSIBLE’ [-Wimplicit-function-declaration]
+ 1665 |         if (!HCD_HW_ACCESSIBLE(hcd)) {
+      |              ^~~~~~~~~~~~~~~~~
+xhci.c:1678:29: error: invalid use of undefined type ‘struct urb’
+ 1678 |                          urb->ep->desc.bEndpointAddress, urb);
+      |                             ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:1677:17: note: in expansion of macro ‘xhci_dbg’
+ 1677 |                 xhci_dbg(xhci, "Ep 0x%x: URB %p submitted for non-responsive xHCI host.\n",
+      |                 ^~~~~~~~
+xhci.c:1697:17: warning: implicit declaration of function ‘usb_endpoint_type’ [-Wimplicit-function-declaration]
+ 1697 |         switch (usb_endpoint_type(&urb->ep->desc)) {
+      |                 ^~~~~~~~~~~~~~~~~
+xhci.c:1697:39: error: invalid use of undefined type ‘struct urb’
+ 1697 |         switch (usb_endpoint_type(&urb->ep->desc)) {
+      |                                       ^~
+xhci.c:1699:14: error: ‘USB_ENDPOINT_XFER_CONTROL’ undeclared (first use in this function)
+ 1699 |         case USB_ENDPOINT_XFER_CONTROL:
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1703:14: error: ‘USB_ENDPOINT_XFER_BULK’ undeclared (first use in this function)
+ 1703 |         case USB_ENDPOINT_XFER_BULK:
+      |              ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1707:14: error: ‘USB_ENDPOINT_XFER_INT’ undeclared (first use in this function)
+ 1707 |         case USB_ENDPOINT_XFER_INT:
+      |              ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:1711:14: error: ‘USB_ENDPOINT_XFER_ISOC’ undeclared (first use in this function)
+ 1711 |         case USB_ENDPOINT_XFER_ISOC:
+      |              ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1719:20: error: invalid use of undefined type ‘struct urb’
+ 1719 |                 urb->hcpriv = NULL;
+      |                    ^~
+xhci.c: In function ‘xhci_urb_dequeue’:
+xhci.c:1773:9: warning: implicit declaration of function ‘trace_xhci_urb_dequeue’; did you mean ‘xhci_urb_dequeue’? [-Wimplicit-function-declaration]
+ 1773 |         trace_xhci_urb_dequeue(urb);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_urb_dequeue
+xhci.c:1776:15: warning: implicit declaration of function ‘usb_hcd_check_unlink_urb’ [-Wimplicit-function-declaration]
+ 1776 |         ret = usb_hcd_check_unlink_urb(hcd, urb, status);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1781:30: error: invalid use of undefined type ‘struct urb’
+ 1781 |         vdev = xhci->devs[urb->dev->slot_id];
+      |                              ^~
+xhci.c:1782:23: error: invalid use of undefined type ‘struct urb’
+ 1782 |         urb_priv = urb->hcpriv;
+      |                       ^~
+xhci.c:1786:48: error: invalid use of undefined type ‘struct urb’
+ 1786 |         ep_index = xhci_get_endpoint_index(&urb->ep->desc);
+      |                                                ^~
+xhci.c:1804:34: error: ‘struct urb_priv’ has no member named ‘td’
+ 1804 |         if (!td_on_ring(&urb_priv->td[0], ep_ring)) {
+      |                                  ^~
+xhci.c:1807:39: error: ‘struct urb_priv’ has no member named ‘td’
+ 1807 |                         td = &urb_priv->td[i];
+      |                                       ^~
+xhci.c:1815:38: error: ‘trace_xhci_dbg_cancel_urb’ undeclared (first use in this function)
+ 1815 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_cancel_urb,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1820:39: error: ‘struct urb_priv’ has no member named ‘td’
+ 1820 |                         td = &urb_priv->td[i];
+      |                                       ^~
+xhci.c:1834:41: error: invalid use of undefined type ‘struct urb’
+ 1834 |                                 urb, urb->dev->devpath,
+      |                                         ^~
+xhci.c:1835:36: error: invalid use of undefined type ‘struct urb’
+ 1835 |                                 urb->ep->desc.bEndpointAddress,
+      |                                    ^~
+xhci.c:1837:49: error: ‘struct urb_priv’ has no member named ‘td’
+ 1837 |                                         urb_priv->td[i].start_seg,
+      |                                                 ^~
+xhci.c:1838:49: error: ‘struct urb_priv’ has no member named ‘td’
+ 1838 |                                         urb_priv->td[i].start_trb));
+      |                                                 ^~
+xhci.c:1841:31: error: ‘struct urb_priv’ has no member named ‘td’
+ 1841 |                 td = &urb_priv->td[i];
+      |                               ^~
+xhci.c:1853:36: error: invalid use of undefined type ‘struct urb’
+ 1853 |                                 urb->dev->slot_id, ep_index, ep->ep_state);
+      |                                    ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:1852:17: note: in expansion of macro ‘xhci_dbg’
+ 1852 |                 xhci_dbg(xhci, "Not queuing Stop Endpoint on slot %d ep %d in state 0x%x\n",
+      |                 ^~~~~~~~
+xhci.c:1861:36: error: invalid use of undefined type ‘struct urb’
+ 1861 |                                 urb->dev->slot_id, ep_index, ep->ep_state);
+      |                                    ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:1860:17: note: in expansion of macro ‘xhci_dbg’
+ 1860 |                 xhci_dbg(xhci, "Invalidating TDs instantly on slot %d ep %d in state 0x%x\n",
+      |                 ^~~~~~~~
+xhci.c:1872:60: error: invalid use of undefined type ‘struct urb’
+ 1872 |                 xhci_queue_stop_endpoint(xhci, command, urb->dev->slot_id,
+      |                                                            ^~
+xhci.c:1883:9: warning: implicit declaration of function ‘usb_hcd_unlink_urb_from_ep’ [-Wimplicit-function-declaration]
+ 1883 |         usb_hcd_unlink_urb_from_ep(hcd, urb);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:1885:9: warning: implicit declaration of function ‘usb_hcd_giveback_urb’ [-Wimplicit-function-declaration]
+ 1885 |         usb_hcd_giveback_urb(hcd, urb, -ESHUTDOWN);
+      |         ^~~~~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:1903:31: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1903 |                        struct usb_host_endpoint *ep)
+      |                               ^~~~~~~~~~~~~~~~~
+xhci.c:1902:5: error: conflicting types for ‘xhci_drop_endpoint’; have ‘int(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’
+ 1902 | int xhci_drop_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~~
+xhci.h:1884:5: note: previous declaration of ‘xhci_drop_endpoint’ with type ‘int(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’
+ 1884 | int xhci_drop_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_drop_endpoint’:
+xhci.c:1914:42: warning: passing argument 3 of ‘xhci_check_args’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 1914 |         ret = xhci_check_args(hcd, udev, ep, 1, true, __func__);
+      |                                          ^~
+      |                                          |
+      |                                          struct usb_host_endpoint *
+xhci.c:1503:43: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1503 |                 struct usb_host_endpoint *ep, int check_ep, bool check_virt_dev,
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:1922:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 1922 |         drop_flag = xhci_get_endpoint_flag(&ep->desc);
+      |                                               ^~
+xhci.c:1929:33: error: invalid use of undefined type ‘struct usb_device’
+ 1929 |         in_ctx = xhci->devs[udev->slot_id]->in_ctx;
+      |                                 ^~
+xhci.c:1930:34: error: invalid use of undefined type ‘struct usb_device’
+ 1930 |         out_ctx = xhci->devs[udev->slot_id]->out_ctx;
+      |                                  ^~
+xhci.c:1938:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 1938 |         ep_index = xhci_get_endpoint_index(&ep->desc);
+      |                                               ^~
+xhci.c:1945:39: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 1945 |             xhci_get_endpoint_flag(&ep->desc)) {
+      |                                       ^~
+xhci.c:1947:36: error: invalid use of undefined type ‘struct usb_device’
+ 1947 |                 if (xhci->devs[udev->slot_id]->eps[ep_index].ring != NULL)
+      |                                    ^~
+xhci.c:1959:59: error: invalid use of undefined type ‘struct usb_device’
+ 1959 |         xhci_debugfs_remove_endpoint(xhci, xhci->devs[udev->slot_id], ep_index);
+      |                                                           ^~
+xhci.c:1961:49: error: invalid use of undefined type ‘struct usb_device’
+ 1961 |         xhci_endpoint_zero(xhci, xhci->devs[udev->slot_id], ep);
+      |                                                 ^~
+xhci.c:1961:61: warning: passing argument 3 of ‘xhci_endpoint_zero’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 1961 |         xhci_endpoint_zero(xhci, xhci->devs[udev->slot_id], ep);
+      |                                                             ^~
+      |                                                             |
+      |                                                             struct usb_host_endpoint *
+xhci.h:1801:109: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1801 | void xhci_endpoint_zero(struct xhci_hcd *xhci, struct xhci_virt_device *virt_dev, struct usb_host_endpoint *ep);
+      |                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:1964:42: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 1964 |                         (unsigned int) ep->desc.bEndpointAddress,
+      |                                          ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:1963:9: note: in expansion of macro ‘xhci_dbg’
+ 1963 |         xhci_dbg(xhci, "drop ep 0x%x, slot id %d, new drop flags = %#x, new add flags = %#x\n",
+      |         ^~~~~~~~
+xhci.c:1965:29: error: invalid use of undefined type ‘struct usb_device’
+ 1965 |                         udev->slot_id,
+      |                             ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:1963:9: note: in expansion of macro ‘xhci_dbg’
+ 1963 |         xhci_dbg(xhci, "drop ep 0x%x, slot id %d, new drop flags = %#x, new add flags = %#x\n",
+      |         ^~~~~~~~
+xhci.c: At top level:
+xhci.c:1986:30: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 1986 |                       struct usb_host_endpoint *ep)
+      |                              ^~~~~~~~~~~~~~~~~
+xhci.c:1985:5: error: conflicting types for ‘xhci_add_endpoint’; have ‘int(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’
+ 1985 | int xhci_add_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~
+xhci.h:1882:5: note: previous declaration of ‘xhci_add_endpoint’ with type ‘int(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’
+ 1882 | int xhci_add_endpoint(struct usb_hcd *hcd, struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_add_endpoint’:
+xhci.c:1998:42: warning: passing argument 3 of ‘xhci_check_args’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 1998 |         ret = xhci_check_args(hcd, udev, ep, 1, true, __func__);
+      |                                          ^~
+      |                                          |
+      |                                          struct usb_host_endpoint *
+xhci.c:1503:43: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1503 |                 struct usb_host_endpoint *ep, int check_ep, bool check_virt_dev,
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:2001:19: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2001 |                 ep->hcpriv = NULL;
+      |                   ^~
+xhci.c:2008:48: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2008 |         added_ctxs = xhci_get_endpoint_flag(&ep->desc);
+      |                                                ^~
+xhci.c:2019:35: error: invalid use of undefined type ‘struct usb_device’
+ 2019 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c:2028:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2028 |         ep_index = xhci_get_endpoint_index(&ep->desc);
+      |                                               ^~
+xhci.c:2036:50: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2036 |                                 (unsigned int) ep->desc.bEndpointAddress);
+      |                                                  ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:2034:17: note: in expansion of macro ‘xhci_warn’
+ 2034 |                 xhci_warn(xhci, "Trying to add endpoint 0x%x "
+      |                 ^~~~~~~~~
+xhci.c:2054:58: error: ‘GFP_NOIO’ undeclared (first use in this function); did you mean ‘GFP_ATOMIC’?
+ 2054 |         if (xhci_endpoint_init(xhci, virt_dev, udev, ep, GFP_NOIO) < 0) {
+      |                                                          ^~~~~~~~
+      |                                                          GFP_ATOMIC
+xhci.c:2054:54: warning: passing argument 4 of ‘xhci_endpoint_init’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 2054 |         if (xhci_endpoint_init(xhci, virt_dev, udev, ep, GFP_NOIO) < 0) {
+      |                                                      ^~
+      |                                                      |
+      |                                                      struct usb_host_endpoint *
+xhci.h:1818:68: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1818 |                 struct usb_device *udev, struct usb_host_endpoint *ep,
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:2056:45: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2056 |                                 __func__, ep->desc.bEndpointAddress);
+      |                                             ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:2072:11: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2072 |         ep->hcpriv = udev;
+      |           ^~
+xhci.c:2075:9: warning: implicit declaration of function ‘trace_xhci_add_endpoint’; did you mean ‘xhci_add_endpoint’? [-Wimplicit-function-declaration]
+ 2075 |         trace_xhci_add_endpoint(ep_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_add_endpoint
+xhci.c:2078:42: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2078 |                         (unsigned int) ep->desc.bEndpointAddress,
+      |                                          ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:2077:9: note: in expansion of macro ‘xhci_dbg’
+ 2077 |         xhci_dbg(xhci, "add ep 0x%x, slot id %d, new drop flags = %#x, new add flags = %#x\n",
+      |         ^~~~~~~~
+xhci.c:2079:29: error: invalid use of undefined type ‘struct usb_device’
+ 2079 |                         udev->slot_id,
+      |                             ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:2077:9: note: in expansion of macro ‘xhci_dbg’
+ 2077 |         xhci_dbg(xhci, "add ep 0x%x, slot id %d, new drop flags = %#x, new add flags = %#x\n",
+      |         ^~~~~~~~
+xhci.c: In function ‘xhci_configure_endpoint_result’:
+xhci.c:2157:38: error: ‘trace_xhci_dbg_context_change’ undeclared (first use in this function)
+ 2157 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_context_change,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_evaluate_context_result’:
+xhci.c:2207:38: error: ‘trace_xhci_dbg_context_change’ undeclared (first use in this function)
+ 2207 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_context_change,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_reserve_host_resources’:
+xhci.c:2274:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 2274 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_free_host_resources’:
+xhci.c:2301:30: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 2301 |         xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_finish_resource_reservation’:
+xhci.c:2321:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 2321 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_get_block_size’:
+xhci.c:2329:21: error: invalid use of undefined type ‘struct usb_device’
+ 2329 |         switch (udev->speed) {
+      |                     ^~
+xhci.c:2330:14: error: ‘USB_SPEED_LOW’ undeclared (first use in this function)
+ 2330 |         case USB_SPEED_LOW:
+      |              ^~~~~~~~~~~~~
+xhci.c:2331:14: error: ‘USB_SPEED_FULL’ undeclared (first use in this function)
+ 2331 |         case USB_SPEED_FULL:
+      |              ^~~~~~~~~~~~~~
+xhci.c:2333:14: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 2333 |         case USB_SPEED_HIGH:
+      |              ^~~~~~~~~~~~~~
+xhci.c:2335:14: error: ‘USB_SPEED_SUPER’ undeclared (first use in this function)
+ 2335 |         case USB_SPEED_SUPER:
+      |              ^~~~~~~~~~~~~~~
+xhci.c:2336:14: error: ‘USB_SPEED_SUPER_PLUS’ undeclared (first use in this function)
+ 2336 |         case USB_SPEED_SUPER_PLUS:
+      |              ^~~~~~~~~~~~~~~~~~~~
+xhci.c:2338:14: error: ‘USB_SPEED_UNKNOWN’ undeclared (first use in this function)
+ 2338 |         case USB_SPEED_UNKNOWN:
+      |              ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_check_bw_table’:
+xhci.c:2461:27: error: invalid use of undefined type ‘struct usb_device’
+ 2461 |         if (virt_dev->udev->speed >= USB_SPEED_SUPER)
+      |                           ^~
+xhci.c:2461:38: error: ‘USB_SPEED_SUPER’ undeclared (first use in this function)
+ 2461 |         if (virt_dev->udev->speed >= USB_SPEED_SUPER)
+      |                                      ^~~~~~~~~~~~~~~
+xhci.c:2464:27: error: invalid use of undefined type ‘struct usb_device’
+ 2464 |         if (virt_dev->udev->speed == USB_SPEED_HIGH) {
+      |                           ^~
+xhci.c:2464:38: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 2464 |         if (virt_dev->udev->speed == USB_SPEED_HIGH) {
+      |                                      ^~~~~~~~~~~~~~
+xhci.c:2483:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 2483 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:2594:49: error: invalid use of undefined type ‘struct usb_device’
+ 2594 |         if (!virt_dev->tt_info && virt_dev->udev->speed == USB_SPEED_HIGH) {
+      |                                                 ^~
+xhci.c: In function ‘xhci_drop_ep_from_interval_table’:
+xhci.c:2660:17: error: invalid use of undefined type ‘struct usb_device’
+ 2660 |         if (udev->speed >= USB_SPEED_SUPER) {
+      |                 ^~
+xhci.c:2660:28: error: ‘USB_SPEED_SUPER’ undeclared (first use in this function)
+ 2660 |         if (udev->speed >= USB_SPEED_SUPER) {
+      |                            ^~~~~~~~~~~~~~~
+xhci.c:2662:40: error: invalid use of undefined type ‘struct usb_device’
+ 2662 |                         xhci->devs[udev->slot_id]->bw_table->ss_bw_in -=
+      |                                        ^~
+xhci.c:2665:40: error: invalid use of undefined type ‘struct usb_device’
+ 2665 |                         xhci->devs[udev->slot_id]->bw_table->ss_bw_out -=
+      |                                        ^~
+xhci.c:2678:17: error: invalid use of undefined type ‘struct usb_device’
+ 2678 |         if (udev->speed == USB_SPEED_HIGH)
+      |                 ^~
+xhci.c:2678:28: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 2678 |         if (udev->speed == USB_SPEED_HIGH)
+      |                            ^~~~~~~~~~~~~~
+xhci.c:2687:21: error: invalid use of undefined type ‘struct usb_device’
+ 2687 |         switch (udev->speed) {
+      |                     ^~
+xhci.c:2688:14: error: ‘USB_SPEED_LOW’ undeclared (first use in this function)
+ 2688 |         case USB_SPEED_LOW:
+      |              ^~~~~~~~~~~~~
+xhci.c:2691:14: error: ‘USB_SPEED_FULL’ undeclared (first use in this function)
+ 2691 |         case USB_SPEED_FULL:
+      |              ^~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_add_ep_to_interval_table’:
+xhci.c:2722:17: error: invalid use of undefined type ‘struct usb_device’
+ 2722 |         if (udev->speed == USB_SPEED_SUPER) {
+      |                 ^~
+xhci.c:2722:28: error: ‘USB_SPEED_SUPER’ undeclared (first use in this function)
+ 2722 |         if (udev->speed == USB_SPEED_SUPER) {
+      |                            ^~~~~~~~~~~~~~~
+xhci.c:2724:40: error: invalid use of undefined type ‘struct usb_device’
+ 2724 |                         xhci->devs[udev->slot_id]->bw_table->ss_bw_in +=
+      |                                        ^~
+xhci.c:2727:40: error: invalid use of undefined type ‘struct usb_device’
+ 2727 |                         xhci->devs[udev->slot_id]->bw_table->ss_bw_out +=
+      |                                        ^~
+xhci.c:2735:17: error: invalid use of undefined type ‘struct usb_device’
+ 2735 |         if (udev->speed == USB_SPEED_HIGH)
+      |                 ^~
+xhci.c:2735:28: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 2735 |         if (udev->speed == USB_SPEED_HIGH)
+      |                            ^~~~~~~~~~~~~~
+xhci.c:2744:21: error: invalid use of undefined type ‘struct usb_device’
+ 2744 |         switch (udev->speed) {
+      |                     ^~
+xhci.c:2745:14: error: ‘USB_SPEED_LOW’ undeclared (first use in this function)
+ 2745 |         case USB_SPEED_LOW:
+      |              ^~~~~~~~~~~~~
+xhci.c:2748:14: error: ‘USB_SPEED_FULL’ undeclared (first use in this function)
+ 2748 |         case USB_SPEED_FULL:
+      |              ^~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:2950:35: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 2950 |                            struct usb_host_endpoint *host_ep)
+      |                                   ^~~~~~~~~~~~~~~~~
+xhci.c:2949:5: error: conflicting types for ‘xhci_usb_endpoint_maxp’; have ‘int(struct usb_device *, struct usb_host_endpoint *)’
+ 2949 | int xhci_usb_endpoint_maxp(struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+xhci.h:1961:5: note: previous declaration of ‘xhci_usb_endpoint_maxp’ with type ‘int(struct usb_device *, struct usb_host_endpoint *)’
+ 1961 | int xhci_usb_endpoint_maxp(struct usb_device *udev,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_usb_endpoint_maxp’:
+xhci.c:2952:13: warning: implicit declaration of function ‘usb_endpoint_is_hs_isoc_double’ [-Wimplicit-function-declaration]
+ 2952 |         if (usb_endpoint_is_hs_isoc_double(udev, host_ep))
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:2953:43: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2953 |                 return le16_to_cpu(host_ep->eusb2_isoc_ep_comp.wMaxPacketSize);
+      |                                           ^~
+include/linux/../mesaos_compat.h:1255:25: note: in definition of macro ‘le16_to_cpu’
+ 1255 | #define le16_to_cpu(x) (x)
+      |                         ^
+xhci.c:2954:42: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 2954 |         return usb_endpoint_maxp(&host_ep->desc);
+      |                                          ^~
+xhci.c: In function ‘xhci_configure_endpoint’:
+xhci.c:2981:35: error: invalid use of undefined type ‘struct usb_device’
+ 2981 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c:3010:9: warning: implicit declaration of function ‘trace_xhci_configure_endpoint_ctrl_ctx’; did you mean ‘xhci_configure_endpoint_result’? [-Wimplicit-function-declaration]
+ 3010 |         trace_xhci_configure_endpoint_ctrl_ctx(ctrl_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_configure_endpoint_result
+xhci.c:3011:9: warning: implicit declaration of function ‘trace_xhci_configure_endpoint’; did you mean ‘xhci_configure_endpoint’? [-Wimplicit-function-declaration]
+ 3011 |         trace_xhci_configure_endpoint(slot_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_configure_endpoint
+xhci.c:3016:37: error: invalid use of undefined type ‘struct usb_device’
+ 3016 |                                 udev->slot_id, must_succeed);
+      |                                     ^~
+xhci.c:3020:37: error: invalid use of undefined type ‘struct usb_device’
+ 3020 |                                 udev->slot_id, must_succeed);
+      |                                     ^~
+xhci.c:3025:39: error: ‘trace_xhci_dbg_context_change’ undeclared (first use in this function)
+ 3025 |                 xhci_dbg_trace(xhci,  trace_xhci_dbg_context_change,
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_check_bandwidth’:
+xhci.c:3099:35: error: invalid use of undefined type ‘struct usb_device’
+ 3099 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c: In function ‘xhci_reset_bandwidth’:
+xhci.c:3191:35: error: invalid use of undefined type ‘struct usb_device’
+ 3191 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c: At top level:
+xhci.c:3253:42: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3253 |                                   struct usb_host_endpoint *host_ep)
+      |                                          ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_endpoint_disable’:
+xhci.c:3266:44: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3266 |         udev = (struct usb_device *)host_ep->hcpriv;
+      |                                            ^~
+xhci.c:3267:27: error: invalid use of undefined type ‘struct usb_device’
+ 3267 |         if (!udev || !udev->slot_id)
+      |                           ^~
+xhci.c:3270:31: error: invalid use of undefined type ‘struct usb_device’
+ 3270 |         vdev = xhci->devs[udev->slot_id];
+      |                               ^~
+xhci.c:3274:52: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3274 |         ep_index = xhci_get_endpoint_index(&host_ep->desc);
+      |                                                    ^~
+xhci.c:3280:17: warning: implicit declaration of function ‘schedule_timeout_uninterruptible’ [-Wimplicit-function-declaration]
+ 3280 |                 schedule_timeout_uninterruptible(1);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:3307:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3307 |                 struct usb_host_endpoint *host_ep)
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_endpoint_reset’:
+xhci.c:3321:52: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3321 |         ep_index = xhci_get_endpoint_index(&host_ep->desc);
+      |                                                    ^~
+xhci.c:3328:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3328 |         if (usb_endpoint_xfer_control(&host_ep->desc) && ep_index == 0) {
+      |                                               ^~
+include/linux/../mesaos_compat.h:50:29: error: invalid use of undefined type ‘struct usb_device’
+   50 |     const typeof(((type *)0)->member) *__mptr = (ptr); \
+      |                             ^~
+xhci.c:3330:24: note: in expansion of macro ‘container_of’
+ 3330 |                 udev = container_of(host_ep, struct usb_device, ep0);
+      |                        ^~~~~~~~~~~~
+include/linux/../mesaos_compat.h:50:49: warning: initialization of ‘const int *’ from incompatible pointer type ‘struct usb_host_endpoint *’ [-Wincompatible-pointer-types]
+   50 |     const typeof(((type *)0)->member) *__mptr = (ptr); \
+      |                                                 ^
+xhci.c:3330:24: note: in expansion of macro ‘container_of’
+ 3330 |                 udev = container_of(host_ep, struct usb_device, ep0);
+      |                        ^~~~~~~~~~~~
+include/linux/../mesaos_compat.h:48:32: error: invalid use of undefined type ‘struct usb_device’
+   48 | #define offsetof(TYPE, MEMBER) __builtin_offsetof(TYPE, MEMBER)
+      |                                ^~~~~~~~~~~~~~~~~~
+include/linux/../mesaos_compat.h:51:31: note: in expansion of macro ‘offsetof’
+   51 |     (type *)((char *)__mptr - offsetof(type, member)); })
+      |                               ^~~~~~~~
+xhci.c:3330:24: note: in expansion of macro ‘container_of’
+ 3330 |                 udev = container_of(host_ep, struct usb_device, ep0);
+      |                        ^~~~~~~~~~~~
+xhci.c:3331:25: error: invalid use of undefined type ‘struct usb_device’
+ 3331 |                 if (udev->speed != USB_SPEED_FULL || !udev->slot_id)
+      |                         ^~
+xhci.c:3331:36: error: ‘USB_SPEED_FULL’ undeclared (first use in this function)
+ 3331 |                 if (udev->speed != USB_SPEED_FULL || !udev->slot_id)
+      |                                    ^~~~~~~~~~~~~~
+xhci.c:3331:59: error: invalid use of undefined type ‘struct usb_device’
+ 3331 |                 if (udev->speed != USB_SPEED_FULL || !udev->slot_id)
+      |                                                           ^~
+xhci.c:3334:39: error: invalid use of undefined type ‘struct usb_device’
+ 3334 |                 vdev = xhci->devs[udev->slot_id];
+      |                                       ^~
+xhci.c:3344:21: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3344 |         if (!host_ep->hcpriv)
+      |                     ^~
+xhci.c:3346:45: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3346 |         udev = (struct usb_device *) host_ep->hcpriv;
+      |                                             ^~
+xhci.c:3347:31: error: invalid use of undefined type ‘struct usb_device’
+ 3347 |         vdev = xhci->devs[udev->slot_id];
+      |                               ^~
+xhci.c:3349:18: error: invalid use of undefined type ‘struct usb_device’
+ 3349 |         if (!udev->slot_id || !vdev)
+      |                  ^~
+xhci.c:3363:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3363 |         if (usb_endpoint_xfer_control(&host_ep->desc) ||
+      |                                               ^~
+xhci.c:3364:44: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3364 |             usb_endpoint_xfer_isoc(&host_ep->desc))
+      |                                            ^~
+xhci.c:3367:50: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3367 |         ep_flag = xhci_get_endpoint_flag(&host_ep->desc);
+      |                                                  ^~
+xhci.c:3372:51: error: ‘GFP_NOWAIT’ undeclared (first use in this function)
+ 3372 |         stop_cmd = xhci_alloc_command(xhci, true, GFP_NOWAIT);
+      |                                                   ^~~~~~~~~~
+xhci.c:3398:60: error: invalid use of undefined type ‘struct usb_device’
+ 3398 |         err = xhci_queue_stop_endpoint(xhci, stop_cmd, udev->slot_id,
+      |                                                            ^~
+xhci.c:3430:43: error: invalid use of undefined type ‘struct usb_device’
+ 3430 |                                       udev->slot_id, false);
+      |                                           ^~
+xhci.c: At top level:
+xhci.c:3454:49: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3454 |                 struct usb_device *udev, struct usb_host_endpoint *ep,
+      |                                                 ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_check_streams_endpoint’:
+xhci.c:3463:56: warning: passing argument 3 of ‘xhci_check_args’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 3463 |         ret = xhci_check_args(xhci_to_hcd(xhci), udev, ep, 1, true, __func__);
+      |                                                        ^~
+      |                                                        |
+      |                                                        struct usb_host_endpoint *
+xhci.c:1503:43: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1503 |                 struct usb_host_endpoint *ep, int check_ep, bool check_virt_dev,
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:3466:13: warning: implicit declaration of function ‘usb_ss_max_streams’ [-Wimplicit-function-declaration]
+ 3466 |         if (usb_ss_max_streams(&ep->ss_ep_comp) == 0) {
+      |             ^~~~~~~~~~~~~~~~~~
+xhci.c:3466:35: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3466 |         if (usb_ss_max_streams(&ep->ss_ep_comp) == 0) {
+      |                                   ^~
+xhci.c:3469:35: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3469 |                                 ep->desc.bEndpointAddress);
+      |                                   ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:3467:17: note: in expansion of macro ‘xhci_warn’
+ 3467 |                 xhci_warn(xhci, "WARN: SuperSpeed Endpoint Companion"
+      |                 ^~~~~~~~~
+xhci.c:3473:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3473 |         ep_index = xhci_get_endpoint_index(&ep->desc);
+      |                                               ^~
+xhci.c:3479:35: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3479 |                                 ep->desc.bEndpointAddress);
+      |                                   ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:3477:17: note: in expansion of macro ‘xhci_warn’
+ 3477 |                 xhci_warn(xhci, "WARN: SuperSpeed bulk endpoint 0x%x "
+      |                 ^~~~~~~~~
+xhci.c:3487:35: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3487 |                                 ep->desc.bEndpointAddress);
+      |                                   ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:3485:17: note: in expansion of macro ‘xhci_warn’
+ 3485 |                 xhci_warn(xhci, "Cannot setup streams for SuperSpeed bulk "
+      |                 ^~~~~~~~~
+xhci.c: In function ‘xhci_calculate_streams_entries’:
+xhci.c:3499:28: warning: implicit declaration of function ‘roundup_pow_of_two’ [-Wimplicit-function-declaration]
+ 3499 |         *num_stream_ctxs = roundup_pow_of_two(*num_streams);
+      |                            ^~~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:3521:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3521 |                 struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_calculate_streams_and_bitmask’:
+xhci.c:3531:45: error: invalid use of undefined type ‘struct usb_device’
+ 3531 |                                 eps[i], udev->slot_id);
+      |                                             ^~
+xhci.c:3531:36: warning: passing argument 3 of ‘xhci_check_streams_endpoint’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 3531 |                                 eps[i], udev->slot_id);
+      |                                 ~~~^~~
+      |                                    |
+      |                                    struct usb_host_endpoint *
+xhci.c:3454:68: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 3454 |                 struct usb_device *udev, struct usb_host_endpoint *ep,
+      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c:3535:57: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3535 |                 max_streams = usb_ss_max_streams(&eps[i]->ss_ep_comp);
+      |                                                         ^~
+xhci.c:3538:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3538 |                                         eps[i]->desc.bEndpointAddress,
+      |                                               ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:3537:25: note: in expansion of macro ‘xhci_dbg’
+ 3537 |                         xhci_dbg(xhci, "Ep 0x%x only supports %u stream IDs.\n",
+      |                         ^~~~~~~~
+xhci.c:3543:63: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3543 |                 endpoint_flag = xhci_get_endpoint_flag(&eps[i]->desc);
+      |                                                               ^~
+xhci.c: At top level:
+xhci.c:3553:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3553 |                 struct usb_host_endpoint **eps, unsigned int num_eps)
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_calculate_no_streams_bitmask’:
+xhci.c:3561:23: error: invalid use of undefined type ‘struct usb_device’
+ 3561 |         slot_id = udev->slot_id;
+      |                       ^~
+xhci.c:3566:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3566 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3573:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3573 |                                         eps[i]->desc.bEndpointAddress);
+      |                                               ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:3570:25: note: in expansion of macro ‘xhci_warn’
+ 3570 |                         xhci_warn(xhci, "WARN Can't disable streams for "
+      |                         ^~~~~~~~~
+xhci.c:3582:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3582 |                                         eps[i]->desc.bEndpointAddress);
+      |                                               ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:3579:25: note: in expansion of macro ‘xhci_warn’
+ 3579 |                         xhci_warn(xhci, "WARN Can't disable streams for "
+      |                         ^~~~~~~~~
+xhci.c:3587:69: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3587 |                 changed_ep_bitmask |= xhci_get_endpoint_flag(&eps[i]->desc);
+      |                                                                     ^~
+xhci.c: At top level:
+xhci.c:3609:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3609 |                 struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_alloc_streams’:
+xhci.c:3658:62: warning: passing argument 3 of ‘xhci_calculate_streams_and_bitmask’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 3658 |         ret = xhci_calculate_streams_and_bitmask(xhci, udev, eps,
+      |                                                              ^~~
+      |                                                              |
+      |                                                              struct usb_host_endpoint **
+xhci.c:3521:44: note: expected ‘struct usb_host_endpoint **’ but argument is of type ‘struct usb_host_endpoint **’
+ 3521 |                 struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+xhci.c:3672:31: error: invalid use of undefined type ‘struct usb_device’
+ 3672 |         vdev = xhci->devs[udev->slot_id];
+      |                               ^~
+xhci.c:3677:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3677 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3691:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3691 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3692:55: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3692 |                 max_packet = usb_endpoint_maxp(&eps[i]->desc);
+      |                                                       ^~
+xhci.c:3708:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3708 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3736:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3736 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3739:30: error: invalid use of undefined type ‘struct usb_device’
+ 3739 |                          udev->slot_id, ep_index);
+      |                              ^~
+include/linux/../mesaos_compat.h:1107:46: note: in definition of macro ‘dev_dbg’
+ 1107 | #define dev_dbg(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:3738:17: note: in expansion of macro ‘xhci_dbg’
+ 3738 |                 xhci_dbg(xhci, "Slot %u ep ctx %u now has streams.\n",
+      |                 ^~~~~~~~
+xhci.c:3746:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3746 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3755:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3755 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3763:51: warning: passing argument 3 of ‘xhci_endpoint_zero’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 3763 |                 xhci_endpoint_zero(xhci, vdev, eps[i]);
+      |                                                ~~~^~~
+      |                                                   |
+      |                                                   struct usb_host_endpoint *
+xhci.h:1801:109: note: expected ‘struct usb_host_endpoint *’ but argument is of type ‘struct usb_host_endpoint *’
+ 1801 | void xhci_endpoint_zero(struct xhci_hcd *xhci, struct xhci_virt_device *virt_dev, struct usb_host_endpoint *ep);
+      |                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+xhci.c: At top level:
+xhci.c:3776:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 3776 |                 struct usb_host_endpoint **eps, unsigned int num_eps,
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_free_streams’:
+xhci.c:3789:31: error: invalid use of undefined type ‘struct usb_device’
+ 3789 |         vdev = xhci->devs[udev->slot_id];
+      |                               ^~
+xhci.c:3794:31: warning: passing argument 3 of ‘xhci_calculate_no_streams_bitmask’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 3794 |                         udev, eps, num_eps);
+      |                               ^~~
+      |                               |
+      |                               struct usb_host_endpoint **
+xhci.c:3553:44: note: expected ‘struct usb_host_endpoint **’ but argument is of type ‘struct usb_host_endpoint **’
+ 3553 |                 struct usb_host_endpoint **eps, unsigned int num_eps)
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+xhci.c:3804:51: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3804 |         ep_index = xhci_get_endpoint_index(&eps[0]->desc);
+      |                                                   ^~
+xhci.c:3817:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3817 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c:3819:32: error: invalid use of undefined type ‘struct usb_device’
+ 3819 |                 xhci->devs[udev->slot_id]->eps[ep_index].ep_state |=
+      |                                ^~
+xhci.c:3846:59: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 3846 |                 ep_index = xhci_get_endpoint_index(&eps[i]->desc);
+      |                                                           ^~
+xhci.c: In function ‘xhci_free_device_endpoint_resources’:
+xhci.c:3882:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 3882 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_discover_or_reset_device’:
+xhci.c:3925:23: error: invalid use of undefined type ‘struct usb_device’
+ 3925 |         slot_id = udev->slot_id;
+      |                       ^~
+xhci.c:3966:60: error: invalid use of undefined type ‘struct usb_device’
+ 3966 |                 ret = xhci_disable_and_free_slot(xhci, udev->slot_id);
+      |                                                            ^~
+xhci.c:3977:9: warning: implicit declaration of function ‘trace_xhci_discover_or_reset_device’; did you mean ‘xhci_discover_or_reset_device’? [-Wimplicit-function-declaration]
+ 3977 |         trace_xhci_discover_or_reset_device(slot_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_discover_or_reset_device
+xhci.c:3986:59: error: ‘GFP_NOIO’ undeclared (first use in this function); did you mean ‘GFP_ATOMIC’?
+ 3986 |         reset_device_cmd = xhci_alloc_command(xhci, true, GFP_NOIO);
+      |                                                           ^~~~~~~~
+      |                                                           GFP_ATOMIC
+xhci.c:4062:33: warning: implicit declaration of function ‘xhci_sideband_notify_ep_ring_free’ [-Wimplicit-function-declaration]
+ 4062 |                                 xhci_sideband_notify_ep_ring_free(ep->sideband, i);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_free_dev’:
+xhci.c:4104:17: warning: implicit declaration of function ‘pm_runtime_put_noidle’ [-Wimplicit-function-declaration]
+ 4104 |                 pm_runtime_put_noidle(hcd->self.controller);
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:4104:42: error: ‘struct usb_hcd’ has no member named ‘self’
+ 4104 |                 pm_runtime_put_noidle(hcd->self.controller);
+      |                                          ^~
+xhci.c:4113:35: error: invalid use of undefined type ‘struct usb_device’
+ 4113 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c:4115:9: warning: implicit declaration of function ‘trace_xhci_free_dev’; did you mean ‘xhci_free_dev’? [-Wimplicit-function-declaration]
+ 4115 |         trace_xhci_free_dev(slot_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~
+      |         xhci_free_dev
+xhci.c:4121:37: error: invalid use of undefined type ‘struct usb_device’
+ 4121 |         xhci_disable_slot(xhci, udev->slot_id);
+      |                                     ^~
+xhci.c:4124:51: error: invalid use of undefined type ‘struct usb_device’
+ 4124 |         xhci_free_virt_device(xhci, virt_dev, udev->slot_id);
+      |                                                   ^~
+xhci.c: In function ‘xhci_reserve_host_control_ep_resources’:
+xhci.c:4192:38: error: ‘trace_xhci_dbg_quirks’ undeclared (first use in this function)
+ 4192 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_alloc_dev’:
+xhci.c:4264:58: error: ‘GFP_NOIO’ undeclared (first use in this function); did you mean ‘GFP_ATOMIC’?
+ 4264 |         if (!xhci_alloc_virt_device(xhci, slot_id, udev, GFP_NOIO)) {
+      |                                                          ^~~~~~~~
+      |                                                          GFP_ATOMIC
+xhci.c:4270:9: warning: implicit declaration of function ‘trace_xhci_alloc_dev’; did you mean ‘xhci_alloc_dev’? [-Wimplicit-function-declaration]
+ 4270 |         trace_xhci_alloc_dev(slot_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~
+      |         xhci_alloc_dev
+xhci.c:4272:13: error: invalid use of undefined type ‘struct usb_device’
+ 4272 |         udev->slot_id = slot_id;
+      |             ^~
+xhci.c:4281:17: warning: implicit declaration of function ‘pm_runtime_get_noresume’ [-Wimplicit-function-declaration]
+ 4281 |                 pm_runtime_get_noresume(hcd->self.controller);
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:4281:44: error: ‘struct usb_hcd’ has no member named ‘self’
+ 4281 |                 pm_runtime_get_noresume(hcd->self.controller);
+      |                                            ^~
+xhci.c:4288:46: error: invalid use of undefined type ‘struct usb_device’
+ 4288 |         xhci_disable_and_free_slot(xhci, udev->slot_id);
+      |                                              ^~
+xhci.c: In function ‘xhci_setup_device’:
+xhci.c:4323:18: error: invalid use of undefined type ‘struct usb_device’
+ 4323 |         if (!udev->slot_id) {
+      |                  ^~
+xhci.c:4324:38: error: ‘trace_xhci_dbg_address’ undeclared (first use in this function)
+ 4324 |                 xhci_dbg_trace(xhci, trace_xhci_dbg_address,
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:4325:55: error: invalid use of undefined type ‘struct usb_device’
+ 4325 |                                 "Bad Slot ID %d", udev->slot_id);
+      |                                                       ^~
+xhci.c:4330:35: error: invalid use of undefined type ‘struct usb_device’
+ 4330 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c:4339:29: error: invalid use of undefined type ‘struct usb_device’
+ 4339 |                         udev->slot_id);
+      |                             ^~
+include/linux/../mesaos_compat.h:1106:47: note: in definition of macro ‘dev_warn’
+ 1106 | #define dev_warn(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                               ^~~~~~~~~~~
+xhci.c:4338:17: note: in expansion of macro ‘xhci_warn’
+ 4338 |                 xhci_warn(xhci, "Virt dev invalid for slot_id 0x%x!\n",
+      |                 ^~~~~~~~~
+xhci.c:4344:9: warning: implicit declaration of function ‘trace_xhci_setup_device_slot’ [-Wimplicit-function-declaration]
+ 4344 |         trace_xhci_setup_device_slot(slot_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:4384:9: warning: implicit declaration of function ‘trace_xhci_address_ctx’ [-Wimplicit-function-declaration]
+ 4384 |         trace_xhci_address_ctx(xhci, virt_dev->in_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:4386:9: warning: implicit declaration of function ‘trace_xhci_address_ctrl_ctx’ [-Wimplicit-function-declaration]
+ 4386 |         trace_xhci_address_ctrl_ctx(ctrl_ctx);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:4388:9: warning: implicit declaration of function ‘trace_xhci_setup_device’; did you mean ‘xhci_setup_device’? [-Wimplicit-function-declaration]
+ 4388 |         trace_xhci_setup_device(virt_dev);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+      |         xhci_setup_device
+xhci.c:4390:45: error: invalid use of undefined type ‘struct usb_device’
+ 4390 |                                         udev->slot_id, setup);
+      |                                             ^~
+xhci.c:4416:35: error: invalid use of undefined type ‘struct usb_device’
+ 4416 |                          act, udev->slot_id);
+      |                                   ^~
+include/linux/../mesaos_compat.h:1105:46: note: in definition of macro ‘dev_err’
+ 1105 | #define dev_err(dev, fmt, ...) printk(fmt, ##__VA_ARGS__)
+      |                                              ^~~~~~~~~~~
+xhci.c:4415:17: note: in expansion of macro ‘xhci_err’
+ 4415 |                 xhci_err(xhci, "Setup ERROR: setup %s command for slot %d.\n",
+      |                 ^~~~~~~~
+xhci.c:4423:60: error: invalid use of undefined type ‘struct usb_device’
+ 4423 |                 ret = xhci_disable_and_free_slot(xhci, udev->slot_id);
+      |                                                            ^~
+xhci.c:4455:21: error: invalid use of undefined type ‘struct usb_device’
+ 4455 |                 udev->slot_id,
+      |                     ^~
+xhci.c:4456:52: error: invalid use of undefined type ‘struct usb_device’
+ 4456 |                 &xhci->dcbaa->dev_context_ptrs[udev->slot_id],
+      |                                                    ^~
+xhci.c:4458:17: warning: implicit declaration of function ‘le64_to_cpu’; did you mean ‘le16_to_cpu’? [-Wimplicit-function-declaration]
+ 4458 |                 le64_to_cpu(xhci->dcbaa->dev_context_ptrs[udev->slot_id]));
+      |                 ^~~~~~~~~~~
+      |                 le16_to_cpu
+xhci.c:4458:63: error: invalid use of undefined type ‘struct usb_device’
+ 4458 |                 le64_to_cpu(xhci->dcbaa->dev_context_ptrs[udev->slot_id]));
+      |                                                               ^~
+xhci.c:4472:13: error: invalid use of undefined type ‘struct usb_device’
+ 4472 |         udev->devaddr = (u8)(le32_to_cpu(slot_ctx->dev_state) & DEV_ADDR_MASK);
+      |             ^~
+xhci.c: In function ‘xhci_change_max_exit_latency’:
+xhci.c:4532:35: error: invalid use of undefined type ‘struct usb_device’
+ 4532 |         virt_dev = xhci->devs[udev->slot_id];
+      |                                   ^~
+xhci.c:4565:30: error: ‘trace_xhci_dbg_context_change’ undeclared (first use in this function)
+ 4565 |         xhci_dbg_trace(xhci, trace_xhci_dbg_context_change,
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:5236:55: warning: ‘enum usb3_link_state’ declared inside parameter list will not be visible outside of this definition or declaration
+ 5236 |                         struct usb_device *udev, enum usb3_link_state state)
+      |                                                       ^~~~~~~~~~~~~~~
+xhci.c:5236:71: error: parameter 3 (‘state’) has incomplete type
+ 5236 |                         struct usb_device *udev, enum usb3_link_state state)
+      |                                                  ~~~~~~~~~~~~~~~~~~~~~^~~~~
+xhci.c: In function ‘xhci_enable_usb3_lpm_timeout’:
+xhci.c:5238:16: error: ‘USB3_LPM_DISABLED’ undeclared (first use in this function)
+ 5238 |         return USB3_LPM_DISABLED;
+      |                ^~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:5242:55: warning: ‘enum usb3_link_state’ declared inside parameter list will not be visible outside of this definition or declaration
+ 5242 |                         struct usb_device *udev, enum usb3_link_state state)
+      |                                                       ^~~~~~~~~~~~~~~
+xhci.c:5242:71: error: parameter 3 (‘state’) has incomplete type
+ 5242 |                         struct usb_device *udev, enum usb3_link_state state)
+      |                                                  ~~~~~~~~~~~~~~~~~~~~~^~~~~
+xhci.c:5254:32: warning: ‘struct usb_tt’ declared inside parameter list will not be visible outside of this definition or declaration
+ 5254 |                         struct usb_tt *tt, gfp_t mem_flags)
+      |                                ^~~~~~
+xhci.c:5253:5: error: conflicting types for ‘xhci_update_hub_device’; have ‘int(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’}
+ 5253 | int xhci_update_hub_device(struct usb_hcd *hcd, struct usb_device *hdev,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+xhci.h:1888:5: note: previous declaration of ‘xhci_update_hub_device’ with type ‘int(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’}
+ 1888 | int xhci_update_hub_device(struct usb_hcd *hcd, struct usb_device *hdev,
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_update_hub_device’:
+xhci.c:5266:18: error: invalid use of undefined type ‘struct usb_device’
+ 5266 |         if (!hdev->parent)
+      |                  ^~
+xhci.c:5269:31: error: invalid use of undefined type ‘struct usb_device’
+ 5269 |         vdev = xhci->devs[hdev->slot_id];
+      |                               ^~
+xhci.c:5288:17: error: invalid use of undefined type ‘struct usb_device’
+ 5288 |         if (hdev->speed == USB_SPEED_HIGH &&
+      |                 ^~
+xhci.c:5288:28: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 5288 |         if (hdev->speed == USB_SPEED_HIGH &&
+      |                            ^~~~~~~~~~~~~~
+xhci.c:5289:62: warning: passing argument 4 of ‘xhci_alloc_tt_info’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 5289 |                         xhci_alloc_tt_info(xhci, vdev, hdev, tt, GFP_ATOMIC)) {
+      |                                                              ^~
+      |                                                              |
+      |                                                              struct usb_tt *
+xhci.h:1903:32: note: expected ‘struct usb_tt *’ but argument is of type ‘struct usb_tt *’
+ 1903 |                 struct usb_tt *tt, gfp_t mem_flags);
+      |                 ~~~~~~~~~~~~~~~^~
+xhci.c:5305:15: error: invalid use of undefined type ‘struct usb_tt’
+ 5305 |         if (tt->multi)
+      |               ^~
+xhci.c:5307:22: error: invalid use of undefined type ‘struct usb_device’
+ 5307 |         else if (hdev->speed == USB_SPEED_FULL)
+      |                      ^~
+xhci.c:5307:33: error: ‘USB_SPEED_FULL’ undeclared (first use in this function)
+ 5307 |         else if (hdev->speed == USB_SPEED_FULL)
+      |                                 ^~~~~~~~~~~~~~
+xhci.c:5314:71: error: invalid use of undefined type ‘struct usb_device’
+ 5314 |                 slot_ctx->dev_info2 |= cpu_to_le32(XHCI_MAX_PORTS(hdev->maxchild));
+      |                                                                       ^~
+include/linux/../mesaos_compat.h:146:25: note: in definition of macro ‘cpu_to_le32’
+  146 | #define cpu_to_le32(x) (x)
+      |                         ^
+xhci.c:5314:52: note: in expansion of macro ‘XHCI_MAX_PORTS’
+ 5314 |                 slot_ctx->dev_info2 |= cpu_to_le32(XHCI_MAX_PORTS(hdev->maxchild));
+      |                                                    ^~~~~~~~~~~~~~
+xhci.c:5322:32: error: invalid use of undefined type ‘struct usb_tt’
+ 5322 |                 think_time = tt->think_time;
+      |                                ^~
+xhci.c:5325:54: error: invalid use of undefined type ‘struct usb_device’
+ 5325 |                 if (xhci->hci_version < 0x100 || hdev->speed == USB_SPEED_HIGH)
+      |                                                      ^~
+xhci.c: In function ‘xhci_hcd_init_usb2_data’:
+xhci.c:5365:12: error: ‘struct usb_hcd’ has no member named ‘speed’
+ 5365 |         hcd->speed = HCD_USB2;
+      |            ^~
+xhci.c:5365:22: error: ‘HCD_USB2’ undeclared (first use in this function)
+ 5365 |         hcd->speed = HCD_USB2;
+      |                      ^~~~~~~~
+xhci.c:5366:12: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5366 |         hcd->self.root_hub->speed = USB_SPEED_HIGH;
+      |            ^~
+xhci.c:5366:37: error: ‘USB_SPEED_HIGH’ undeclared (first use in this function)
+ 5366 |         hcd->self.root_hub->speed = USB_SPEED_HIGH;
+      |                                     ^~~~~~~~~~~~~~
+xhci.c:5372:12: error: ‘struct usb_hcd’ has no member named ‘has_tt’
+ 5372 |         hcd->has_tt = 1;
+      |            ^~
+xhci.c: In function ‘xhci_hcd_init_usb3_data’:
+xhci.c:5395:20: error: ‘struct usb_hcd’ has no member named ‘speed’
+ 5395 |                 hcd->speed = HCD_USB32;
+      |                    ^~
+xhci.c:5395:30: error: ‘HCD_USB32’ undeclared (first use in this function)
+ 5395 |                 hcd->speed = HCD_USB32;
+      |                              ^~~~~~~~~
+xhci.c:5396:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5396 |                 hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
+      |                    ^~
+xhci.c:5396:45: error: ‘USB_SPEED_SUPER_PLUS’ undeclared (first use in this function)
+ 5396 |                 hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
+      |                                             ^~~~~~~~~~~~~~~~~~~~
+xhci.c:5397:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5397 |                 hcd->self.root_hub->rx_lanes = 2;
+      |                    ^~
+xhci.c:5398:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5398 |                 hcd->self.root_hub->tx_lanes = 2;
+      |                    ^~
+xhci.c:5399:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5399 |                 hcd->self.root_hub->ssp_rate = USB_SSP_GEN_2x2;
+      |                    ^~
+xhci.c:5399:48: error: ‘USB_SSP_GEN_2x2’ undeclared (first use in this function)
+ 5399 |                 hcd->self.root_hub->ssp_rate = USB_SSP_GEN_2x2;
+      |                                                ^~~~~~~~~~~~~~~
+xhci.c:5402:20: error: ‘struct usb_hcd’ has no member named ‘speed’
+ 5402 |                 hcd->speed = HCD_USB31;
+      |                    ^~
+xhci.c:5402:30: error: ‘HCD_USB31’ undeclared (first use in this function)
+ 5402 |                 hcd->speed = HCD_USB31;
+      |                              ^~~~~~~~~
+xhci.c:5403:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5403 |                 hcd->self.root_hub->speed = USB_SPEED_SUPER_PLUS;
+      |                    ^~
+xhci.c:5404:20: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5404 |                 hcd->self.root_hub->ssp_rate = USB_SSP_GEN_2x1;
+      |                    ^~
+xhci.c:5404:48: error: ‘USB_SSP_GEN_2x1’ undeclared (first use in this function)
+ 5404 |                 hcd->self.root_hub->ssp_rate = USB_SSP_GEN_2x1;
+      |                                                ^~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_gen_setup’:
+xhci.c:5420:43: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5420 |         struct device           *dev = hcd->self.sysdev;
+      |                                           ^~
+xhci.c:5425:12: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5425 |         hcd->self.sg_tablesize = ~0;
+      |            ^~
+xhci.c:5428:12: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5428 |         hcd->self.no_sg_constraint = 1;
+      |            ^~
+xhci.c:5431:12: error: ‘struct usb_hcd’ has no member named ‘self’
+ 5431 |         hcd->self.no_stop_on_short = 1;
+      |            ^~
+xhci.c:5442:29: error: ‘struct usb_hcd’ has no member named ‘regs’
+ 5442 |         xhci->cap_regs = hcd->regs;
+      |                             ^~
+xhci.c:5443:28: error: ‘struct usb_hcd’ has no member named ‘regs’
+ 5443 |         xhci->op_regs = hcd->regs +
+      |                            ^~
+xhci.c:5445:29: error: ‘struct usb_hcd’ has no member named ‘regs’
+ 5445 |         xhci->run_regs = hcd->regs +
+      |                             ^~
+xhci.c:5508:26: warning: implicit declaration of function ‘dma_set_mask’ [-Wimplicit-function-declaration]
+ 5508 |                         !dma_set_mask(dev, DMA_BIT_MASK(64))) {
+      |                          ^~~~~~~~~~~~
+xhci.c:5508:44: warning: implicit declaration of function ‘DMA_BIT_MASK’; did you mean ‘BIT_MASK’? [-Wimplicit-function-declaration]
+ 5508 |                         !dma_set_mask(dev, DMA_BIT_MASK(64))) {
+      |                                            ^~~~~~~~~~~~
+      |                                            BIT_MASK
+xhci.c:5510:17: warning: implicit declaration of function ‘dma_set_coherent_mask’ [-Wimplicit-function-declaration]
+ 5510 |                 dma_set_coherent_mask(dev, DMA_BIT_MASK(64));
+      |                 ^~~~~~~~~~~~~~~~~~~~~
+xhci.c: At top level:
+xhci.c:5543:24: warning: ‘struct usb_host_endpoint’ declared inside parameter list will not be visible outside of this definition or declaration
+ 5543 |                 struct usb_host_endpoint *ep)
+      |                        ^~~~~~~~~~~~~~~~~
+xhci.c: In function ‘xhci_clear_tt_buffer_complete’:
+xhci.c:5554:39: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 5554 |         udev = (struct usb_device *)ep->hcpriv;
+      |                                       ^~
+xhci.c:5555:23: error: invalid use of undefined type ‘struct usb_device’
+ 5555 |         slot_id = udev->slot_id;
+      |                       ^~
+xhci.c:5556:47: error: invalid use of undefined type ‘struct usb_host_endpoint’
+ 5556 |         ep_index = xhci_get_endpoint_index(&ep->desc);
+      |                                               ^~
+xhci.c: At top level:
+xhci.c:5571:33: warning: initialization of ‘int (*)(struct usb_hcd *)’ from incompatible pointer type ‘irqreturn_t (*)(struct usb_hcd *)’ {aka ‘int (*)(struct usb_hcd *)’} [-Wincompatible-pointer-types]
+ 5571 |         .irq =                  xhci_irq,
+      |                                 ^~~~~~~~
+xhci.c:5571:33: note: (near initialization for ‘xhci_hc_driver.irq’)
+xhci.c:5572:33: error: ‘HCD_MEMORY’ undeclared here (not in a function)
+ 5572 |         .flags =                HCD_MEMORY | HCD_DMA | HCD_USB3 | HCD_SHARED |
+      |                                 ^~~~~~~~~~
+xhci.c:5572:46: error: ‘HCD_DMA’ undeclared here (not in a function)
+ 5572 |         .flags =                HCD_MEMORY | HCD_DMA | HCD_USB3 | HCD_SHARED |
+      |                                              ^~~~~~~
+xhci.c:5572:56: error: ‘HCD_USB3’ undeclared here (not in a function)
+ 5572 |         .flags =                HCD_MEMORY | HCD_DMA | HCD_USB3 | HCD_SHARED |
+      |                                                        ^~~~~~~~
+xhci.c:5572:67: error: ‘HCD_SHARED’ undeclared here (not in a function)
+ 5572 |         .flags =                HCD_MEMORY | HCD_DMA | HCD_USB3 | HCD_SHARED |
+      |                                                                   ^~~~~~~~~~
+xhci.c:5573:33: error: ‘HCD_BH’ undeclared here (not in a function)
+ 5573 |                                 HCD_BH,
+      |                                 ^~~~~~
+xhci.c:5579:33: warning: initialization of ‘int (*)(struct usb_hcd *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5579 |         .start =                xhci_run,
+      |                                 ^~~~~~~~
+xhci.c:5579:33: note: (near initialization for ‘xhci_hc_driver.start’)
+xhci.c:5580:33: warning: initialization of ‘void (*)(struct usb_hcd *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5580 |         .stop =                 xhci_stop,
+      |                                 ^~~~~~~~~
+xhci.c:5580:33: note: (near initialization for ‘xhci_hc_driver.stop’)
+xhci.c:5581:33: warning: initialization of ‘void (*)(struct usb_hcd *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5581 |         .shutdown =             xhci_shutdown,
+      |                                 ^~~~~~~~~~~~~
+xhci.c:5581:33: note: (near initialization for ‘xhci_hc_driver.shutdown’)
+xhci.c:5586:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct urb *, gfp_t)’ {aka ‘void (*)(struct usb_hcd *, struct urb *, unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct urb *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct urb *, unsigned int)’} [-Wincompatible-pointer-types]
+ 5586 |         .map_urb_for_dma =      xhci_map_urb_for_dma,
+      |                                 ^~~~~~~~~~~~~~~~~~~~
+xhci.c:5586:33: note: (near initialization for ‘xhci_hc_driver.map_urb_for_dma’)
+xhci.c:5587:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct urb *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct urb *)’ [-Wincompatible-pointer-types]
+ 5587 |         .unmap_urb_for_dma =    xhci_unmap_urb_for_dma,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5587:33: note: (near initialization for ‘xhci_hc_driver.unmap_urb_for_dma’)
+xhci.c:5588:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct urb *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct urb *, unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct urb *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct urb *, unsigned int)’} [-Wincompatible-pointer-types]
+ 5588 |         .urb_enqueue =          xhci_urb_enqueue,
+      |                                 ^~~~~~~~~~~~~~~~
+xhci.c:5588:33: note: (near initialization for ‘xhci_hc_driver.urb_enqueue’)
+xhci.c:5589:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct urb *, int)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct urb *, int)’ [-Wincompatible-pointer-types]
+ 5589 |         .urb_dequeue =          xhci_urb_dequeue,
+      |                                 ^~~~~~~~~~~~~~~~
+xhci.c:5589:33: note: (near initialization for ‘xhci_hc_driver.urb_dequeue’)
+xhci.c:5590:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5590 |         .alloc_dev =            xhci_alloc_dev,
+      |                                 ^~~~~~~~~~~~~~
+xhci.c:5590:33: note: (near initialization for ‘xhci_hc_driver.alloc_dev’)
+xhci.c:5591:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5591 |         .free_dev =             xhci_free_dev,
+      |                                 ^~~~~~~~~~~~~
+xhci.c:5591:33: note: (near initialization for ‘xhci_hc_driver.free_dev’)
+xhci.c:5592:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int,  gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int,  unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int,  gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int,  unsigned int)’} [-Wincompatible-pointer-types]
+ 5592 |         .alloc_streams =        xhci_alloc_streams,
+      |                                 ^~~~~~~~~~~~~~~~~~
+xhci.c:5592:33: note: (near initialization for ‘xhci_hc_driver.alloc_streams’)
+xhci.c:5593:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint **, unsigned int,  unsigned int)’} [-Wincompatible-pointer-types]
+ 5593 |         .free_streams =         xhci_free_streams,
+      |                                 ^~~~~~~~~~~~~~~~~
+xhci.c:5593:33: note: (near initialization for ‘xhci_hc_driver.free_streams’)
+xhci.c:5594:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5594 |         .add_endpoint =         xhci_add_endpoint,
+      |                                 ^~~~~~~~~~~~~~~~~
+xhci.c:5594:33: note: (near initialization for ‘xhci_hc_driver.add_endpoint’)
+xhci.c:5595:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5595 |         .drop_endpoint =        xhci_drop_endpoint,
+      |                                 ^~~~~~~~~~~~~~~~~~
+xhci.c:5595:33: note: (near initialization for ‘xhci_hc_driver.drop_endpoint’)
+xhci.c:5596:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_host_endpoint *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5596 |         .endpoint_disable =     xhci_endpoint_disable,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~
+xhci.c:5596:33: note: (near initialization for ‘xhci_hc_driver.endpoint_disable’)
+xhci.c:5597:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_host_endpoint *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5597 |         .endpoint_reset =       xhci_endpoint_reset,
+      |                                 ^~~~~~~~~~~~~~~~~~~
+xhci.c:5597:33: note: (near initialization for ‘xhci_hc_driver.endpoint_reset’)
+xhci.c:5598:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5598 |         .check_bandwidth =      xhci_check_bandwidth,
+      |                                 ^~~~~~~~~~~~~~~~~~~~
+xhci.c:5598:33: note: (near initialization for ‘xhci_hc_driver.check_bandwidth’)
+xhci.c:5599:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5599 |         .reset_bandwidth =      xhci_reset_bandwidth,
+      |                                 ^~~~~~~~~~~~~~~~~~~~
+xhci.c:5599:33: note: (near initialization for ‘xhci_hc_driver.reset_bandwidth’)
+xhci.c:5600:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, unsigned int)’ [-Wincompatible-pointer-types]
+ 5600 |         .address_device =       xhci_address_device,
+      |                                 ^~~~~~~~~~~~~~~~~~~
+xhci.c:5600:33: note: (near initialization for ‘xhci_hc_driver.address_device’)
+xhci.c:5601:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5601 |         .enable_device =        xhci_enable_device,
+      |                                 ^~~~~~~~~~~~~~~~~~
+xhci.c:5601:33: note: (near initialization for ‘xhci_hc_driver.enable_device’)
+xhci.c:5602:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’} [-Wincompatible-pointer-types]
+ 5602 |         .update_hub_device =    xhci_update_hub_device,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5602:33: note: (near initialization for ‘xhci_hc_driver.update_hub_device’)
+xhci.c:5603:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5603 |         .reset_device =         xhci_discover_or_reset_device,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5603:33: note: (near initialization for ‘xhci_hc_driver.reset_device’)
+xhci.c:5608:33: warning: initialization of ‘int (*)(struct usb_hcd *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5608 |         .get_frame_number =     xhci_get_frame,
+      |                                 ^~~~~~~~~~~~~~
+xhci.c:5608:33: note: (near initialization for ‘xhci_hc_driver.get_frame_number’)
+xhci.c:5613:33: warning: initialization of ‘int (*)(struct usb_hcd *, u16,  u16,  u16,  char *, u16)’ {aka ‘int (*)(struct usb_hcd *, short unsigned int,  short unsigned int,  short unsigned int,  char *, short unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, u16,  u16,  u16,  char *, u16)’ {aka ‘int (*)(struct usb_hcd *, short unsigned int,  short unsigned int,  short unsigned int,  char *, short unsigned int)’} [-Wincompatible-pointer-types]
+ 5613 |         .hub_control =          xhci_hub_control,
+      |                                 ^~~~~~~~~~~~~~~~
+xhci.c:5613:33: note: (near initialization for ‘xhci_hc_driver.hub_control’)
+xhci.c:5614:33: warning: initialization of ‘int (*)(struct usb_hcd *, char *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, char *)’ [-Wincompatible-pointer-types]
+ 5614 |         .hub_status_data =      xhci_hub_status_data,
+      |                                 ^~~~~~~~~~~~~~~~~~~~
+xhci.c:5614:33: note: (near initialization for ‘xhci_hc_driver.hub_status_data’)
+xhci.c:5622:33: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5622 |         .update_device =        xhci_update_device,
+      |                                 ^~~~~~~~~~~~~~~~~~
+xhci.c:5622:33: note: (near initialization for ‘xhci_hc_driver.update_device’)
+xhci.c:5623:33: warning: initialization of ‘int (*)(struct usb_hcd *, struct usb_device *, int)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, int)’ [-Wincompatible-pointer-types]
+ 5623 |         .set_usb2_hw_lpm =      xhci_set_usb2_hardware_lpm,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5623:33: note: (near initialization for ‘xhci_hc_driver.set_usb2_hw_lpm’)
+xhci.c:5626:33: warning: initialization of ‘int (*)(struct usb_hcd *, int)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, int)’ [-Wincompatible-pointer-types]
+ 5626 |         .find_raw_port_number = xhci_find_raw_port_number,
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5626:33: note: (near initialization for ‘xhci_hc_driver.find_raw_port_number’)
+xhci.c:5627:37: warning: initialization of ‘void (*)(struct usb_hcd *, struct usb_host_endpoint *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5627 |         .clear_tt_buffer_complete = xhci_clear_tt_buffer_complete,
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xhci.c:5627:37: note: (near initialization for ‘xhci_hc_driver.clear_tt_buffer_complete’)
+xhci.c: In function ‘xhci_init_driver’:
+xhci.c:5633:9: warning: implicit declaration of function ‘BUG_ON’ [-Wimplicit-function-declaration]
+ 5633 |         BUG_ON(!over);
+      |         ^~~~~~
+xhci.c:5641:36: warning: assignment to ‘int (*)(struct usb_hcd *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5641 |                         drv->reset = over->reset;
+      |                                    ^
+xhci.c:5643:36: warning: assignment to ‘int (*)(struct usb_hcd *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *)’ [-Wincompatible-pointer-types]
+ 5643 |                         drv->start = over->start;
+      |                                    ^
+xhci.c:5645:43: warning: assignment to ‘void (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5645 |                         drv->add_endpoint = over->add_endpoint;
+      |                                           ^
+xhci.c:5647:44: warning: assignment to ‘void (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_host_endpoint *)’ [-Wincompatible-pointer-types]
+ 5647 |                         drv->drop_endpoint = over->drop_endpoint;
+      |                                            ^
+xhci.c:5649:46: warning: assignment to ‘int (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5649 |                         drv->check_bandwidth = over->check_bandwidth;
+      |                                              ^
+xhci.c:5651:46: warning: assignment to ‘void (*)(struct usb_hcd *, struct usb_device *)’ from incompatible pointer type ‘void (*)(struct usb_hcd *, struct usb_device *)’ [-Wincompatible-pointer-types]
+ 5651 |                         drv->reset_bandwidth = over->reset_bandwidth;
+      |                                              ^
+xhci.c:5653:48: warning: assignment to ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, gfp_t)’ {aka ‘int (*)(struct usb_hcd *, struct usb_device *, struct usb_tt *, unsigned int)’} [-Wincompatible-pointer-types]
+ 5653 |                         drv->update_hub_device = over->update_hub_device;
+      |                                                ^
+xhci.c:5655:42: warning: assignment to ‘int (*)(struct usb_hcd *, u16,  u16,  u16,  char *, u16)’ {aka ‘int (*)(struct usb_hcd *, short unsigned int,  short unsigned int,  short unsigned int,  char *, short unsigned int)’} from incompatible pointer type ‘int (*)(struct usb_hcd *, u16,  u16,  u16,  char *, u16)’ {aka ‘int (*)(struct usb_hcd *, short unsigned int,  short unsigned int,  short unsigned int,  char *, short unsigned int)’} [-Wincompatible-pointer-types]
+ 5655 |                         drv->hub_control = over->hub_control;
+      |                                          ^
+xhci.c: In function ‘xhci_hcd_init’:
+xhci.c:5684:13: warning: implicit declaration of function ‘usb_disabled’ [-Wimplicit-function-declaration]
+ 5684 |         if (usb_disabled())
+      |             ^~~~~~~~~~~~
+xhci.c: In function ‘xhci_usb_endpoint_maxp’:
+xhci.c:2955:1: warning: control reaches end of non-void function [-Wreturn-type]
+ 2955 | }
+      | ^
+xhci.c: In function ‘xhci_get_block_size’:
+xhci.c:2343:1: warning: control reaches end of non-void function [-Wreturn-type]
+ 2343 | }
+      | ^
+make: *** [Makefile:23: xhci.o] Error 1

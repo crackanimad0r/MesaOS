@@ -1,0 +1,19 @@
+[1;33m[CHECK][0m Verificando dependencias...
+[0;32m[OK][0m Dependencias OK
+[1;33m[BUILD][0m Compilando userland ELFs...
+make: se entra en el directorio '/home/antonio/Documentos/MesaOS-mainn/MesaOS-main/userland/hello_elf'
+make: No se hace nada para 'all'.
+make: se sale del directorio '/home/antonio/Documentos/MesaOS-mainn/MesaOS-main/userland/hello_elf'
+[1;33m[BUILD][0m Compilando módulo kernel de prueba (.ko)...
+make: se entra en el directorio '/home/antonio/Documentos/MesaOS-mainn/MesaOS-main/userland/kernel_mod'
+make: 'test_mod.ko' está actualizado.
+make: se sale del directorio '/home/antonio/Documentos/MesaOS-mainn/MesaOS-main/userland/kernel_mod'
+[0;32m[INJECT][0m modload.elf copiado a inyect/bin/
+[0;32m[INJECT][0m test_mod.ko copiado a inyect/bin/
+[1;33m[INJECT][0m Regenerando initrd desde inyect/...
+[0;34m[IMPORTANTE][0m Recompila el kernel para que los cambios surtan efecto:
+  [1;33m./build.sh build[0m  o  [1;33m./tools/inject_build.sh[0m
+
+[0;34m[NOTA][0m Los archivos inyectados se montan en / durante el boot
+[0;34m[0m y PERMANECEN en la ISO (no se pierden al reiniciar).
+[1;33m[BUILD][0m Compilando kernel MesaOS (x86_64)...

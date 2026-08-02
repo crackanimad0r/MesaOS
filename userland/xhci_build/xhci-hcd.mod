@@ -1,0 +1,11 @@
+./xhci.o
+./xhci-mem.o
+./xhci-ext-caps.o
+./xhci-ring.o
+./xhci-hub.o
+./xhci-dbg.o
+./xhci-trace.o
+./xhci-dbgcap.o
+./xhci-dbgtty.o
+./xhci-debugfs.o
+./xhci-sideband.o

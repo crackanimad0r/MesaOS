@@ -1,0 +1,86 @@
+eXtensible Host Controller Interface
+Jump to navigationJump to search
+eXtensible Host Controller Interface (xHCI) defines a register-level description of a Host Controller for Universal Serial bus (USB), which is capable of interfacing to USB 1.x, 2.0, and 3.0 compatible devices without the use of companion controllers.
+
+
+Contents
+1	Technical Details
+2	Capability Registers
+3	Operational Registers
+4	Port Registers
+5	Runtime Registers
+6	Doorbell Registers
+7	Virtual Registers
+8	Chipsets with both EHC and xHC
+9	External Links
+Technical Details
+The xHCI controller communicates with the operating system using memory mapped registers that can be located by searching the PCI configuration space for a device with a specific Class ID, Subclass ID, and Interface number. All xHCI controllers will have a Class ID of 0x0C, a Subclass ID of 0x03, and an Interface value of 0x30. The configuration space for this device will contain two Base Address Registers: BAR0 and BAR1. These two 32-bit address fields combine to create a single 64-bit address that points to the base address of the memory mapped registers for the controller.
+
+Capability Registers
+The capability registers are located at the address specified by the PCI configuration space.
+
+Offset (Hex)	Name	Description
+00	CAPLENGTH	Capability Register Length
+01	RSVD	Reserved
+02	HCIVERSION	Interface Version Number
+04	HCSPARAMS1	Structural Parameters 1
+08	HCSPARAMS2	Structural Parameters 2
+0C	HCSPARAMS3	Structural Parameters 3
+10	HCCPARAMS1	Capability Parameters
+14	DBOFF	Doorbell Offset
+18	RTSOFF	Runtime Registers Space Offset
+1C	HCCPARMS2	Capability Parameters 2
+Operational Registers
+The operational registers are located after the capability registers in memory, and can be found by adding the CAPLENGTH field to the base address specified in the PCI configuration space.
+
+Offset (Hex)	Name	Description
+00	USBCMD	USB Command
+04	USBSTS	USB Status
+08	PAGESIZE	Page Size
+14	DNCTRL	Device Notification Control
+18	CRCR	Command Ring Control
+30	DCBAAP	Device Context Base Address Array Pointer
+38	CONFIG	Configure
+Reading CRCR (or bits of it) provides '0'. Therefore, keep your own track of this address. Bit 0 of CRCR is the Consumer Cycle State (CCS) flag.
+
+Port Registers
+At the end of the operational registers (at offset 0x400!), each port on the root hub is assigned a set of registers. The number of entries in the port registers table is determined by the MaxPorts value in the HCSPARAMS1 register.
+
+Offset (Hex)	Name	Description
+00	PORTSC	Port Status and Control
+04	PORTPMSC	Port Power Management Status and Control
+08	PORTLI	Port Link Info
+0C	reserved
+Runtime Registers
+The runtime registers are located after the operational registers in memory, and can be found by adding the RTSOFF field to the base address specified in the PCI configuration space.
+
+Offset (Hex)	Name	Description
+00	MFINDEX	Microframe Index
+20	IR0-1023	Interrupter Register Sets
+Starting at offset 0x20, each interrupter register set defines the event ring memory addresses needed to send and receive events and data to the USB bus.
+
+Offset (Hex)	Name	Description
+00	IMAN	Interrupter Management
+04	IMOD	Interrupter Moderation
+08	ERSTSZ	Event Ring Segment Table Size
+10	ERSTBA	Event Ring Segment Table Base Address
+18	ERDP	Event Ring Dequeue Pointer
+Doorbell Registers
+The doorbell registers are located after the runtime registers in memory, and can be found by adding the DBOFF field to the base address specified in the PCI configuration space. The length of the doorbell register table is based on the number of ports specified in the MaxSlots field in the HCSPARAMS1 register above. Each doorbell register is 32-bits long, and is used to notify the controller that there are pending operations to be performed on a specific device slot.
+
+Virtual Registers
+The xHCI specifications support "virtual" controllers that can be used to support multiple virtual machines running on a single physical machine. These registers must be configured and managed by the VM host, and effectively duplicate the registers above for use by the guest VMs.
+
+Chipsets with both EHC and xHC
+Some chipsets such as the Intel Panther Point (8086:1e31) feature both an EHC and xHC. Both controllers share the same set of ports and access to each port is determined by a hardware toggle (0 = EHC, 1 = xHC).
+
+To switch a port to either the EHC or the xHC registers USB3_PSSEN (0xd0) and XUSB2PR (0xd8) must be written.
+
+For example, to switch all available ports to the xHC (make sure the registers are actually present!):
+
+#define USB3_PSSEN 0xd0
+#define XUSB2PR    0xd8
+
+char *pci_header = ...;
+(u32 *)(pci_header + USB3_PSSEN) = 0xffff_ffff; // Enable SuperSpeed on USB3 ports
+(u32 *)(pci_header + XUSB2PR)    = 0xffff_ffff; // Switch over USB2 ports

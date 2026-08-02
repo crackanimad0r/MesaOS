@@ -1,0 +1,4 @@
+#ifndef _LINUX_IO-64-NONATOMIC-HI-LO_H
+#define _LINUX_IO-64-NONATOMIC-HI-LO_H
+
+#endif

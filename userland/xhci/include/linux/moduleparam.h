@@ -1,0 +1,4 @@
+#ifndef _LINUX_MODULEPARAM_H
+#define _LINUX_MODULEPARAM_H
+
+#endif

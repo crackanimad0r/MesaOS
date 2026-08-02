@@ -1,0 +1,4 @@
+#ifndef _LINUX_USB_XHCI-SIDEBAND_H
+#define _LINUX_USB_XHCI-SIDEBAND_H
+
+#endif

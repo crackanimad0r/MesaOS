@@ -1,0 +1,390 @@
+/*
+ * usb_shim.h - MesaOS Linux USB Driver Compatibility Layer
+ *
+ * This header defines the C interface that bridges Linux USB drivers
+ * (struct usb_device, struct urb, etc.) into MesaOS's isolated shim process.
+ *
+ * All functions here run inside the shim process (Ring 3 or isolated VM),
+ * NOT in the MesaOS kernel. Communication with the kernel is via shared memory
+ * SCM (Shim Control Messages) protocol.
+ *
+ * License: MIT
+ */
+
+#ifndef _MESA_USB_SHIM_H
+#define _MESA_USB_SHIM_H
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * SCM Protocol Constants
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+#define SHIM_MAGIC              0x4D455341  /* "MESA" */
+#define SHIM_VERSION            1
+#define SHIM_DATA_POOL_SIZE     (1024 * 64) /* 64KB shared data pool */
+#define SHIM_QUEUE_DEPTH        64
+#define SHIM_HEARTBEAT_INTERVAL 100         /* ms */
+
+/* SCM Command Types */
+#define SCM_NOP                 0x00
+#define SCM_USB_CONTROL         0x01
+#define SCM_USB_BULK            0x02
+#define SCM_USB_ALLOC_URB       0x03
+#define SCM_USB_FREE_URB        0x04
+#define SCM_USB_SUBMIT_URB      0x05
+#define SCM_USB_KILL_URB        0x06
+#define SCM_USB_RESET_DEVICE    0x07
+#define SCM_USB_GET_DESCRIPTOR  0x08
+#define SCM_USB_SET_CONFIG      0x09
+#define SCM_USB_CLAIM_INTF      0x0A
+#define SCM_USB_RELEASE_INTF    0x0B
+#define SCM_USB_GET_DEVICE_INFO 0x0C
+#define SCM_USB_GET_DEVICE_INFO 0x0C  /* Devuelve struct usb_device_info */
+
+/* WiFi-specific SCM types */
+#define SCM_WIFI_INIT           0x10
+#define SCM_WIFI_SEND_SKB       0x11
+#define SCM_WIFI_RECV_SKB       0x12
+#define SCM_WIFI_SET_CHANNEL    0x13
+#define SCM_WIFI_SET_MAC        0x14
+#define SCM_WIFI_LINK_STATUS    0x15
+#define SCM_WIFI_SCAN           0x16
+
+/* Control/Status */
+#define SCM_SHIM_HEARTBEAT      0xFE
+#define SCM_SHIM_PANIC          0xFF
+
+/* Event Types (shim → kernel) */
+#define EVT_NONE                0x00
+#define EVT_URB_COMPLETE        0x01
+#define EVT_URB_ERROR           0x02
+#define EVT_WIFI_RX_PACKET      0x10
+#define EVT_WIFI_LINK_CHANGE    0x11
+#define EVT_WIFI_SCAN_RESULT    0x12
+#define EVT_SHIM_HEARTBEAT_ACK  0xFE
+#define EVT_SHIM_ERROR          0xFF
+
+/* Status codes */
+#define SCM_OK                  0
+#define SCM_ERR_GENERAL         -1
+#define SCM_ERR_NOMEM           -12     /* -ENOMEM */
+#define SCM_ERR_TIMEOUT         -110    /* -ETIMEDOUT */
+#define SCM_ERR_SHUTDOWN        -108    /* -ESHUTDOWN */
+#define SCM_ERR_BUSY            -16     /* -EBUSY */
+
+/* Linux errno compat (for shim C code) */
+#define EIO                     5
+#define EINVAL                  22
+#define ENOMEM                  12
+#define ENODEV                  19
+#define ENOSPC                  28
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Shared Memory Structures
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * struct scm_command - A command message from kernel to shim
+ * @type:     SCM command type (SCM_USB_CONTROL, etc.)
+ * @id:       Unique request ID for matching completions
+ * @flags:    Flags (e.g., SCM_FLAG_NONBLOCK)
+ * @arg0-3:   Type-specific arguments
+ * @data_len: Length of payload in data_pool (0 if no payload)
+ * @data_ofs: Offset into shim_region.data_pool for payload
+ */
+struct scm_command {
+    uint32_t type;
+    uint32_t id;
+    uint32_t flags;
+    uint32_t _rsvd1;
+    uint64_t arg0;
+    uint64_t arg1;
+    uint64_t arg2;
+    uint64_t arg3;
+    uint32_t data_len;
+    uint32_t data_ofs;      /* offset into data_pool */
+} __attribute__((packed));
+
+_Static_assert(sizeof(struct scm_command) == 56, "scm_command must be 56 bytes");
+
+/**
+ * struct scm_event - An event message from shim to kernel
+ * @type:       Event type (EVT_URB_COMPLETE, etc.)
+ * @id:         Matching request ID from scm_command
+ * @status:     Result status (SCM_OK or negative errno)
+ * @actual_len: Actual data transferred
+ * @data_ofs:   Offset into data_pool for result data
+ * @data_len:   Length of result data
+ */
+struct scm_event {
+    uint32_t type;
+    uint32_t id;
+    int32_t  status;
+    uint32_t actual_len;
+    uint32_t data_ofs;
+    uint32_t data_len;
+    uint64_t reserved;
+} __attribute__((packed));
+
+_Static_assert(sizeof(struct scm_event) == 32, "scm_event must be 32 bytes");
+
+/**
+ * struct scm_queue - Lock-free single-producer single-consumer queue
+ * @head: Written by producer, read by consumer
+ * @tail: Written by consumer, read by producer
+ * @entries: Fixed-size ring buffer
+ *
+ * Kernel is producer for cmd_queue, consumer for evt_queue.
+ * Shim is consumer for cmd_queue, producer for evt_queue.
+ */
+#define SCM_QUEUE_DEPTH 64
+
+struct scm_queue {
+    volatile uint32_t head;
+    volatile uint32_t tail;
+    uint8_t _pad[56];  /* cache line padding */
+    struct scm_command entries[SCM_QUEUE_DEPTH];
+} __attribute__((packed));
+
+_Static_assert(sizeof(struct scm_queue) == 64 + SCM_QUEUE_DEPTH * sizeof(struct scm_command),
+               "scm_queue size check");
+
+/**
+ * struct shim_region - Main shared memory layout between kernel and shim
+ *
+ * This structure is mapped into both kernel and shim address spaces.
+ * The kernel maps it read-write, the shim maps it read-write.
+ * Synchronization is via memory barriers (volatile + sfence/mfence).
+ *
+ * Layout:
+ *   [0x0000 - 0x003F] Header + flags
+ *   [0x0040 - 0x1FFF] Command queue (kernel → shim)
+ *   [0x2000 - 0x3FFF] Event queue (shim → kernel)
+ *   [0x4000 - 0xFFFF] Data pool (payloads)
+ */
+struct shim_region {
+    /* Header */
+    uint32_t magic;
+    uint32_t version;
+    uint32_t flags;
+    uint32_t heartbeat_counter;
+    uint64_t kernel_private;    /* Kernel-only: pointer to shim_manager */
+    uint64_t shim_private;      /* Shim-only: internal state pointer */
+    uint8_t  _pad0[32];         /* Pad to 64 bytes */
+
+    /* Queues */
+    struct scm_queue cmd_queue; /* Kernel → Shim commands */
+    uint8_t  _pad1[128];        /* Separate evt_queue in different cache line */
+    struct scm_queue evt_queue; /* Shim → Kernel events */
+
+    /* Payload data pool */
+    uint8_t  data_pool[SHIM_DATA_POOL_SIZE];
+} __attribute__((packed));
+
+_Static_assert(offsetof(struct shim_region, cmd_queue) == 64,
+               "cmd_queue must be at offset 64");
+_Static_assert(offsetof(struct shim_region, evt_queue) % 64 == 0,
+               "evt_queue must be cache-line aligned");
+
+/* Flag bits for shim_region.flags */
+#define SHIM_FLAG_RUNNING       (1 << 0)
+#define SHIM_FLAG_CRASHED       (1 << 1)
+#define SHIM_FLAG_SUSPENDED     (1 << 2)
+#define SHIM_FLAG_NEED_RESPAWN  (1 << 3)
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * ABI for Incoming SCM Commands (called by shim runtime)
+ * ══════════════════════════════════════════════════════════════════════════ */
+/* Forward declarations de tipos xHCI internos */
+struct xhci_seg;
+struct xhci_erst_entry;
+struct xhci_input_ctx;
+struct xhci_dev_ctx;
+
+typedef struct xhci_seg xhci_seg_t;
+typedef struct xhci_erst_entry xhci_erst_entry_t;
+
+/* Dispositivo USB trackeado por el shim */
+struct shim_usb_dev {
+    uint8_t  slot_id, speed, port, addr_assigned;
+    uint16_t vendor_id, product_id;
+    bool     configured;
+    uint8_t  config_value, num_interfaces;
+    struct xhci_input_ctx *input_ctx;
+    uint64_t input_ctx_dma;
+    struct xhci_dev_ctx  *dev_ctx;
+    uint64_t dev_ctx_dma;
+};
+
+/**
+ * struct usb_shim_context - State for the USB driver shim
+ *
+ * Contiene toda la información necesaria para manejar el controlador xHCI,
+ * incluyendo rings, slots de dispositivos y estado del shim.
+ * El kernel de MesaOS ve solo la shim_region via shared memory.
+ */
+struct usb_shim_context {
+    struct shim_region *region;
+    volatile uint8_t *mmio_base;
+    uint64_t mmio_size;
+    uint8_t  caplength;
+    volatile uint8_t *op_base;
+    volatile uint8_t *db_base;
+    volatile uint8_t *rt_base;
+    uint32_t hcs_params1, hcs_params2, hcs_params3;
+    uint32_t hcc_params1;
+    uint8_t  max_slots, max_ports, max_intrs;
+    uint32_t page_size;
+    xhci_seg_t *cmd_ring_seg;
+    uint64_t cmd_ring_dma;
+    uint32_t cmd_ring_enq_idx, cmd_ring_cycle;
+    xhci_seg_t *evt_ring_seg;
+    uint64_t evt_ring_dma;
+    xhci_erst_entry_t *erst;
+    uint64_t erst_dma;
+    uint32_t evt_ring_deq_idx, evt_ring_cycle;
+    uint64_t *dcbaa;
+    uint64_t dcbaa_dma;
+    void *scratchpad[8];
+    uint64_t scratchpad_dma[8];
+    uint32_t num_scratchpad;
+    struct shim_usb_dev devices[32];
+    uint32_t num_devices;
+    volatile uint32_t *doorbells, *irq_set, *irq_info;
+    bool running, hc_ready;
+    uint32_t next_cmd_id;
+    void *shim_heap;
+    int irq_handle;
+    void *driver_instance;
+    int (*driver_probe)(struct usb_shim_context *ctx);
+    void (*driver_disconnect)(struct usb_shim_context *ctx);
+};
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Linux Driver ABI Emulation
+ *
+ * These functions are called BY the Linux driver C code.
+ * They translate Linux kernel API calls into SCM messages
+ * or handle them locally within the shim process.
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/* Memory management */
+void *shim_kmalloc(size_t size, int flags);
+void  shim_kfree(void *ptr);
+void *shim_kzalloc(size_t size, int flags);
+
+/* USB core API types (what Linux drivers call) */
+
+struct usb_device {
+    uint8_t devnum;
+    uint8_t speed;
+    struct usb_device *parent;
+};
+
+struct urb {
+    void *transfer_buffer;
+    uint32_t transfer_buffer_length;
+    uint32_t pipe;
+    uint8_t *setup_packet;
+    void *context;
+    uint32_t actual_length;
+    int32_t status;
+};
+
+struct usb_host_interface;
+struct usb_interface;
+
+struct urb *shim_usb_alloc_urb(int iso_packets, int mem_flags);
+void        shim_usb_free_urb(struct urb *urb);
+int         shim_usb_submit_urb(struct urb *urb, int mem_flags);
+int         shim_usb_kill_urb(struct urb *urb);
+int         shim_usb_control_msg(struct usb_device *dev, unsigned int pipe,
+                                 uint8_t request, uint8_t requesttype,
+                                 uint16_t value, uint16_t index,
+                                 void *data, uint16_t size, int timeout);
+int         shim_usb_bulk_msg(struct usb_device *dev, unsigned int pipe,
+                              void *data, int len, int *actual, int timeout);
+int         shim_usb_reset_device(struct usb_device *dev);
+
+/* USB descriptor helpers */
+int shim_usb_get_descriptor(struct usb_device *dev, uint8_t type,
+                            uint8_t index, void *buf, int size);
+
+/* Interface management */
+int shim_usb_set_interface(struct usb_device *dev, int interface, int alternate);
+int shim_usb_claim_interface(struct usb_device *dev, struct usb_interface *intf);
+int shim_usb_release_interface(struct usb_device *dev, struct usb_interface *intf);
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Shim Runtime Entry Points (called by MesaOS kernel or shim loader)
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * shim_entry() - Main entry point for the shim process
+ * @region_phys: Physical address of shared memory region
+ * @mmio_phys:   Physical address of xHCI MMIO BAR
+ * @mmio_size:   Size of MMIO region
+ * @pci_bdf:     PCI Bus:Device.Function packed (BDF)
+ *
+ * This is the C entry point. The shim loader (asm or Rust) sets up:
+ *   - Page tables with shared memory mapped
+ *   - MMIO region mapped (uncacheable)
+ *   - Stack pointer
+ *   - Then jumps here
+ *
+ * Return: Does not return normally; terminates via SCM_SHIM_PANIC event.
+ */
+void shim_entry(uint64_t region_phys, uint64_t mmio_phys,
+                uint64_t mmio_size, uint32_t pci_bdf);
+
+/**
+ * shim_handle_command() - Process a single SCM command
+ * @ctx:  Shim context
+ * @cmd:  The command to process
+ *
+ * Called by the shim runtime loop when a new command arrives.
+ * Dispatches to the appropriate handler based on cmd->type.
+ */
+void shim_handle_command(struct usb_shim_context *ctx,
+                         const struct scm_command *cmd);
+
+/**
+ * shim_send_event() - Send an event back to the kernel
+ * @ctx:   Shim context
+ * @event: Event to send (copied into queue)
+ *
+ * Return: 0 on success, -1 if queue full
+ */
+int shim_send_event(struct usb_shim_context *ctx,
+                    const struct scm_event *event);
+
+/**
+ * shim_poll_irq() - Check for hardware interrupts
+ * @ctx: Shim context
+ *
+ * Must be called periodically or after receiving an IRQ notification
+ * from the kernel. Processes pending interrupts and generates events.
+ */
+void shim_poll_irq(struct usb_shim_context *ctx);
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * Utility Macros
+ * ══════════════════════════════════════════════════════════════════════════ */
+
+/* Allocate from shared data pool. Returns offset or -1. */
+int shim_data_pool_alloc(struct shim_region *region, size_t size);
+void shim_data_pool_free(struct shim_region *region, int offset);
+
+/* Queue helpers (lock-free SPSC) */
+int  scm_queue_push(struct scm_queue *q, const struct scm_command *cmd);
+int  scm_queue_pop(struct scm_queue *q, struct scm_command *cmd);
+int  scm_event_queue_push(struct scm_queue *q, const struct scm_event *evt);
+int  scm_event_queue_pop(struct scm_queue *q, struct scm_event *evt);
+
+/* Logging within shim (outputs to shim's own console or kernel via event) */
+void shim_log(const char *fmt, ...);
+
+#endif /* _MESA_USB_SHIM_H */

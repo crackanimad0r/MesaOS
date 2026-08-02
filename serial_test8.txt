@@ -1,0 +1,201 @@
+[BOOT] Mesa OS iniciando...
+[BOOT] Framebuffer inicializado
+Mesa OS v0.1.0-v129-TASKLET
+"Minimalismo con Libertad"
+
+[Sistema]
+  Kernel: 0x1eb3a000 -> 0xffffffff80000000
+  CPUs:   1
+  RAM:    490 MB
+
+[HW] Hardware genérico detectado
+[CPU]
+[BOOT] Inicializando arquitectura x86_64...
+[GDT] Kernel CS=0x8 DS=0x10
+[GDT] User CS=0x1b DS=0x23
+  [OK] GDT + IDT
+[BOOT] Inicializando teclado...
+[KEYBOARD] Iniciando inicializacion robusta...
+[BOOT] Teclado: [KEYBOARD] Controller Self-test: OK
+[KEYBOARD] CCB original: 0x71
+[KEYBOARD] CCB verificado (Traduccion ON): 0x61
+[KEYBOARD] Intento 1 de forzar Set 2...
+[KEYBOARD] Hardware aceptó Set 2 (ACK)
+[KEYBOARD] Inicialización finalizada.
+[OK]
+  [OK] Keyboard
+[BOOT] Inicializando RTC...
+[RTC] Driver inicializado - Timezone: UTC+2 CEST (verano)
+  [OK] RTC
+[BOOT] Inicializando Batería...
+[BATTERY] Inicializando driver de batería...
+[BATTERY] Sin batería detectada (desktop / VM)
+  [OK] Battery Manager
+
+[Memoria]
+[BOOT] Inicializando sistema de memoria...
+       Highest usable:  0x1ffe0000
+       Total frames:    131040
+       Frames libres:   125559 (490 MB)
+       Heap inicial:    304 KB @ 0xffff800000053000
+  [OK] PMM+VMM (~511 MB)
+  [OK] Heap
+
+[BOOT] Inicializando UEFI NVRAM...
+  [--] UEFI NVRAM: No disponible (no UEFI boot o sin RuntimeServices)
+[Hardware]
+[BOOT] Parseando tablas ACPI...
+[ACPI] Iniciando parseo de tablas...
+[ACPI] RSDP rev=0 en 0xffff8000000f5290
+[ACPI] RSDT entradas en 4
+[ACPI] FADT en 0x1ffe1b06
+[ACPI] DSDT en 0x1ffe0040, 8042=false
+[ACPI] MADT en 0x1ffe1b7a
+[ACPI] IOAPIC en 0xfec00000 GSI=0
+[ACPI] LAPIC=0xfee00000 IOAPIC=0xfec00000
+[AML] DSDT parseado (6818 bytes)
+[ACPI] Listo. Contexto AML disponible.
+  [OK] ACPI
+[BOOT] Inicializando sistema de interrupciones (APIC)...
+[APIC] Legacy PIC disabled
+[APIC] Local APIC initialized at 0xfee00000
+[APIC] BSP APIC ID: 0
+[APIC] MADT Override: Source IRQ 0 -> GSI 2 (flags 0x0)
+[APIC] MADT Override: Source IRQ 5 -> GSI 5 (flags 0xd)
+[APIC] MADT Override: Source IRQ 9 -> GSI 9 (flags 0xd)
+[APIC] MADT Override: Source IRQ 10 -> GSI 10 (flags 0xd)
+[APIC] MADT Override: Source IRQ 11 -> GSI 11 (flags 0xd)
+[APIC] Routing Timer: IRQ 0 -> GSI 2 (flags: 0x0)
+[APIC] Routing Keyboard: IRQ 1 -> GSI 1 (flags: 0x0)
+[APIC] Verificación KBD GSI 1: 0xff000000_0x21
+[APIC] Redirection Table Dump:
+  [IRQ 0] GSI 0: 0x000000000_0x00010000
+  [IRQ 1] GSI 1: 0x0ff000000_0x00000021
+  [IRQ 2] GSI 2: 0x000000000_0x00000020
+  [IRQ 3] GSI 3: 0x000000000_0x00010000
+  [IRQ 4] GSI 4: 0x000000000_0x00010000
+  [IRQ 5] GSI 5: 0x000000000_0x00010000
+  [IRQ 6] GSI 6: 0x000000000_0x00010000
+  [IRQ 7] GSI 7: 0x000000000_0x00010000
+  [IRQ 8] GSI 8: 0x000000000_0x00010000
+  [IRQ 9] GSI 9: 0x000000000_0x00010000
+  [IRQ 10] GSI 10: 0x000000000_0x00010000
+  [IRQ 11] GSI 11: 0x0ff000000_0x0000a02b
+  [IRQ 12] GSI 12: 0x000000000_0x00010000
+  [IRQ 13] GSI 13: 0x000000000_0x00010000
+  [IRQ 14] GSI 14: 0x000000000_0x00010000
+  [IRQ 15] GSI 15: 0x000000000_0x00010000
+[APIC] I/O APIC initialized and IRQs routed to BSP APIC ID 0
+  [OK] APIC (Modern Mode)
+[BOOT] Escaneando bus PCI...
+[PCI] Scanning all buses (0-255)...
+[PCI] Scan complete: 6 devices found
+  [OK] PCI (6 dispositivos)
+[BOOT] Inicializando red...
+[VIRTIO-NET] Inicializando con tamaño nativo...
+[VIRTIO-NET] Driver listo y operativo
+[NET] virtio-net inicializado (modo QEMU)
+  [OK] Networking (VirtIO-Net)
+[NET] Network stack initialized
+[NET] Configured: 10.0.2.15/255.255.255.0 via 10.0.2.2
+  [OK] IP: 10.0.2.15/24
+[BOOT] Inicializando audio...
+[HDA] Buscando controlador HD Audio...
+[HDA] No se encontro controlador HD Audio.
+[HDA] Error inicializando audio: HDA Controller not found
+  [OK] Audio (HDA + PC Speaker)
+
+[Kernel]
+[BOOT] Inicializando scheduler...
+[SCHED] Inicializando scheduler...
+[SCHED] Scheduler listo
+  [OK] Scheduler
+[BOOT] Inicializando syscalls...
+[SYSCALL] Inicializando syscalls...
+[SYSCALL] Syscalls listos
+  [OK] Syscalls
+[BOOT] Inicializando filesystem...
+[FS] Inicializando VFS (Modo solo RAM)...
+[FS] Extrayendo initrd embebido...
+[INITRD] Extrayendo 8183422 bytes de initrd...
+[INITRD] Extrayendo: /inyect/bin/linux5.elf (5264 bytes)
+[INITRD] OK: /inyect/bin/linux5.elf
+[INITRD] Extrayendo: /inyect/bin/linux2.elf (5424 bytes)
+[INITRD] OK: /inyect/bin/linux2.elf
+[INITRD] Extrayendo: /inyect/bin/linux8.elf (8784 bytes)
+[INITRD] OK: /inyect/bin/linux8.elf
+[INITRD] Extrayendo: /inyect/bin/linux6.elf (6416 bytes)
+[INITRD] OK: /inyect/bin/linux6.elf
+[INITRD] Extrayendo: /inyect/bin/linux7.elf (6760 bytes)
+[INITRD] OK: /inyect/bin/linux7.elf
+[INITRD] Extrayendo: /inyect/bin/linux.elf (5600 bytes)
+[INITRD] OK: /inyect/bin/linux.elf
+[INITRD] Extrayendo: /inyect/bin/linux4.elf (5336 bytes)
+[INITRD] OK: /inyect/bin/linux4.elf
+[INITRD] Extrayendo: /inyect/bin/miscript.sh (208 bytes)
+[INITRD] OK: /inyect/bin/miscript.sh
+[INITRD] Extrayendo: /inyect/bin/linux3.elf (5288 bytes)
+[INITRD] OK: /inyect/bin/linux3.elf
+[INITRD] Extrayendo: /inyect/bin/linux.c (1507 bytes)
+[INITRD] OK: /inyect/bin/linux.c
+[INITRD] Extrayendo: /inyect/bin/linker.ld (442 bytes)
+[INITRD] OK: /inyect/bin/linker.ld
+[INITRD] Extrayendo: /inyect/bin/Hola desde MesaOS.txt (18 bytes)
+[INITRD] OK: /inyect/bin/Hola desde MesaOS.txt
+[INITRD] Extrayendo: /inyect/audio/Good.wav (3806328 bytes)
+[INITRD] OK: /inyect/audio/Good.wav
+[INITRD] Extrayendo: /inyect/audio/fah.mp3 (56006 bytes)
+[INITRD] OK: /inyect/audio/fah.mp3
+[INITRD] Extrayendo: /inyect/audio/Good.mp3 (346354 bytes)
+[INITRD] OK: /inyect/audio/Good.mp3
+[INITRD] Extrayendo: /inyect/audio/fah.wav (308814 bytes)
+[INITRD] OK: /inyect/audio/fah.wav
+[INITRD] Extrayendo: /inyect/audio/Nose.wav (3612750 bytes)
+[INITRD] OK: /inyect/audio/Nose.wav
+[INITRD] Extrayendo: /inyect/README.md (1318 bytes)
+[INITRD] OK: /inyect/README.md
+[INITRD] Extrayendo: /inyect/etc/miconfig.conf (117 bytes)
+[INITRD] OK: /inyect/etc/miconfig.conf
+[INITRD] Extraídos 19 archivos en /inyect/.
+[FS] Initrd extraído: 19 archivos
+  [OK] Filesystem (RamFS - volátil)
+[BOOT] Inicializando sistema de usuarios...
+[USERS] Inicializando sistema de usuarios...
+[USERS] No se encontró /etc/passwd, usando usuarios por defecto.
+[USERS] Sistema de usuarios listo
+  [OK] Users
+  [OK] Config
+[BOOT] Inicializando módulo de seguridad...
+[SEC] Kernel stack canary initialized: 0x5f9cff76871ed83b
+[SEC] RNG seeded: 0xb05039f2494d13db
+[SEC] Módulo de seguridad inicializado
+  [OK] Security
+[LINUX_COMPAT] Inicializando capa de compatibilidad...
+[LINUX_COMPAT] /proc y /sys poblados
+[LINUX_COMPAT] 462 syscalls Linux traducidas
+[BOOT] Habilitando interrupciones...
+Sistema listo.
+
+[BOOT] Mesa OS completamente inicializado
+
+
+      ##m   m##  ######  ######  #####
+      ###m m###  #       #       #   #
+      ## ### ##  ####    #####   #####
+      ## '#' ##  #           #   #   #
+      ##     ##  ######  #####   #   #
+
+                O P E R A T I N G   S Y S T E M
+                       Version 0.1.0
+
+
+      ┌─────────────────────────────────┐
+      │            L O G I N            │
+      └─────────────────────────────────┘
+
+      Available users:
+        • root  (no password)
+        • guest (password: guest)
+        • mesa  (password: mesa)
+
+      User: [LOGIN] Esperando nombre de usuario...

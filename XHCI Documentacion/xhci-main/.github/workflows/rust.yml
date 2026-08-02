@@ -1,0 +1,36 @@
+name: Rust
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Update the version of Rust toolchain
+      run: rustup update
+
+    - name: Install clippy and rustfmt
+      run: rustup component add clippy rustfmt
+
+    - name: Run rustfmt with check mode
+      run: |
+        shopt -s globstar
+        rustfmt **/*.rs --check
+
+    - uses: giraffate/clippy-action@v1
+      with:
+        clippy_flags: -- -D clippy::pedantic -D clippy::all
+
+    - name: Build
+      run: cargo build
+
+    - name: Build the doc for the lint related to the rustdoc
+      run: cargo doc

@@ -1,0 +1,1273 @@
+.
+├── app
+├── BIOS_WIFI_FIX.md
+├── BOOTX64.EFI
+├── build.sh
+├── Cargo.lock
+├── Cargo.toml
+├── create_disk.sh
+├── Docs
+│   └── extensible-host-controler-interface-usb-xhci.pdf
+├── Documentacion-Casera-RTK-8822CE.txt
+├── DOCUMENTACION-WIFI-VER
+│   ├── 625472_xHCI_Rev1_2b.pdf
+│   ├── 625472_xHCI_Rev1_2b.txt
+│   ├── host
+│   │   ├── bcma-hcd.c
+│   │   ├── ehci-atmel.c
+│   │   ├── ehci-brcm.c
+│   │   ├── ehci-dbg.c
+│   │   ├── ehci-exynos.c
+│   │   ├── ehci-fsl.c
+│   │   ├── ehci-fsl.h
+│   │   ├── ehci-grlib.c
+│   │   ├── ehci.h
+│   │   ├── ehci-hcd.c
+│   │   ├── ehci-hub.c
+│   │   ├── ehci-mem.c
+│   │   ├── ehci-mv.c
+│   │   ├── ehci-npcm7xx.c
+│   │   ├── ehci-omap.c
+│   │   ├── ehci-orion.c
+│   │   ├── ehci-pci.c
+│   │   ├── ehci-platform.c
+│   │   ├── ehci-ppc-of.c
+│   │   ├── ehci-ps3.c
+│   │   ├── ehci-q.c
+│   │   ├── ehci-sched.c
+│   │   ├── ehci-sh.c
+│   │   ├── ehci-spear.c
+│   │   ├── ehci-st.c
+│   │   ├── ehci-sysfs.c
+│   │   ├── ehci-timer.c
+│   │   ├── ehci-xilinx-of.c
+│   │   ├── fhci-dbg.c
+│   │   ├── fhci.h
+│   │   ├── fhci-hcd.c
+│   │   ├── fhci-hub.c
+│   │   ├── fhci-mem.c
+│   │   ├── fhci-q.c
+│   │   ├── fhci-sched.c
+│   │   ├── fhci-tds.c
+│   │   ├── fsl-mph-dr-of.c
+│   │   ├── isp116x.h
+│   │   ├── isp116x-hcd.c
+│   │   ├── Kconfig
+│   │   ├── Makefile
+│   │   ├── max3421-hcd.c
+│   │   ├── octeon-hcd.c
+│   │   ├── octeon-hcd.h
+│   │   ├── ohci-at91.c
+│   │   ├── ohci-da8xx.c
+│   │   ├── ohci-dbg.c
+│   │   ├── ohci-exynos.c
+│   │   ├── ohci.h
+│   │   ├── ohci-hcd.c
+│   │   ├── ohci-hub.c
+│   │   ├── ohci-mem.c
+│   │   ├── ohci-nxp.c
+│   │   ├── ohci-omap.c
+│   │   ├── ohci-pci.c
+│   │   ├── ohci-platform.c
+│   │   ├── ohci-ppc-of.c
+│   │   ├── ohci-ps3.c
+│   │   ├── ohci-pxa27x.c
+│   │   ├── ohci-q.c
+│   │   ├── ohci-s3c2410.c
+│   │   ├── ohci-sa1111.c
+│   │   ├── ohci-sm501.c
+│   │   ├── ohci-spear.c
+│   │   ├── ohci-st.c
+│   │   ├── oxu210hp-hcd.c
+│   │   ├── pci-quirks.c
+│   │   ├── pci-quirks.h
+│   │   ├── r8a66597.h
+│   │   ├── r8a66597-hcd.c
+│   │   ├── sl811_cs.c
+│   │   ├── sl811.h
+│   │   ├── sl811-hcd.c
+│   │   ├── ssb-hcd.c
+│   │   ├── uhci-debug.c
+│   │   ├── uhci-grlib.c
+│   │   ├── uhci-hcd.c
+│   │   ├── uhci-hcd.h
+│   │   ├── uhci-hub.c
+│   │   ├── uhci-pci.c
+│   │   ├── uhci-platform.c
+│   │   ├── uhci-q.c
+│   │   ├── xen-hcd.c
+│   │   ├── xhci.c
+│   │   ├── xhci-caps.h
+│   │   ├── xhci-dbg.c
+│   │   ├── xhci-dbgcap.c
+│   │   ├── xhci-dbgcap.h
+│   │   ├── xhci-dbgtty.c
+│   │   ├── xhci-debugfs.c
+│   │   ├── xhci-debugfs.h
+│   │   ├── xhci-ext-caps.c
+│   │   ├── xhci-ext-caps.h
+│   │   ├── xhci.h
+│   │   ├── xhci-histb.c
+│   │   ├── xhci-hub.c
+│   │   ├── xhci-mem.c
+│   │   ├── xhci-mtk.c
+│   │   ├── xhci-mtk.h
+│   │   ├── xhci-mtk-sch.c
+│   │   ├── xhci-mvebu.c
+│   │   ├── xhci-mvebu.h
+│   │   ├── xhci-pci.c
+│   │   ├── xhci-pci.h
+│   │   ├── xhci-pci-renesas.c
+│   │   ├── xhci-plat.c
+│   │   ├── xhci-plat.h
+│   │   ├── xhci-port.h
+│   │   ├── xhci-rcar.c
+│   │   ├── xhci-rcar-regs.h
+│   │   ├── xhci-ring.c
+│   │   ├── xhci-rzg3e-regs.h
+│   │   ├── xhci-rzv2m.c
+│   │   ├── xhci-rzv2m.h
+│   │   ├── xhci-sideband.c
+│   │   ├── xhci-tegra.c
+│   │   ├── xhci-trace.c
+│   │   └── xhci-trace.h
+│   ├── main.c
+│   ├── main.h
+│   ├── mis_registros.txt
+│   ├── pci.c
+│   ├── reg.h
+│   └── zip
+│       ├── 67x00
+│       │   ├── c67x00-drv.c
+│       │   ├── c67x00.h
+│       │   ├── c67x00-hcd.c
+│       │   ├── c67x00-hcd.h
+│       │   ├── c67x00-ll-hpi.c
+│       │   ├── c67x00-sched.c
+│       │   └── Makefile
+│       ├── adget
+│       │   ├── composite.c
+│       │   ├── config.c
+│       │   ├── configfs.c
+│       │   ├── configfs.h
+│       │   ├── epautoconf.c
+│       │   ├── function
+│       │   │   ├── f_acm.c
+│       │   │   ├── f_ecm.c
+│       │   │   ├── f_eem.c
+│       │   │   ├── f_fs.c
+│       │   │   ├── f_hid.c
+│       │   │   ├── f_loopback.c
+│       │   │   ├── f_mass_storage.c
+│       │   │   ├── f_mass_storage.h
+│       │   │   ├── f_midi2.c
+│       │   │   ├── f_midi.c
+│       │   │   ├── f_ncm.c
+│       │   │   ├── f_obex.c
+│       │   │   ├── f_phonet.c
+│       │   │   ├── f_printer.c
+│       │   │   ├── f_rndis.c
+│       │   │   ├── f_serial.c
+│       │   │   ├── f_sourcesink.c
+│       │   │   ├── f_subset.c
+│       │   │   ├── f_tcm.c
+│       │   │   ├── f_uac1.c
+│       │   │   ├── f_uac1_legacy.c
+│       │   │   ├── f_uac2.c
+│       │   │   ├── f_uvc.c
+│       │   │   ├── f_uvc.h
+│       │   │   ├── g_zero.h
+│       │   │   ├── Makefile
+│       │   │   ├── ndis.h
+│       │   │   ├── rndis.c
+│       │   │   ├── rndis.h
+│       │   │   ├── storage_common.c
+│       │   │   ├── storage_common.h
+│       │   │   ├── tcm.h
+│       │   │   ├── uac_common.h
+│       │   │   ├── u_audio.c
+│       │   │   ├── u_audio.h
+│       │   │   ├── u_ecm.h
+│       │   │   ├── u_eem.h
+│       │   │   ├── u_ether.c
+│       │   │   ├── u_ether_configfs.h
+│       │   │   ├── u_ether.h
+│       │   │   ├── u_fs.h
+│       │   │   ├── u_gether.h
+│       │   │   ├── u_hid.h
+│       │   │   ├── u_midi2.h
+│       │   │   ├── u_midi.h
+│       │   │   ├── u_ncm.h
+│       │   │   ├── u_phonet.h
+│       │   │   ├── u_printer.h
+│       │   │   ├── u_rndis.h
+│       │   │   ├── u_serial.c
+│       │   │   ├── u_serial.h
+│       │   │   ├── u_tcm.h
+│       │   │   ├── u_uac1.h
+│       │   │   ├── u_uac1_legacy.c
+│       │   │   ├── u_uac1_legacy.h
+│       │   │   ├── u_uac2.h
+│       │   │   ├── u_uvc.h
+│       │   │   ├── uvc_configfs.c
+│       │   │   ├── uvc_configfs.h
+│       │   │   ├── uvc.h
+│       │   │   ├── uvc_queue.c
+│       │   │   ├── uvc_queue.h
+│       │   │   ├── uvc_trace.c
+│       │   │   ├── uvc_trace.h
+│       │   │   ├── uvc_v4l2.c
+│       │   │   ├── uvc_v4l2.h
+│       │   │   ├── uvc_video.c
+│       │   │   └── uvc_video.h
+│       │   ├── functions.c
+│       │   ├── Kconfig
+│       │   ├── legacy
+│       │   │   ├── acm_ms.c
+│       │   │   ├── audio.c
+│       │   │   ├── cdc2.c
+│       │   │   ├── dbgp.c
+│       │   │   ├── ether.c
+│       │   │   ├── g_ffs.c
+│       │   │   ├── gmidi.c
+│       │   │   ├── hid.c
+│       │   │   ├── inode.c
+│       │   │   ├── Kconfig
+│       │   │   ├── Makefile
+│       │   │   ├── mass_storage.c
+│       │   │   ├── multi.c
+│       │   │   ├── ncm.c
+│       │   │   ├── nokia.c
+│       │   │   ├── printer.c
+│       │   │   ├── raw_gadget.c
+│       │   │   ├── serial.c
+│       │   │   ├── tcm_usb_gadget.c
+│       │   │   ├── webcam.c
+│       │   │   └── zero.c
+│       │   ├── Makefile
+│       │   ├── udc
+│       │   │   ├── amd5536udc.h
+│       │   │   ├── amd5536udc_pci.c
+│       │   │   ├── aspeed_udc.c
+│       │   │   ├── aspeed-vhub
+│       │   │   │   ├── core.c
+│       │   │   │   ├── dev.c
+│       │   │   │   ├── ep0.c
+│       │   │   │   ├── epn.c
+│       │   │   │   ├── hub.c
+│       │   │   │   ├── Kconfig
+│       │   │   │   ├── Makefile
+│       │   │   │   └── vhub.h
+│       │   │   ├── at91_udc.c
+│       │   │   ├── at91_udc.h
+│       │   │   ├── atmel_usba_udc.c
+│       │   │   ├── atmel_usba_udc.h
+│       │   │   ├── bcm63xx_udc.c
+│       │   │   ├── bdc
+│       │   │   │   ├── bdc_cmd.c
+│       │   │   │   ├── bdc_cmd.h
+│       │   │   │   ├── bdc_core.c
+│       │   │   │   ├── bdc_dbg.c
+│       │   │   │   ├── bdc_dbg.h
+│       │   │   │   ├── bdc_ep.c
+│       │   │   │   ├── bdc_ep.h
+│       │   │   │   ├── bdc.h
+│       │   │   │   ├── bdc_udc.c
+│       │   │   │   ├── Kconfig
+│       │   │   │   └── Makefile
+│       │   │   ├── cdns2
+│       │   │   │   ├── cdns2-debug.h
+│       │   │   │   ├── cdns2-ep0.c
+│       │   │   │   ├── cdns2-gadget.c
+│       │   │   │   ├── cdns2-gadget.h
+│       │   │   │   ├── cdns2-pci.c
+│       │   │   │   ├── cdns2-trace.c
+│       │   │   │   ├── cdns2-trace.h
+│       │   │   │   ├── Kconfig
+│       │   │   │   └── Makefile
+│       │   │   ├── core.c
+│       │   │   ├── dummy_hcd.c
+│       │   │   ├── fsl_qe_udc.c
+│       │   │   ├── fsl_qe_udc.h
+│       │   │   ├── fsl_udc_core.c
+│       │   │   ├── fsl_usb2_udc.h
+│       │   │   ├── goku_udc.c
+│       │   │   ├── goku_udc.h
+│       │   │   ├── gr_udc.c
+│       │   │   ├── gr_udc.h
+│       │   │   ├── Kconfig
+│       │   │   ├── lpc32xx_udc.c
+│       │   │   ├── m66592-udc.c
+│       │   │   ├── m66592-udc.h
+│       │   │   ├── Makefile
+│       │   │   ├── max3420_udc.c
+│       │   │   ├── net2280.c
+│       │   │   ├── net2280.h
+│       │   │   ├── omap_udc.c
+│       │   │   ├── omap_udc.h
+│       │   │   ├── pch_udc.c
+│       │   │   ├── pxa25x_udc.c
+│       │   │   ├── pxa25x_udc.h
+│       │   │   ├── pxa27x_udc.c
+│       │   │   ├── pxa27x_udc.h
+│       │   │   ├── r8a66597-udc.c
+│       │   │   ├── r8a66597-udc.h
+│       │   │   ├── renesas_usb3.c
+│       │   │   ├── renesas_usbf.c
+│       │   │   ├── rzv2m_usb3drd.c
+│       │   │   ├── snps_udc_core.c
+│       │   │   ├── snps_udc_plat.c
+│       │   │   ├── tegra-xudc.c
+│       │   │   ├── trace.c
+│       │   │   ├── trace.h
+│       │   │   └── udc-xilinx.c
+│       │   ├── u_f.c
+│       │   ├── u_os_desc.h
+│       │   └── usbstring.c
+│       ├── akefile
+│       ├── arly
+│       │   ├── ehci-dbgp.c
+│       │   ├── Makefile
+│       │   ├── xhci-dbc.c
+│       │   └── xhci-dbc.h
+│       ├── config
+│       ├── dns3
+│       │   ├── cdns3-debug.h
+│       │   ├── cdns3-ep0.c
+│       │   ├── cdns3-gadget.c
+│       │   ├── cdns3-gadget.h
+│       │   ├── cdns3-imx.c
+│       │   ├── cdns3-pci-wrap.c
+│       │   ├── cdns3-plat.c
+│       │   ├── cdns3-starfive.c
+│       │   ├── cdns3-ti.c
+│       │   ├── cdns3-trace.c
+│       │   ├── cdns3-trace.h
+│       │   ├── cdnsp-debug.h
+│       │   ├── cdnsp-ep0.c
+│       │   ├── cdnsp-gadget.c
+│       │   ├── cdnsp-gadget.h
+│       │   ├── cdnsp-mem.c
+│       │   ├── cdnsp-pci.c
+│       │   ├── cdnsp-ring.c
+│       │   ├── cdnsp-trace.c
+│       │   ├── cdnsp-trace.h
+│       │   ├── core.c
+│       │   ├── core.h
+│       │   ├── drd.c
+│       │   ├── drd.h
+│       │   ├── gadget-export.h
+│       │   ├── host.c
+│       │   ├── host-export.h
+│       │   ├── Kconfig
+│       │   └── Makefile
+│       ├── enesas_usbhs
+│       │   ├── common.c
+│       │   ├── common.h
+│       │   ├── fifo.c
+│       │   ├── fifo.h
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── mod.c
+│       │   ├── mod_gadget.c
+│       │   ├── mod.h
+│       │   ├── mod_host.c
+│       │   ├── pipe.c
+│       │   ├── pipe.h
+│       │   ├── rcar2.c
+│       │   ├── rcar2.h
+│       │   ├── rcar3.c
+│       │   ├── rcar3.h
+│       │   ├── rza2.c
+│       │   ├── rza.c
+│       │   └── rza.h
+│       ├── erial
+│       │   ├── aircable.c
+│       │   ├── ark3116.c
+│       │   ├── belkin_sa.c
+│       │   ├── belkin_sa.h
+│       │   ├── bus.c
+│       │   ├── ch341.c
+│       │   ├── console.c
+│       │   ├── cp210x.c
+│       │   ├── cyberjack.c
+│       │   ├── cypress_m8.c
+│       │   ├── cypress_m8.h
+│       │   ├── digi_acceleport.c
+│       │   ├── empeg.c
+│       │   ├── ezusb_convert.pl
+│       │   ├── f81232.c
+│       │   ├── f81534.c
+│       │   ├── ftdi_sio.c
+│       │   ├── ftdi_sio.h
+│       │   ├── ftdi_sio_ids.h
+│       │   ├── garmin_gps.c
+│       │   ├── generic.c
+│       │   ├── io_16654.h
+│       │   ├── io_edgeport.c
+│       │   ├── io_edgeport.h
+│       │   ├── io_ionsp.h
+│       │   ├── io_ti.c
+│       │   ├── io_ti.h
+│       │   ├── io_usbvend.h
+│       │   ├── ipaq.c
+│       │   ├── ipw.c
+│       │   ├── ir-usb.c
+│       │   ├── iuu_phoenix.c
+│       │   ├── iuu_phoenix.h
+│       │   ├── Kconfig
+│       │   ├── keyspan.c
+│       │   ├── keyspan_pda.c
+│       │   ├── keyspan_usa26msg.h
+│       │   ├── keyspan_usa28msg.h
+│       │   ├── keyspan_usa49msg.h
+│       │   ├── keyspan_usa67msg.h
+│       │   ├── keyspan_usa90msg.h
+│       │   ├── kl5kusb105.c
+│       │   ├── kl5kusb105.h
+│       │   ├── kobil_sct.c
+│       │   ├── kobil_sct.h
+│       │   ├── Makefile
+│       │   ├── Makefile-keyspan_pda_fw
+│       │   ├── mct_u232.c
+│       │   ├── mct_u232.h
+│       │   ├── metro-usb.c
+│       │   ├── mos7720.c
+│       │   ├── mos7840.c
+│       │   ├── mxuport.c
+│       │   ├── navman.c
+│       │   ├── omninet.c
+│       │   ├── opticon.c
+│       │   ├── option.c
+│       │   ├── oti6858.c
+│       │   ├── oti6858.h
+│       │   ├── pl2303.c
+│       │   ├── pl2303.h
+│       │   ├── qcaux.c
+│       │   ├── qcserial.c
+│       │   ├── quatech2.c
+│       │   ├── safe_serial.c
+│       │   ├── sierra.c
+│       │   ├── spcp8x5.c
+│       │   ├── ssu100.c
+│       │   ├── symbolserial.c
+│       │   ├── ti_usb_3410_5052.c
+│       │   ├── upd78f0730.c
+│       │   ├── usb_debug.c
+│       │   ├── usb-serial.c
+│       │   ├── usb-serial-simple.c
+│       │   ├── usb_wwan.c
+│       │   ├── usb-wwan.h
+│       │   ├── visor.c
+│       │   ├── visor.h
+│       │   ├── whiteheat.c
+│       │   ├── whiteheat.h
+│       │   ├── wishbone-serial.c
+│       │   ├── xr_serial.c
+│       │   └── xsens_mt.c
+│       ├── hipidea
+│       │   ├── bits.h
+│       │   ├── ci.h
+│       │   ├── ci_hdrc_imx.c
+│       │   ├── ci_hdrc_imx.h
+│       │   ├── ci_hdrc_msm.c
+│       │   ├── ci_hdrc_npcm.c
+│       │   ├── ci_hdrc_pci.c
+│       │   ├── ci_hdrc_tegra.c
+│       │   ├── ci_hdrc_usb2.c
+│       │   ├── core.c
+│       │   ├── debug.c
+│       │   ├── host.c
+│       │   ├── host.h
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── otg.c
+│       │   ├── otg_fsm.c
+│       │   ├── otg_fsm.h
+│       │   ├── otg.h
+│       │   ├── trace.c
+│       │   ├── trace.h
+│       │   ├── udc.c
+│       │   ├── udc.h
+│       │   ├── ulpi.c
+│       │   └── usbmisc_imx.c
+│       ├── hy
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── of.c
+│       │   ├── phy-ab8500-usb.c
+│       │   ├── phy-am335x.c
+│       │   ├── phy-am335x-control.c
+│       │   ├── phy-am335x-control.h
+│       │   ├── phy.c
+│       │   ├── phy-fsl-usb.c
+│       │   ├── phy-fsl-usb.h
+│       │   ├── phy-generic.c
+│       │   ├── phy-generic.h
+│       │   ├── phy-gpio-vbus-usb.c
+│       │   ├── phy-isp1301.c
+│       │   ├── phy-keystone.c
+│       │   ├── phy-mv-usb.h
+│       │   ├── phy-mxs-usb.c
+│       │   ├── phy-omap-otg.c
+│       │   ├── phy-tahvo.c
+│       │   ├── phy-tegra-usb.c
+│       │   ├── phy-twl6030-usb.c
+│       │   ├── phy-ulpi.c
+│       │   └── phy-ulpi-viewport.c
+│       ├── isc
+│       │   ├── adutux.c
+│       │   ├── appledisplay.c
+│       │   ├── apple-mfi-fastcharge.c
+│       │   ├── brcmstb-usb-pinmap.c
+│       │   ├── chaoskey.c
+│       │   ├── cypress_cy7c63.c
+│       │   ├── cytherm.c
+│       │   ├── ehset.c
+│       │   ├── emi26.c
+│       │   ├── emi62.c
+│       │   ├── ezusb.c
+│       │   ├── idmouse.c
+│       │   ├── iowarrior.c
+│       │   ├── isight_firmware.c
+│       │   ├── Kconfig
+│       │   ├── ldusb.c
+│       │   ├── legousbtower.c
+│       │   ├── lvstest.c
+│       │   ├── Makefile
+│       │   ├── onboard_usb_dev.c
+│       │   ├── onboard_usb_dev.h
+│       │   ├── onboard_usb_dev_pdevs.c
+│       │   ├── qcom_eud.c
+│       │   ├── sisusbvga
+│       │   │   ├── Kconfig
+│       │   │   ├── Makefile
+│       │   │   ├── sisusb.h
+│       │   │   ├── sisusb_struct.h
+│       │   │   ├── sisusb_tables.h
+│       │   │   └── sisusbvga.c
+│       │   ├── trancevibrator.c
+│       │   ├── usb251xb.c
+│       │   ├── usb3503.c
+│       │   ├── usb4604.c
+│       │   ├── usbio.c
+│       │   ├── usblcd.c
+│       │   ├── usb-ljca.c
+│       │   ├── usbsevseg.c
+│       │   ├── usbtest.c
+│       │   ├── uss720.c
+│       │   └── yurex.c
+│       ├── lass
+│       │   ├── cdc-acm.c
+│       │   ├── cdc-acm.h
+│       │   ├── cdc-wdm.c
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── usblp.c
+│       │   └── usbtmc.c
+│       ├── mage
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── mdc800.c
+│       │   ├── microtek.c
+│       │   └── microtek.h
+│       ├── oles
+│       │   ├── class.c
+│       │   ├── intel-xhci-usb-role-switch.c
+│       │   ├── Kconfig
+│       │   └── Makefile
+│       ├── ommon
+│       │   ├── common.c
+│       │   ├── common.h
+│       │   ├── debug.c
+│       │   ├── Kconfig
+│       │   ├── led.c
+│       │   ├── Makefile
+│       │   ├── ulpi.c
+│       │   ├── usb-conn-gpio.c
+│       │   └── usb-otg-fsm.c
+│       ├── on
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── mon_bin.c
+│       │   ├── mon_main.c
+│       │   ├── mon_stat.c
+│       │   ├── mon_text.c
+│       │   └── usb_mon.h
+│       ├── ore
+│       │   ├── buffer.c
+│       │   ├── config.c
+│       │   ├── devices.c
+│       │   ├── devio.c
+│       │   ├── driver.c
+│       │   ├── endpoint.c
+│       │   ├── file.c
+│       │   ├── generic.c
+│       │   ├── hcd.c
+│       │   ├── hcd-pci.c
+│       │   ├── hub.c
+│       │   ├── hub.h
+│       │   ├── Kconfig
+│       │   ├── ledtrig-usbport.c
+│       │   ├── Makefile
+│       │   ├── message.c
+│       │   ├── notify.c
+│       │   ├── of.c
+│       │   ├── offload.c
+│       │   ├── otg_productlist.h
+│       │   ├── phy.c
+│       │   ├── phy.h
+│       │   ├── port.c
+│       │   ├── quirks.c
+│       │   ├── sysfs.c
+│       │   ├── trace.c
+│       │   ├── trace.h
+│       │   ├── urb.c
+│       │   ├── usb-acpi.c
+│       │   ├── usb.c
+│       │   └── usb.h
+│       ├── ost
+│       │   ├── bcma-hcd.c
+│       │   ├── ehci-atmel.c
+│       │   ├── ehci-brcm.c
+│       │   ├── ehci-dbg.c
+│       │   ├── ehci-exynos.c
+│       │   ├── ehci-fsl.c
+│       │   ├── ehci-fsl.h
+│       │   ├── ehci-grlib.c
+│       │   ├── ehci.h
+│       │   ├── ehci-hcd.c
+│       │   ├── ehci-hub.c
+│       │   ├── ehci-mem.c
+│       │   ├── ehci-mv.c
+│       │   ├── ehci-npcm7xx.c
+│       │   ├── ehci-omap.c
+│       │   ├── ehci-orion.c
+│       │   ├── ehci-pci.c
+│       │   ├── ehci-platform.c
+│       │   ├── ehci-ppc-of.c
+│       │   ├── ehci-ps3.c
+│       │   ├── ehci-q.c
+│       │   ├── ehci-sched.c
+│       │   ├── ehci-sh.c
+│       │   ├── ehci-spear.c
+│       │   ├── ehci-st.c
+│       │   ├── ehci-sysfs.c
+│       │   ├── ehci-timer.c
+│       │   ├── ehci-xilinx-of.c
+│       │   ├── fhci-dbg.c
+│       │   ├── fhci.h
+│       │   ├── fhci-hcd.c
+│       │   ├── fhci-hub.c
+│       │   ├── fhci-mem.c
+│       │   ├── fhci-q.c
+│       │   ├── fhci-sched.c
+│       │   ├── fhci-tds.c
+│       │   ├── fsl-mph-dr-of.c
+│       │   ├── isp116x.h
+│       │   ├── isp116x-hcd.c
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── max3421-hcd.c
+│       │   ├── octeon-hcd.c
+│       │   ├── octeon-hcd.h
+│       │   ├── ohci-at91.c
+│       │   ├── ohci-da8xx.c
+│       │   ├── ohci-dbg.c
+│       │   ├── ohci-exynos.c
+│       │   ├── ohci.h
+│       │   ├── ohci-hcd.c
+│       │   ├── ohci-hub.c
+│       │   ├── ohci-mem.c
+│       │   ├── ohci-nxp.c
+│       │   ├── ohci-omap.c
+│       │   ├── ohci-pci.c
+│       │   ├── ohci-platform.c
+│       │   ├── ohci-ppc-of.c
+│       │   ├── ohci-ps3.c
+│       │   ├── ohci-pxa27x.c
+│       │   ├── ohci-q.c
+│       │   ├── ohci-s3c2410.c
+│       │   ├── ohci-sa1111.c
+│       │   ├── ohci-sm501.c
+│       │   ├── ohci-spear.c
+│       │   ├── ohci-st.c
+│       │   ├── oxu210hp-hcd.c
+│       │   ├── pci-quirks.c
+│       │   ├── pci-quirks.h
+│       │   ├── r8a66597.h
+│       │   ├── r8a66597-hcd.c
+│       │   ├── sl811_cs.c
+│       │   ├── sl811.h
+│       │   ├── sl811-hcd.c
+│       │   ├── ssb-hcd.c
+│       │   ├── uhci-debug.c
+│       │   ├── uhci-grlib.c
+│       │   ├── uhci-hcd.c
+│       │   ├── uhci-hcd.h
+│       │   ├── uhci-hub.c
+│       │   ├── uhci-pci.c
+│       │   ├── uhci-platform.c
+│       │   ├── uhci-q.c
+│       │   ├── xen-hcd.c
+│       │   ├── xhci.c
+│       │   ├── xhci-caps.h
+│       │   ├── xhci-dbg.c
+│       │   ├── xhci-dbgcap.c
+│       │   ├── xhci-dbgcap.h
+│       │   ├── xhci-dbgtty.c
+│       │   ├── xhci-debugfs.c
+│       │   ├── xhci-debugfs.h
+│       │   ├── xhci-ext-caps.c
+│       │   ├── xhci-ext-caps.h
+│       │   ├── xhci.h
+│       │   ├── xhci-histb.c
+│       │   ├── xhci-hub.c
+│       │   ├── xhci-mem.c
+│       │   ├── xhci-mtk.c
+│       │   ├── xhci-mtk.h
+│       │   ├── xhci-mtk-sch.c
+│       │   ├── xhci-mvebu.c
+│       │   ├── xhci-mvebu.h
+│       │   ├── xhci-pci.c
+│       │   ├── xhci-pci.h
+│       │   ├── xhci-pci-renesas.c
+│       │   ├── xhci-plat.c
+│       │   ├── xhci-plat.h
+│       │   ├── xhci-port.h
+│       │   ├── xhci-rcar.c
+│       │   ├── xhci-rcar-regs.h
+│       │   ├── xhci-ring.c
+│       │   ├── xhci-rzg3e-regs.h
+│       │   ├── xhci-rzv2m.c
+│       │   ├── xhci-rzv2m.h
+│       │   ├── xhci-sideband.c
+│       │   ├── xhci-tegra.c
+│       │   ├── xhci-trace.c
+│       │   └── xhci-trace.h
+│       ├── otg210
+│       │   ├── fotg210-core.c
+│       │   ├── fotg210.h
+│       │   ├── fotg210-hcd.c
+│       │   ├── fotg210-hcd.h
+│       │   ├── fotg210-udc.c
+│       │   ├── fotg210-udc.h
+│       │   ├── Kconfig
+│       │   └── Makefile
+│       ├── sbip
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── stub_dev.c
+│       │   ├── stub.h
+│       │   ├── stub_main.c
+│       │   ├── stub_rx.c
+│       │   ├── stub_tx.c
+│       │   ├── usbip_common.c
+│       │   ├── usbip_common.h
+│       │   ├── usbip_event.c
+│       │   ├── vhci.h
+│       │   ├── vhci_hcd.c
+│       │   ├── vhci_rx.c
+│       │   ├── vhci_sysfs.c
+│       │   ├── vhci_tx.c
+│       │   ├── vudc_dev.c
+│       │   ├── vudc.h
+│       │   ├── vudc_main.c
+│       │   ├── vudc_rx.c
+│       │   ├── vudc_sysfs.c
+│       │   ├── vudc_transfer.c
+│       │   └── vudc_tx.c
+│       ├── sb-skeleton.c
+│       ├── sp1760
+│       │   ├── isp1760-core.c
+│       │   ├── isp1760-core.h
+│       │   ├── isp1760-hcd.c
+│       │   ├── isp1760-hcd.h
+│       │   ├── isp1760-if.c
+│       │   ├── isp1760-regs.h
+│       │   ├── isp1760-udc.c
+│       │   ├── isp1760-udc.h
+│       │   ├── Kconfig
+│       │   └── Makefile
+│       ├── tm
+│       │   ├── cxacru.c
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── speedtch.c
+│       │   ├── ueagle-atm.c
+│       │   ├── usbatm.c
+│       │   ├── usbatm.h
+│       │   └── xusbatm.c
+│       ├── torage
+│       │   ├── alauda.c
+│       │   ├── cypress_atacb.c
+│       │   ├── datafab.c
+│       │   ├── debug.c
+│       │   ├── debug.h
+│       │   ├── ene_ub6250.c
+│       │   ├── freecom.c
+│       │   ├── initializers.c
+│       │   ├── initializers.h
+│       │   ├── isd200.c
+│       │   ├── jumpshot.c
+│       │   ├── karma.c
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── onetouch.c
+│       │   ├── option_ms.c
+│       │   ├── option_ms.h
+│       │   ├── protocol.c
+│       │   ├── protocol.h
+│       │   ├── realtek_cr.c
+│       │   ├── scsiglue.c
+│       │   ├── scsiglue.h
+│       │   ├── sddr09.c
+│       │   ├── sddr55.c
+│       │   ├── shuttle_usbat.c
+│       │   ├── sierra_ms.c
+│       │   ├── sierra_ms.h
+│       │   ├── transport.c
+│       │   ├── transport.h
+│       │   ├── uas.c
+│       │   ├── uas-detect.h
+│       │   ├── unusual_alauda.h
+│       │   ├── unusual_cypress.h
+│       │   ├── unusual_datafab.h
+│       │   ├── unusual_devs.h
+│       │   ├── unusual_ene_ub6250.h
+│       │   ├── unusual_freecom.h
+│       │   ├── unusual_isd200.h
+│       │   ├── unusual_jumpshot.h
+│       │   ├── unusual_karma.h
+│       │   ├── unusual_onetouch.h
+│       │   ├── unusual_realtek.h
+│       │   ├── unusual_sddr09.h
+│       │   ├── unusual_sddr55.h
+│       │   ├── unusual_uas.h
+│       │   ├── unusual_usbat.h
+│       │   ├── usb.c
+│       │   ├── usb.h
+│       │   └── usual-tables.c
+│       ├── tu3
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── mtu3_core.c
+│       │   ├── mtu3_debugfs.c
+│       │   ├── mtu3_debug.h
+│       │   ├── mtu3_dr.c
+│       │   ├── mtu3_dr.h
+│       │   ├── mtu3_gadget.c
+│       │   ├── mtu3_gadget_ep0.c
+│       │   ├── mtu3.h
+│       │   ├── mtu3_host.c
+│       │   ├── mtu3_hw_regs.h
+│       │   ├── mtu3_plat.c
+│       │   ├── mtu3_qmu.c
+│       │   ├── mtu3_qmu.h
+│       │   ├── mtu3_trace.c
+│       │   └── mtu3_trace.h
+│       ├── usb
+│       │   ├── cppi_dma.h
+│       │   ├── da8xx.c
+│       │   ├── jz4740.c
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── mediatek.c
+│       │   ├── mpfs.c
+│       │   ├── musb_core.c
+│       │   ├── musb_core.h
+│       │   ├── musb_cppi41.c
+│       │   ├── musb_debugfs.c
+│       │   ├── musb_debug.h
+│       │   ├── musb_dma.h
+│       │   ├── musb_dsps.c
+│       │   ├── musb_gadget.c
+│       │   ├── musb_gadget_ep0.c
+│       │   ├── musb_gadget.h
+│       │   ├── musb_host.c
+│       │   ├── musb_host.h
+│       │   ├── musbhsdma.c
+│       │   ├── musb_io.h
+│       │   ├── musb_regs.h
+│       │   ├── musb_trace.c
+│       │   ├── musb_trace.h
+│       │   ├── musb_virthub.c
+│       │   ├── omap2430.c
+│       │   ├── omap2430.h
+│       │   ├── sunxi.c
+│       │   ├── tusb6010.c
+│       │   ├── tusb6010.h
+│       │   ├── tusb6010_omap.c
+│       │   ├── ux500.c
+│       │   └── ux500_dma.c
+│       ├── wc2
+│       │   ├── core.c
+│       │   ├── core.h
+│       │   ├── core_intr.c
+│       │   ├── debugfs.c
+│       │   ├── debug.h
+│       │   ├── drd.c
+│       │   ├── gadget.c
+│       │   ├── hcd.c
+│       │   ├── hcd_ddma.c
+│       │   ├── hcd.h
+│       │   ├── hcd_intr.c
+│       │   ├── hcd_queue.c
+│       │   ├── hw.h
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── params.c
+│       │   ├── pci.c
+│       │   └── platform.c
+│       ├── wc3
+│       │   ├── core.c
+│       │   ├── core.h
+│       │   ├── debugfs.c
+│       │   ├── debug.h
+│       │   ├── drd.c
+│       │   ├── dwc3-am62.c
+│       │   ├── dwc3-apple.c
+│       │   ├── dwc3-exynos.c
+│       │   ├── dwc3-generic-plat.c
+│       │   ├── dwc3-google.c
+│       │   ├── dwc3-haps.c
+│       │   ├── dwc3-imx8mp.c
+│       │   ├── dwc3-imx.c
+│       │   ├── dwc3-keystone.c
+│       │   ├── dwc3-meson-g12a.c
+│       │   ├── dwc3-octeon.c
+│       │   ├── dwc3-of-simple.c
+│       │   ├── dwc3-omap.c
+│       │   ├── dwc3-pci.c
+│       │   ├── dwc3-qcom.c
+│       │   ├── dwc3-qcom-legacy.c
+│       │   ├── dwc3-rtk.c
+│       │   ├── dwc3-st.c
+│       │   ├── dwc3-xilinx.c
+│       │   ├── ep0.c
+│       │   ├── gadget.c
+│       │   ├── gadget.h
+│       │   ├── glue.h
+│       │   ├── host.c
+│       │   ├── io.h
+│       │   ├── Kconfig
+│       │   ├── Makefile
+│       │   ├── trace.c
+│       │   ├── trace.h
+│       │   └── ulpi.c
+│       └── ypec
+│           ├── altmodes
+│           │   ├── displayport.c
+│           │   ├── displayport.h
+│           │   ├── Kconfig
+│           │   ├── Makefile
+│           │   ├── nvidia.c
+│           │   └── thunderbolt.c
+│           ├── anx7411.c
+│           ├── bus.c
+│           ├── bus.h
+│           ├── class.c
+│           ├── class.h
+│           ├── hd3ss3220.c
+│           ├── Kconfig
+│           ├── Makefile
+│           ├── mode_selection.c
+│           ├── mux
+│           │   ├── fsa4480.c
+│           │   ├── gpio-sbu-mux.c
+│           │   ├── intel_pmc_mux.c
+│           │   ├── it5205.c
+│           │   ├── Kconfig
+│           │   ├── Makefile
+│           │   ├── nb7vpq904m.c
+│           │   ├── pi3usb30532.c
+│           │   ├── ps883x.c
+│           │   ├── ptn36502.c
+│           │   ├── tusb1046.c
+│           │   └── wcd939x-usbss.c
+│           ├── mux.c
+│           ├── mux.h
+│           ├── pd.c
+│           ├── pd.h
+│           ├── port-mapper.c
+│           ├── retimer.c
+│           ├── retimer.h
+│           ├── rt1719.c
+│           ├── stusb160x.c
+│           ├── tcpm
+│           │   ├── fusb302.c
+│           │   ├── fusb302_reg.h
+│           │   ├── Kconfig
+│           │   ├── Makefile
+│           │   ├── maxim_contaminant.c
+│           │   ├── qcom
+│           │   │   ├── Makefile
+│           │   │   ├── qcom_pmic_typec.c
+│           │   │   ├── qcom_pmic_typec.h
+│           │   │   ├── qcom_pmic_typec_pdphy.c
+│           │   │   ├── qcom_pmic_typec_pdphy.h
+│           │   │   ├── qcom_pmic_typec_pdphy_stub.c
+│           │   │   ├── qcom_pmic_typec_port.c
+│           │   │   └── qcom_pmic_typec_port.h
+│           │   ├── tcpci.c
+│           │   ├── tcpci_maxim_core.c
+│           │   ├── tcpci_maxim.h
+│           │   ├── tcpci_mt6360.c
+│           │   ├── tcpci_mt6370.c
+│           │   ├── tcpci_rt1711h.c
+│           │   ├── tcpm.c
+│           │   └── wcove.c
+│           ├── tipd
+│           │   ├── core.c
+│           │   ├── Kconfig
+│           │   ├── Makefile
+│           │   ├── tps6598x.h
+│           │   ├── trace.c
+│           │   └── trace.h
+│           ├── ucsi
+│           │   ├── cros_ec_ucsi.c
+│           │   ├── debugfs.c
+│           │   ├── displayport.c
+│           │   ├── Kconfig
+│           │   ├── Makefile
+│           │   ├── psy.c
+│           │   ├── thunderbolt.c
+│           │   ├── trace.c
+│           │   ├── trace.h
+│           │   ├── ucsi_acpi.c
+│           │   ├── ucsi.c
+│           │   ├── ucsi_ccg.c
+│           │   ├── ucsi_glink.c
+│           │   ├── ucsi.h
+│           │   ├── ucsi_huawei_gaokun.c
+│           │   ├── ucsi_stm32g0.c
+│           │   └── ucsi_yoga_c630.c
+│           └── wusb3801.c
+├── grub.cfg
+├── hp-laptop-config.md
+├── iso
+│   ├── boot
+│   │   ├── grub
+│   │   │   └── grub.cfg
+│   │   ├── limine
+│   │   │   ├── limine-bios-cd.bin
+│   │   │   ├── limine-bios.sys
+│   │   │   ├── limine.conf
+│   │   │   └── limine-uefi-cd.bin
+│   │   └── mesa_kernel
+│   └── EFI
+│       └── BOOT
+│           └── BOOTX64.EFI
+├── limine
+│   ├── BOOTAA64.EFI
+│   ├── BOOTIA32.EFI
+│   ├── BOOTLOONGARCH64.EFI
+│   ├── BOOTRISCV64.EFI
+│   ├── BOOTX64.EFI
+│   ├── install-sh
+│   ├── LICENSE
+│   ├── limine
+│   ├── limine-bios-cd.bin
+│   ├── limine-bios-hdd.h
+│   ├── limine-bios-pxe.bin
+│   ├── limine-bios.sys
+│   ├── limine.c
+│   ├── limine.exe
+│   ├── limine.h
+│   ├── limine-uefi-cd.bin
+│   └── Makefile
+├── limine.cfg
+├── limine.conf
+├── limine-uefi.cfg
+├── mesa_kernel
+│   ├── build_error.log
+│   ├── build_err.txt
+│   ├── build.log
+│   ├── build_new.log
+│   ├── build_output.txt
+│   ├── build.rs
+│   ├── Cargo.toml
+│   ├── c_drivers
+│   ├── check_errors.txt
+│   ├── compile.log
+│   ├── linker.ld
+│   └── src
+│       ├── acpi
+│       │   └── mod.rs
+│       ├── arch
+│       │   ├── aarch64
+│       │   │   ├── context.rs
+│       │   │   ├── limine_req.rs
+│       │   │   └── mod.rs
+│       │   ├── mod.rs
+│       │   └── x86_64
+│       │       ├── context.rs
+│       │       ├── gdt.rs
+│       │       ├── interrupts
+│       │       │   ├── apic.rs
+│       │       │   ├── handlers.rs
+│       │       │   ├── idt.rs
+│       │       │   ├── mod.rs
+│       │       │   └── timer.rs
+│       │       ├── limine_req.rs
+│       │       └── mod.rs
+│       ├── config.rs
+│       ├── drivers
+│       │   ├── acpi
+│       │   │   ├── mod.rs
+│       │   │   └── tables.rs
+│       │   ├── ata.rs
+│       │   ├── audio.rs
+│       │   ├── bios_analyzer.rs
+│       │   ├── block.rs
+│       │   ├── framebuffer
+│       │   │   ├── console.rs
+│       │   │   ├── font.rs
+│       │   │   ├── html.rs
+│       │   │   ├── mod.rs
+│       │   │   ├── palette.rs
+│       │   │   └── ui.rs
+│       │   ├── keyboard
+│       │   │   ├── layout.rs
+│       │   │   ├── mod.rs
+│       │   │   └── scancode.rs
+│       │   ├── mod.rs
+│       │   ├── net
+│       │   │   ├── mod.rs
+│       │   │   ├── rtl8139.rs
+│       │   │   └── virtio_net.rs
+│       │   ├── nvme.rs
+│       │   ├── pci
+│       │   │   └── mod.rs
+│       │   ├── rtc.rs
+│       │   ├── serial.rs
+│       │   └── usb
+│       │       ├── descriptors.rs
+│       │       ├── hub.rs
+│       │       ├── linux_glue.rs
+│       │       ├── mod.rs
+│       │       ├── msc.rs
+│       │       ├── net
+│       │       ├── rndis_host.rs
+│       │       ├── rndis.rs
+│       │       └── xhci
+│       │           ├── context.rs
+│       │           ├── handshake.rs
+│       │           ├── mod.rs
+│       │           ├── msix.rs
+│       │           └── rings.rs
+│       ├── elf.rs
+│       ├── fs
+│       │   ├── mesafs.rs
+│       │   ├── mod.rs
+│       │   ├── partition.rs
+│       │   ├── path.rs
+│       │   ├── ramfs.rs
+│       │   └── sync.rs
+│       ├── linux
+│       │   ├── list.rs
+│       │   ├── mod.rs
+│       │   ├── slab.rs
+│       │   └── spinlock.rs
+│       ├── log.rs
+│       ├── main.rs
+│       ├── memory
+│       │   ├── address_space.rs
+│       │   ├── addr.rs
+│       │   ├── heap.rs
+│       │   ├── mod.rs
+│       │   ├── paging.rs
+│       │   ├── pmm.rs
+│       │   ├── vmm.rs
+│       │   └── xhci_access.rs
+│       ├── net
+│       │   ├── arp.rs
+│       │   ├── config.rs
+│       │   ├── dhcp.rs
+│       │   ├── dns.rs
+│       │   ├── ethernet.rs
+│       │   ├── icmp.rs
+│       │   ├── ipv4.rs
+│       │   ├── mod.rs
+│       │   ├── tcp.rs
+│       │   └── udp.rs
+│       ├── pci
+│       │   └── mod.rs
+│       ├── pipe.rs
+│       ├── scheduler
+│       │   └── mod.rs
+│       ├── syscall
+│       │   └── mod.rs
+│       ├── userland
+│       │   ├── exec.rs
+│       │   ├── mod.rs
+│       │   ├── programs.rs
+│       │   └── shell.rs
+│       └── users
+│           └── mod.rs
+├── mesa-os.iso
+├── output
+│   └── pila
+├── rtl8822befw.bin
+├── rtl8822befw.bin.zst
+├── rtl8822ce_fw.bin
+├── rust-toolchain.toml
+├── scratch
+├── setup_host_network.sh
+├── TODO.md
+├── tools
+│   ├── inject_elf.sh
+│   ├── mesafs_inject
+│   │   ├── Cargo.toml
+│   │   └── src
+│   │       └── main.rs
+│   └── README.md
+├── tree.txt
+├── userland
+│   └── hello_elf
+│       ├── hello.c
+│       ├── hello.elf
+│       ├── linker.ld
+│       ├── Makefile
+│       └── README.md
+└── XHCI Documentacion
+    ├── 625472_xHCI_Rev1_2b.txt
+    ├── docs.rs.txt
+    ├── Osdev.txt
+    └── xhci-main
+        ├── Cargo.toml
+        ├── CHANGELOG.md
+        ├── LICENSE-APACHE
+        ├── LICENSE-MIT
+        ├── README.md
+        ├── rustfmt.toml
+        └── src
+            ├── context
+            │   ├── macros.rs
+            │   └── mod.rs
+            ├── extended_capabilities
+            │   ├── debug.rs
+            │   ├── hci_extended_power_management.rs
+            │   ├── mod.rs
+            │   ├── usb_legacy_support_capability.rs
+            │   ├── xhci_extended_message_interrupt.rs
+            │   ├── xhci_local_memory.rs
+            │   ├── xhci_message_interrupt.rs
+            │   └── xhci_supported_protocol.rs
+            ├── lib.rs
+            ├── macros.rs
+            ├── registers
+            │   ├── capability.rs
+            │   ├── doorbell.rs
+            │   ├── mod.rs
+            │   ├── operational.rs
+            │   └── runtime.rs
+            └── ring
+                ├── mod.rs
+                └── trb
+                    ├── command.rs
+                    ├── event.rs
+                    ├── mod.rs
+                    └── transfer.rs
+
+93 directories, 1178 files
