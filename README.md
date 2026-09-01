@@ -13,6 +13,10 @@
 </p>
 
 ---
+---
+## ¡ACLARACION INICIAL!
+
+MesaOS es un proyecto el cual, por ahora, esta hecho por 1 sola persona (crackanimador) y uso IA **SOLO PARA GENERACION DE CODIGO**, el debuging, ideas, y demas partes del desarrollo son 100% humanas y sin intervención de una maquina.
 
 ## 🌟 ¿Qué es MesaOS?
 
