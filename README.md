@@ -58,7 +58,7 @@ MesaOS es un sistema operativo x86_64 escrito **100% desde cero en Rust**. No es
 | **Framebuffer** | Consola, Rose Pine, renderizado HTML | ✅ |
 | **UEFI NVRAM** | Read/write/list variables runtime services | ✅ |
 | **NVMe** | Código completo (desactivado por seguridad) | ⏸️ |
-| **xHCI (USB 3.0)** | Init y port scanning (periféricos desactivados) | 🚧 |
+| **xHCI (USB 3.0)** | Init y port scanning (drivers en construccion, pero la base ya hecha)|✅ |
 | **ATA/IDE** | Código completo (desactivado por seguridad) | ⏸️ |
 
 ### 🌐 Red
@@ -73,7 +73,7 @@ MesaOS es un sistema operativo x86_64 escrito **100% desde cero en Rust**. No es
 | UDP | 🚧 |
 | DHCP — Cliente | ✅ |
 | DNS — Resolución | ✅ |
-| RNDIS — USB tethering | 🚧 |
+| RNDIS — USB tethering (Por ahora, solo iniciacion NCP) | 🚧 |
 
 ### 📂 Sistema de Archivos
 
@@ -265,6 +265,8 @@ ARCH=aarch64 ./build.sh build   # ARM64 (experimental)
 
 El driver **NVMe sobrescribe el Sector 0** (tabla de particiones) durante la inicialización.  
 **No ejecutes en hardware con datos importantes si llega a descomentar el driver NVMe.** Usa QEMU o un disco de pruebas.
+
+Ademas, **La version de Qemu puede tener errores por culpa del SMP**, pero en si todas las funciones van como deben ir.
 
 ---
 
