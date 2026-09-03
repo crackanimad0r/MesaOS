@@ -249,9 +249,9 @@ ARCH=aarch64 ./build.sh build   # ARM64 (experimental)
 - [x] **v0.2** — HDA Audio, WAV streaming, red (ARP/IP/DHCP)
 - [x] **v0.3** — Initrd persistente, battery report, UEFI NVRAM
 - [x] **v0.4** — Linux shim, 350 syscalls, Ring 3, ELF loader, editor nano
-- [ ] **v0.5** — xHCI funcional (control transfers reales), USB storage
+- [/] **v0.5** — xHCI funcional (control transfers reales), USB storage
 - [ ] **v0.6** — TCP state machine (conexiones reales)
-- [ ] **v0.7** — SMP (scheduler multicore)
+- [x] **v0.7** — SMP (scheduler multicore)
 - [ ] **v0.8** — Servidor web HTTP embebido
 - [ ] **v0.9** — Decodificador MP3 (Huffman + MDCT)
 - [ ] **v1.0** — WiFi RTL8822CE
