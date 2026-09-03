@@ -4,7 +4,10 @@
   <img src="https://img.shields.io/badge/Limine-FDEFE8?style=for-the-badge&logo=limine&logoColor=black"/>
   <img src="https://img.shields.io/badge/UEFI-0A5CF5?style=for-the-badge&logo=uefi&logoColor=white"/>
   <img src="https://img.shields.io/badge/license-GPL-blue?style=for-the-badge"/>
+  <a href="https://discord.gg/sEaB7KAwtr"><img src="https://img.shields.io/badge/Discord-MesaOS-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
 </p>
+</p>
+
 
 <h1 align="center">MesaOS</h1>
 <p align="center"><i>Un sistema operativo de 64 bits escrito desde cero en Rust.</i></p>
@@ -278,6 +281,7 @@ Ademas, **La version de Qemu puede tener errores por culpa del SMP**, pero en si
 ## 👤 Creador
 
 **Crackanimad0r / Crackanimador** ⛩️
+
 
 ---
 
