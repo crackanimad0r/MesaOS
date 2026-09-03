@@ -14,9 +14,10 @@
 
 ---
 ---
-## ¡ACLARACION INICIAL!
-
-MesaOS es un proyecto el cual, por ahora, esta hecho por 1 sola persona (crackanimador) y uso IA **SOLO PARA GENERACION DE CODIGO**, el debuging, ideas, y demas partes del desarrollo son 100% humanas y sin intervención de una maquina.
+> 🤖 **Nota sobre el desarrollo:**
+> MesaOS es un experimento de arquitectura de sistemas diseñado y dirigido por **crackanimador** (estudiante de ESO). 
+> 
+> Todo el código fuente ha sido generado mediante modelos de Lenguaje (IA) siguiendo mis especificaciones, mientras que el diseño de la arquitectura, la depuración de errores, las pruebas en hardware real y la integración del sistema son 100% trabajo humano.
 
 ## 🌟 ¿Qué es MesaOS?
 
