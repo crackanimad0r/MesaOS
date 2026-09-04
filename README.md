@@ -15,6 +15,8 @@
   <b>Kernel híbrido</b> · <b>Multitarea apropiativa</b> · <b>Shim de drivers Linux</b> · <b>Audio HD</b> · <b>Red TCP/IP</b>
 </p>
 
+<img width="1282" height="802" alt="Grabación-de-pantalla-desde-2026-09-04-11-51-01" src="https://github.com/user-attachments/assets/94b3e844-16a0-41fc-805a-b078010ffb91" />
+
 ---
 ---
 > 🤖 **Nota sobre el desarrollo:**
