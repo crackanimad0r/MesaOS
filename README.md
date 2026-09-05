@@ -20,7 +20,7 @@
 ---
 ---
 > 🤖 **Nota sobre el desarrollo:**
-> MesaOS es un experimento de arquitectura de sistemas diseñado y dirigido por **crackanimador** (estudiante de ESO). 
+> MesaOS es un experimento de arquitectura de sistemas diseñado y dirigido por **crackanimador** (estudiante de ESO con 14 años de edad). 
 > 
 > Todo el código fuente ha sido generado mediante modelos de Lenguaje (IA) siguiendo mis especificaciones, mientras que el diseño de la arquitectura, la depuración de errores, las pruebas en hardware real y la integración del sistema son 100% trabajo humano.
 
