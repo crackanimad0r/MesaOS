@@ -38,7 +38,11 @@ pub fn handle_arp(data: &[u8]) {
     if oper == 1 {
         // ARP Request
         let our_ip = crate::net::get_ip();
-        if target_ip == our_ip {
+        let pending_ip = crate::net::get_pending_ip();
+        // While DHCP is negotiating, reply for the address we were offered so
+        // a router that ARPs it before delivering the ACK can reach us.
+        if target_ip == our_ip || (pending_ip != [0, 0, 0, 0] && target_ip == pending_ip) {
+            let reply_ip = if target_ip == our_ip { our_ip } else { pending_ip };
             crate::serial_println!(
                 "[ARP] Replying to {}.{}.{}.{}",
                 sender_ip[0],
@@ -46,7 +50,7 @@ pub fn handle_arp(data: &[u8]) {
                 sender_ip[2],
                 sender_ip[3]
             );
-            send_arp_reply(sender_mac, sender_ip);
+            send_arp_reply(sender_mac, sender_ip, reply_ip);
         }
     } else if oper == 2 {
         crate::serial_println!(
@@ -91,9 +95,8 @@ pub fn send_arp_request(target_ip: [u8; 4]) {
     let _ = crate::net::send_ethernet(broadcast_mac, 0x0806, &arp_packet);
 }
 
-fn send_arp_reply(target_mac: [u8; 6], target_ip: [u8; 4]) {
+fn send_arp_reply(target_mac: [u8; 6], target_ip: [u8; 4], our_ip: [u8; 4]) {
     let our_mac = crate::net::get_mac();
-    let our_ip = crate::net::get_ip();
 
     let mut arp_packet = Vec::with_capacity(28);
     arp_packet.extend_from_slice(&1u16.to_be_bytes());

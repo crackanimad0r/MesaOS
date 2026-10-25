@@ -23,7 +23,12 @@ pub fn handle_icmp(data: &[u8], src_ip: [u8; 4], ttl: u8) {
 
     match icmp_type {
         8 => {
-            // Echo Request - send reply
+            // Echo Request. Never answer 0.0.0.0: with no lease, our broadcast
+            // echo request comes back from the AP and replying to 0.0.0.0
+            // creates a loop that looks like a successful ping.
+            if src_ip == [0, 0, 0, 0] {
+                return;
+            }
             crate::serial_println!(
                 "[ICMP] Echo Request from {}.{}.{}.{}",
                 src_ip[0],
@@ -34,12 +39,15 @@ pub fn handle_icmp(data: &[u8], src_ip: [u8; 4], ttl: u8) {
             send_echo_reply(src_ip, data);
         }
         0 => {
-            // Echo Reply
+            // Echo Reply. Drop 0.0.0.0 sources (our own frames reflected back).
+            if src_ip == [0, 0, 0, 0] {
+                return;
+            }
             let id = u16::from_be_bytes([data[4], data[5]]);
             let seq = u16::from_be_bytes([data[6], data[7]]);
             PING_REPLIES.lock().push((src_ip, id, seq, ttl));
-            crate::serial_println!(
-                "[ICMP] Echo reply from {}.{}.{}.{} id={} seq={} ttl={}",
+            crate::mesa_println!(
+                "[ICMP] Echo reply de {}.{}.{}.{} id={} seq={} ttl={}",
                 src_ip[0],
                 src_ip[1],
                 src_ip[2],
@@ -89,7 +97,7 @@ fn send_echo_reply(dest_ip: [u8; 4], request_data: &[u8]) {
     reply[3] = (checksum & 0xFF) as u8;
 
     crate::serial_println!("[ICMP] Outbound Echo Reply checksum: {:#x}", checksum);
-    let _ = crate::net::ipv4::send_packet(dest_ip, 1, &reply);
+    let _ = crate::net::ipv4::send_packet(dest_ip, crate::net::get_ip(), 1, &reply);
 }
 
 pub fn send_ping(dest_ip: [u8; 4], id: u16, seq: u16) -> Result<(), &'static str> {
@@ -126,7 +134,7 @@ pub fn send_ping(dest_ip: [u8; 4], id: u16, seq: u16) -> Result<(), &'static str
     );
     crate::net::hex_dump(&data, 32);
 
-    crate::net::ipv4::send_packet(dest_ip, 1, &data)
+    crate::net::ipv4::send_packet(dest_ip, crate::net::get_ip(), 1, &data)
 }
 
 fn calculate_icmp_checksum(data: &[u8]) -> u16 {
@@ -148,11 +156,20 @@ fn calculate_icmp_checksum(data: &[u8]) -> u16 {
     !sum as u16
 }
 
-pub fn wait_for_reply(id: u16, seq: u16, timeout_ms: usize) -> Option<([u8; 4], u8)> {
+/// Discard pending replies (call right before sending a new request).
+pub fn clear_replies() {
+    PING_REPLIES.lock().clear();
+}
+
+pub fn wait_for_reply(
+    _id: u16,
+    seq: u16,
+    timeout_ms: usize,
+    expected_ip: [u8; 4],
+) -> Option<([u8; 4], u8)> {
     let start_ticks = crate::curr_arch::get_ticks();
-    // Aproximadamente 1 tick = 55ms. 1000ms / 55 = 18 ticks.
-    let timeout_ticks = (timeout_ms as u64) / 55;
-    let timeout_ticks = if timeout_ticks == 0 { 1 } else { timeout_ticks };
+    // Timer is ~100 Hz: 1 tick = 10 ms.
+    let timeout_ticks = (timeout_ms as u64 / 10).max(1);
 
     let mut last_dot_tick = start_ticks;
 
@@ -162,10 +179,12 @@ pub fn wait_for_reply(id: u16, seq: u16, timeout_ms: usize) -> Option<([u8; 4], 
         // Check if we got a reply
         {
             let mut replies = PING_REPLIES.lock();
-            if let Some(pos) = replies
-                .iter()
-                .position(|(_, reply_id, reply_seq, _)| *reply_id == id && *reply_seq == seq)
-            {
+            // Match by sequence + source only: many routers/NATs rewrite the
+            // ICMP identifier of relayed pings, so requiring the original id
+            // dropped every reply to external hosts (ping "almost never").
+            if let Some(pos) = replies.iter().position(|(ip, _reply_id, reply_seq, _)| {
+                *reply_seq == seq && *ip == expected_ip
+            }) {
                 let (ip, _, _, reply_ttl) = replies.remove(pos);
                 return Some((ip, reply_ttl));
             }
@@ -178,8 +197,8 @@ pub fn wait_for_reply(id: u16, seq: u16, timeout_ms: usize) -> Option<([u8; 4], 
             break;
         }
 
-        // Print dot every 500ms (~9 ticks)
-        if current_ticks.wrapping_sub(last_dot_tick) >= 9 {
+        // Print dot every 500 ms (50 ticks at ~100 Hz)
+        if current_ticks.wrapping_sub(last_dot_tick) >= 50 {
             crate::mesa_print!(".");
             last_dot_tick = current_ticks;
         }
@@ -194,6 +213,6 @@ pub fn wait_for_reply(id: u16, seq: u16, timeout_ms: usize) -> Option<([u8; 4], 
     }
 
     crate::mesa_println!();
-    crate::serial_println!("[ICMP] Timeout for id={} seq={}", id, seq);
+    crate::serial_println!("[ICMP] Timeout for seq={}", seq);
     None
 }

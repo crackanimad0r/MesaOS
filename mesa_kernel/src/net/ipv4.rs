@@ -106,7 +106,25 @@ pub fn handle_ipv4(data: &[u8]) {
     if let Some(packet) = parse_packet(data) {
         let our_ip = crate::net::get_ip();
 
-        if packet.dest_ip != our_ip && packet.dest_ip != [255, 255, 255, 255] {
+        // Accept broadcast (255.255.255.255) and multicast (224.0.0.0/4) always.
+        // While we have no IP yet (0.0.0.0, i.e. during DHCP) also accept
+        // everything: the DHCP server may unicast the OFFER/ACK to the address
+        // it is offering, which is not configured on us yet.
+        let is_broadcast = packet.dest_ip == [255, 255, 255, 255];
+        let is_multicast = packet.dest_ip[0] >= 224 && packet.dest_ip[0] <= 239;
+        let unconfigured = our_ip == [0, 0, 0, 0];
+
+        if unconfigured {
+            // Before a lease, only DHCP (UDP -> 68) plus broadcast/multicast is
+            // legitimate. Accepting every unicast made the AP-reflected echo
+            // requests look like real ping replies from 0.0.0.0.
+            let udp_to_dhcp = packet.protocol == 17
+                && packet.payload.len() >= 4
+                && u16::from_be_bytes([packet.payload[2], packet.payload[3]]) == 68;
+            if !is_broadcast && !is_multicast && !udp_to_dhcp {
+                return;
+            }
+        } else if packet.dest_ip != our_ip && !is_broadcast && !is_multicast {
             return; // No es para nosotros
         }
 
@@ -121,8 +139,7 @@ pub fn handle_ipv4(data: &[u8]) {
     }
 }
 
-pub fn send_packet(dest_ip: [u8; 4], protocol: u8, payload: &[u8]) -> Result<(), &'static str> {
-    let src_ip = crate::net::get_ip();
+pub fn send_packet(dest_ip: [u8; 4], src_ip: [u8; 4], protocol: u8, payload: &[u8]) -> Result<(), &'static str> {
 
     let dest_mac = if dest_ip == [255, 255, 255, 255] {
         [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]

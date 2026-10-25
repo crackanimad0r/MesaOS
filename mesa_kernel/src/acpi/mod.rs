@@ -1,7 +1,7 @@
 // mesa_kernel/src/acpi/mod.rs
 #![cfg(target_arch = "x86_64")]
 
-extern crate alloc;
+
 
 pub mod aml_handler;
 

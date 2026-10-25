@@ -529,8 +529,6 @@ fn address_device(
     bar0: u64,
     dboff: u32,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
-
     crate::mesa_println!("[xHCI] Iniciando Address Device para slot {}...", slot_id);
 
     let max_pkt: u32 = match port_speed {
@@ -780,7 +778,6 @@ fn get_device_descriptor(
     dboff: u32,
     adapter: &mut PmmXhciAdapter,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
 
     crate::mesa_println!("[xHCI] Obteniendo Device Descriptor...");
 
@@ -902,7 +899,6 @@ fn get_config_descriptor(
     dboff: u32,
     adapter: &mut PmmXhciAdapter,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
 
     crate::mesa_println!("[xHCI] Obteniendo Configuration Descriptor...");
 
@@ -1114,7 +1110,6 @@ fn configure_endpoints(
     bar0: u64,
     dboff: u32,
 ) -> bool {
-    use crate::memory::xhci_access::XhciMemory;
     crate::mesa_println!("[xHCI] Configurando Endpoints...");
 
     // Reintentos para Configure Endpoint
@@ -1424,7 +1419,6 @@ fn mass_storage_init(
     bar0: u64,
     dboff: u32,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
 
     let idx = (slot_id as usize).min(MAX_USB_DEVICES - 1);
     let dev = unsafe { &USB_DEVICES[idx] };
@@ -1818,7 +1812,6 @@ fn scsi_read_10(
     bar0: u64,
     dboff: u32,
 ) -> bool {
-    use crate::memory::xhci_access::XhciMemory;
 
     let transfer_len = (sector_count as u32) * 512;
     if buffer.len() < transfer_len as usize {
@@ -2032,7 +2025,6 @@ fn scsi_write_10(
     bar0: u64,
     dboff: u32,
 ) -> bool {
-    use crate::memory::xhci_access::XhciMemory;
 
     let transfer_len = (sector_count as u32) * 512;
     if buffer.len() < transfer_len as usize {
@@ -2253,7 +2245,6 @@ fn scsi_request_sense(
     bar0: u64,
     dboff: u32,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
     let sense_buf = match adapter.alloc_64byte(18) {
         Some(p) => p,
         None => {
@@ -2469,7 +2460,6 @@ fn parse_gpt(
     dboff: u32,
     disk_total_sectors: u64,
 ) {
-    use crate::memory::xhci_access::XhciMemory;
 
     let idx = (slot_id as usize).min(MAX_USB_DEVICES - 1);
     let mut buf = [0u8; 512];
@@ -2697,7 +2687,6 @@ pub fn add_gpt_partition_entry(
     end_lba: u64,
     partition_name: &str,
 ) -> bool {
-    use crate::memory::xhci_access::XhciMemory;
 
     crate::mesa_println!(
         "[GPT] Agregando partición '{}' en LBA {}-{}...",
@@ -3305,7 +3294,6 @@ pub fn init(dev: &PciDevice) {
     regs.operational.config.write_volatile(config);
 
     let mut adapter = PmmXhciAdapter;
-    use crate::memory::xhci_access::XhciMemory;
 
     // 3. DCBAA
     let dcbaa_phys = match adapter.alloc_64byte((max_slots as usize + 1) * 8) {

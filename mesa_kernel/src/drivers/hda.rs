@@ -1,11 +1,29 @@
 // mesa_kernel/src/drivers/hda.rs
 
+use crate::drivers::keyboard::{KeyEvent, SpecialKey};
 use crate::memory::{pmm, vmm};
 use crate::pci;
 
 const HDA_GCAP: usize = 0x00;
 const HDA_GCTL: usize = 0x08;
 const HDA_STATESTS: usize = 0x0E;
+
+// Offset del registro Link Position In Buffer (bytes reproducidos) dentro
+// del bloque de registros de un stream de salida.
+const SD_LPIB: usize = 0x04;
+// Bytes por segundo del formato fijado en init/play: 48 kHz, 16-bit, 2ch.
+const HDA_BYTES_PER_SEC: u64 = 192_000;
+// Frecuencia del timer del sistema (LAPIC programado a ~100 Hz).
+const SYSTEM_TICK_HZ: u64 = 100;
+
+/// Resultado de una reproducción.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PlaybackStatus {
+    /// El buffer se reprodujo completo.
+    Completed,
+    /// El usuario pulsó Ctrl+C y se detuvo antes de terminar.
+    Stopped,
+}
 
 const HDA_CORBLBASE: usize = 0x40;
 const HDA_CORBUBASE: usize = 0x44;
@@ -457,6 +475,106 @@ pub fn enumerate_codecs() {
     }
 }
 
+/// Detiene el DMA del stream de salida (sin hacer SRST).
+fn stop_dma() {
+    let mut lock = HDA.lock();
+    if let Some(ref mut driver) = *lock {
+        driver.write_reg8(driver.stream_base + 0x00, 0x00);
+        driver.stream_running = false;
+    }
+}
+
+/// Espera a que el hardware reproduzca `total_bytes` del buffer DMA.
+///
+/// El avance se mide con LPIB (posición real del stream), no con ticks, para
+/// que la duración sea exacta. Mientras espera:
+///   * ESPACIO  → pausa / reanuda (parando y reanudando el bit RUN)
+///   * Ctrl+C   → detiene y devuelve `PlaybackStatus::Stopped`
+///   * Ctrl+S   → pausa / reanuda (alias)
+///
+/// Cualquier otra tecla pulsada durante la reproducción se descarta para que
+/// no acabe escribiéndose en el prompt del shell.
+fn wait_playback(total_bytes: usize) -> PlaybackStatus {
+    if total_bytes == 0 {
+        return PlaybackStatus::Completed;
+    }
+
+    let duration_ticks = (total_bytes as u64 * SYSTEM_TICK_HZ) / HDA_BYTES_PER_SEC;
+    let timeout_ticks = duration_ticks + SYSTEM_TICK_HZ * 5; // +5 s de margen
+
+    let mut active_ticks: u64 = 0;
+    let mut last_tick = crate::curr_arch::get_ticks();
+    let mut paused = false;
+
+    loop {
+        crate::scheduler::yield_now();
+
+        let now = crate::curr_arch::get_ticks();
+        if !paused {
+            active_ticks = active_ticks.saturating_add(now.wrapping_sub(last_tick));
+        }
+        last_tick = now;
+
+        while let Some(event) = crate::drivers::keyboard::read_event() {
+            match event {
+                KeyEvent::Char(' ') => {
+                    let mut lock = HDA.lock();
+                    if let Some(ref mut driver) = *lock {
+                        paused = !paused;
+                        if paused {
+                            // RUN = 0: el hardware deja de avanzar pero LPIB
+                            // conserva la posición para reanudar.
+                            driver.write_reg8(driver.stream_base + 0x00, 0x00);
+                            crate::serial_println!("[HDA] Reproducción en pausa");
+                        } else {
+                            let ctl = driver.read_reg32(driver.stream_base + 0x00);
+                            driver.write_reg32(driver.stream_base + 0x00, ctl | 0x02);
+                            driver.stream_running = true;
+                            crate::serial_println!("[HDA] Reproducción reanudada");
+                        }
+                    }
+                }
+                KeyEvent::Special(SpecialKey::CtrlC) => {
+                    stop_dma();
+                    crate::serial_println!("[HDA] Reproducción detenida por el usuario");
+                    return PlaybackStatus::Stopped;
+                }
+                // Ctrl+S como alias de pausa (mismo comportamiento que ESPACIO).
+                KeyEvent::Special(SpecialKey::CtrlS) => {
+                    let mut lock = HDA.lock();
+                    if let Some(ref mut driver) = *lock {
+                        paused = !paused;
+                        if paused {
+                            driver.write_reg8(driver.stream_base + 0x00, 0x00);
+                        } else {
+                            let ctl = driver.read_reg32(driver.stream_base + 0x00);
+                            driver.write_reg32(driver.stream_base + 0x00, ctl | 0x02);
+                            driver.stream_running = true;
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+
+        let (lpib, running) = {
+            let lock = HDA.lock();
+            match *lock {
+                Some(ref driver) => (
+                    driver.read_reg32(driver.stream_base + SD_LPIB) as usize,
+                    driver.stream_running,
+                ),
+                None => (0, false),
+            }
+        };
+
+        if !paused && (lpib >= total_bytes || !running || active_ticks >= timeout_ticks) {
+            stop_dma();
+            return PlaybackStatus::Completed;
+        }
+    }
+}
+
 pub fn play_test() {
     let mut lock = HDA.lock();
     if let Some(ref mut driver) = *lock {
@@ -585,33 +703,9 @@ pub fn play_test() {
     // EXPLICITAMENTE liberar el lock antes del bucle para evitar deadlock
     drop(lock);
 
-    // Polling para detener al terminar (usando el timer del sistema en lugar de LPIB)
-    // 48000 Hz * 16-bit (2 bytes) * 2 canales = 192000 bytes/segundo
-    // El PIT va a 18.2 Hz (aprox). Ticks = (Bytes / 192000) * 18.2
-    let target_ticks = (MP3_PCM.len() as u64 * 182) / (192000 * 10);
-    let start_tick = crate::curr_arch::get_ticks();
-
-    loop {
-        crate::scheduler::yield_now();
-
-        let current_tick = crate::curr_arch::get_ticks();
-        if current_tick.wrapping_sub(start_tick) >= target_ticks {
-            let mut lock = HDA.lock();
-            if let Some(ref mut driver) = *lock {
-                driver.write_reg8(driver.stream_base + 0x00, 0x00); // Clear RUN bit
-                driver.stream_running = false;
-            }
-            break;
-        }
-
-        // Comprobar si alguien mas lo detuvo prematuramente con 'hda stop'
-        let lock = HDA.lock();
-        if let Some(ref driver) = *lock {
-            if !driver.stream_running {
-                break;
-            }
-        }
-    }
+    // Esperar al final usando la posición real del stream (LPIB). Permite
+    // pausar con ESPACIO y detener con Ctrl+C.
+    wait_playback(MP3_PCM.len());
 }
 
 pub fn set_volume(vol: u8) {
@@ -773,33 +867,9 @@ pub fn play_pcm(pcm_bytes: &[u8]) -> Result<(), &'static str> {
     // EXPLICITAMENTE liberar el lock antes del bucle para evitar deadlock
     drop(lock);
 
-    // Esperar a que termine: polling por ticks con timeout
-    let target_ticks = (copy_len as u64 * 182) / (192_000 * 10);
-    let start_tick = crate::curr_arch::get_ticks();
-    let max_wait = target_ticks + 200; // margen extra
-
-    loop {
-        crate::scheduler::yield_now();
-        let elapsed = crate::curr_arch::get_ticks().wrapping_sub(start_tick);
-        if elapsed >= target_ticks {
-            // Tiempo cumplido, parar DMA
-            let mut lock = HDA.lock();
-            if let Some(ref mut driver) = *lock {
-                driver.write_reg8(driver.stream_base + 0x00, 0x00);
-                driver.stream_running = false;
-            }
-            break;
-        }
-        if elapsed > max_wait {
-            // Timeout de seguridad
-            let mut lock = HDA.lock();
-            if let Some(ref mut driver) = *lock {
-                driver.write_reg8(driver.stream_base + 0x00, 0x00);
-                driver.stream_running = false;
-            }
-            break;
-        }
-    }
+    // Esperar al final usando la posición real del stream (LPIB). Permite
+    // pausar con ESPACIO y detener con Ctrl+C.
+    wait_playback(copy_len);
 
     Ok(())
 }
@@ -807,7 +877,7 @@ pub fn play_pcm(pcm_bytes: &[u8]) -> Result<(), &'static str> {
 /// Rellena el buffer DMA y arranca la reproducción sin hacer SRST.
 /// Esta función es para streaming: el caller ya debe haber llamado
 /// a stop_stream() antes. Más ligero que play_pcm() para chunks.
-pub fn play_chunk(pcm_bytes: &[u8]) -> Result<(), &'static str> {
+pub fn play_chunk(pcm_bytes: &[u8]) -> Result<PlaybackStatus, &'static str> {
     if pcm_bytes.is_empty() {
         return Err("Buffer PCM vacío");
     }
@@ -924,23 +994,7 @@ pub fn play_chunk(pcm_bytes: &[u8]) -> Result<(), &'static str> {
 
     drop(lock);
 
-    // Esperar a que termine el chunk antes de volver
-    // 48000 Hz * 16-bit * 2 canales = 192000 bytes/segundo
-    let target_ticks = (copy_len as u64 * 182) / (192_000 * 10);
-    let start_tick = crate::curr_arch::get_ticks();
-
-    loop {
-        crate::scheduler::yield_now();
-        let elapsed = crate::curr_arch::get_ticks().wrapping_sub(start_tick);
-        if elapsed >= target_ticks {
-            let mut lock = HDA.lock();
-            if let Some(ref mut driver) = *lock {
-                driver.write_reg8(driver.stream_base + 0x00, 0x00);
-                driver.stream_running = false;
-            }
-            break;
-        }
-    }
-
-    Ok(())
+    // Esperar a que termine el chunk antes de volver (LPIB). Permite
+    // pausar con ESPACIO y detener con Ctrl+C.
+    Ok(wait_playback(copy_len))
 }

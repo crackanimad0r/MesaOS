@@ -22,14 +22,15 @@ pub use workqueue::*;
 
 pub fn msleep(ms: u64) {
     let ticks = crate::curr_arch::get_ticks();
-    let wait_ticks = (ms / 55).max(1);
-    while crate::curr_arch::get_ticks() - ticks < wait_ticks {
+    // Timer is calibrated to ~100 Hz: 1 tick = 10 ms (not 55 ms).
+    let wait_ticks = (ms / 10).max(1);
+    while crate::curr_arch::get_ticks().wrapping_sub(ticks) < wait_ticks {
         crate::scheduler::yield_now();
     }
 }
 
 pub fn mdelay(ms: u64) {
-    for _ in 0..ms * 1_000_000 {
+    for _ in 0..ms * 1000 {
         core::hint::spin_loop();
     }
 }

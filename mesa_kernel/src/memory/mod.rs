@@ -15,7 +15,7 @@ use crate::arch::x86_64::limine_req;
 
 pub use address_space::{flags as page_flags, layout as user_layout, AddressSpace};
 pub use paging::PAGE_SIZE;
-pub use vmm::{phys_to_virt, virt_to_phys};
+pub use vmm::phys_to_virt;
 
 pub struct MemoryInfo {
     pub usable_memory: u64,

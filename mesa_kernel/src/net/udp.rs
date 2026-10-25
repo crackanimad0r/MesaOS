@@ -104,6 +104,12 @@ pub fn handle_udp(data: &[u8], src_ip: [u8; 4]) {
         match packet.dest_port {
             68 => {
                 // DHCP Client
+                crate::mesa_println!(
+                    "  [UDP] DHCP rx {}->{} len={}",
+                    packet.src_port,
+                    packet.dest_port,
+                    packet.payload.len()
+                );
                 crate::net::dhcp::handle_packet(&packet.payload);
             }
             54321 => {
@@ -119,11 +125,11 @@ pub fn handle_udp(data: &[u8], src_ip: [u8; 4]) {
 
 pub fn send_packet(
     dest_ip: [u8; 4],
+    src_ip: [u8; 4],
     src_port: u16,
     dest_port: u16,
     payload: &[u8],
 ) -> Result<(), &'static str> {
-    let src_ip = crate::net::get_ip();
     let udp_packet = create_packet(src_ip, dest_ip, src_port, dest_port, payload);
-    crate::net::ipv4::send_packet(dest_ip, 17, &udp_packet)
+    crate::net::ipv4::send_packet(dest_ip, src_ip, 17, &udp_packet)
 }

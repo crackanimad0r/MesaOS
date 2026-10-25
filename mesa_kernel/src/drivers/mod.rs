@@ -26,6 +26,7 @@ pub mod rtc;
 #[cfg(target_arch = "x86_64")]
 pub mod touchpad;
 pub mod usb;
+pub mod wifi;
 
 pub fn init_serial() {
     serial::init();

@@ -17,3 +17,6 @@ opt-level = 2
 codegen-units = 1
 debug = 0
 incremental = false
+
+[workspace.metadata]
+mesafs_inject_target = "x86_64-unknown-linux-gnu"

@@ -321,7 +321,7 @@ pub fn socket_sendto(fd: i32, data: &[u8], dest_ip: u32, dest_port: u16) -> i64 
         }
     }
     let ip = dest_ip.to_be_bytes();
-    match crate::net::udp::send_packet(ip, local_port, dest_port, data) {
+    match crate::net::udp::send_packet(ip, crate::net::get_ip(), local_port, dest_port, data) {
         Ok(_) => data.len() as i64,
         Err(_) => -crate::linux_compat::errno::EIO,
     }

@@ -5,7 +5,7 @@
 //!
 //! Mejorado: validación de punteros de usuario (SMAP/SMEP), auditoría
 
-extern crate alloc;
+
 
 use crate::security;
 use core::arch::naked_asm;

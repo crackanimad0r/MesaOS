@@ -931,6 +931,10 @@ static int rtw_pci_tx_write(struct rtw_dev *rtwdev,
 	if (avail_desc(ring->r.wp, ring->r.rp, ring->r.len) < 2) {
 		ieee80211_stop_queue(rtwdev->hw, skb_get_queue_mapping(skb));
 		ring->queue_stopped = true;
+	} else if (ring->queue_stopped) {
+		/* Queue was stopped, now have space - wake it */
+		ring->queue_stopped = false;
+		ieee80211_wake_queue(rtwdev->hw, skb_get_queue_mapping(skb));
 	}
 	spin_unlock_bh(&rtwpci->irq_lock);
 
@@ -1710,9 +1714,10 @@ static void rtw_pci_napi_deinit(struct rtw_dev *rtwdev)
 static pci_ers_result_t rtw_pci_io_err_detected(struct pci_dev *pdev,
 						pci_channel_state_t state)
 {
-	struct net_device *netdev = pci_get_drvdata(pdev);
+	struct ieee80211_hw *hw = pci_get_drvdata(pdev);
+	struct rtw_dev *rtwdev = hw->priv;
 
-	netif_device_detach(netdev);
+	rtw_unregister_hw(rtwdev, hw);
 
 	return PCI_ERS_RESULT_NEED_RESET;
 }
@@ -1729,12 +1734,13 @@ static pci_ers_result_t rtw_pci_io_slot_reset(struct pci_dev *pdev)
 
 static void rtw_pci_io_resume(struct pci_dev *pdev)
 {
-	struct net_device *netdev = pci_get_drvdata(pdev);
+	struct ieee80211_hw *hw = pci_get_drvdata(pdev);
+	struct rtw_dev *rtwdev = hw->priv;
 
 	/* ack any pending wake events, disable PME */
 	pci_enable_wake(pdev, PCI_D0, 0);
 
-	netif_device_attach(netdev);
+	rtw_register_hw(rtwdev, hw);
 }
 
 const struct pci_error_handlers rtw_pci_err_handler = {
@@ -1794,7 +1800,7 @@ int rtw_pci_probe(struct pci_dev *pdev,
 	ret = rtw_pci_napi_init(rtwdev);
 	if (ret) {
 		rtw_err(rtwdev, "failed to setup NAPI\n");
-		goto err_pci_declaim;
+		goto err_destroy_pci_resource;
 	}
 
 	ret = rtw_chip_info_setup(rtwdev);
@@ -1804,7 +1810,8 @@ int rtw_pci_probe(struct pci_dev *pdev,
 	}
 
 	/* Disable PCIe ASPM L1 while doing NAPI poll for 8821CE */
-	if (rtwdev->chip->id == RTW_CHIP_TYPE_8821C && bridge->vendor == PCI_VENDOR_ID_INTEL)
+	if (rtwdev->chip->id == RTW_CHIP_TYPE_8821C &&
+	    bridge && bridge->vendor == PCI_VENDOR_ID_INTEL)
 		rtwpci->rx_no_aspm = true;
 
 	rtw_pci_phy_cfg(rtwdev);
@@ -1825,6 +1832,10 @@ int rtw_pci_probe(struct pci_dev *pdev,
 
 err_destroy_pci:
 	rtw_pci_napi_deinit(rtwdev);
+	rtw_pci_destroy(rtwdev, pdev);
+	goto err_pci_declaim;
+
+err_destroy_pci_resource:
 	rtw_pci_destroy(rtwdev, pdev);
 
 err_pci_declaim:

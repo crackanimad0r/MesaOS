@@ -1,8 +1,5 @@
-use crate::drivers::block::{BlockDevice, SECTOR_SIZE};
+use crate::drivers::block::BlockDevice;
 use crate::memory::{pmm, vmm};
-use crate::pci;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
 use core::sync::atomic::{compiler_fence, Ordering};
 use spin::Mutex;
 

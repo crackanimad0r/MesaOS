@@ -189,11 +189,12 @@ pub extern "x86-interrupt" fn keyboard_handler(_stack_frame: InterruptStackFrame
 }
 
 // =======================
-// IRQ WIFI (Realtek)
+// IRQ WIFI (Realtek RTL8822CE)
 // =======================
 
 pub extern "x86-interrupt" fn wifi_handler(_stack_frame: InterruptStackFrame) {
-    // C wifi driver ha sido eliminado, el handler solo envía EOI por ahora
+    // Process WiFi interrupt (RX, TX done, C2H events)
+    crate::drivers::net::rtl8822ce::handle_interrupt();
 
     // EOI
     crate::arch::x86_64::interrupts::apic::send_eoi();

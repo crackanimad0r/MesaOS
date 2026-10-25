@@ -1,4 +1,3 @@
-use super::console::Color;
 use super::ui::{palette, UiRenderer};
 use crate::fs;
 use alloc::string::String;

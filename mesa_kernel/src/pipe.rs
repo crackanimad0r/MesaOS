@@ -1,6 +1,5 @@
 //! Pipes: buffer en kernel para comunicación entre procesos (cmd1 | cmd2)
 
-use alloc::vec::Vec;
 use spin::Mutex;
 
 const PIPE_BUF_SIZE: usize = 4096;

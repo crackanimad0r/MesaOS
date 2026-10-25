@@ -1,7 +1,7 @@
 //! BIOS/UEFI Analyzer for MesaOS
 //! Herramienta para analizar y diagnosticar configuraciones de BIOS que afectan al WiFi RTL8822CE
 
-extern crate alloc;
+
 use crate::acpi;
 use crate::pci;
 use alloc::{format, string::String, vec::Vec};

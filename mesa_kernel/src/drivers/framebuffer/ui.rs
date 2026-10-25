@@ -1,5 +1,5 @@
 use super::console::Color;
-use libm::{cosf, sinf, sqrtf};
+use libm::sqrtf;
 
 pub mod palette {
     use super::Color;

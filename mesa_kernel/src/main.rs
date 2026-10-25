@@ -107,6 +107,7 @@ const COMMANDS: &[&str] = &[
     "write", // Escribir contenido a archivo
     "beep",
     "ifconfig",
+    "dhcp",
     "ping",
     "curl",
     "arp",
@@ -133,6 +134,8 @@ const COMMANDS: &[&str] = &[
     "play",
     "audio-info",
     "audio-list",
+    // WiFi commands
+    "wifi",
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -396,6 +399,8 @@ extern "C" fn kernel_start() -> ! {
         drivers::net::init();
         let nic_name = if net::is_virtio() {
             "VirtIO-Net"
+        } else if crate::drivers::net::rtl8822ce::is_ready() {
+            "RTL8822CE WiFi"
         } else {
             "RTL8139"
         };
@@ -1143,6 +1148,8 @@ fn execute_command(cmd: &str) {
         #[cfg(target_arch = "x86_64")]
         "ifconfig" => cmd_ifconfig(args),
         #[cfg(target_arch = "x86_64")]
+        "dhcp" => cmd_dhcp(),
+        #[cfg(target_arch = "x86_64")]
         "ping" => cmd_ping(args),
         "curl" => cmd_curl(args),
         "ip" => cmd_ip(),
@@ -1224,6 +1231,8 @@ fn execute_command(cmd: &str) {
         "play" => cmd_play(args),
         "audio-info" => cmd_audio_info(args),
         "audio-list" => cmd_audio_list(args),
+        // WiFi commands
+        "wifi" => cmd_wifi(args),
         "" => {}
         _ => {
             print_error(&format!(
@@ -1490,8 +1499,6 @@ fn cmd_tree(args: &[&str]) {
     drivers::framebuffer::set_color(palette::TEXT);
 
     fn print_tree(path: &str, prefix: &str, _is_last: bool) {
-        use alloc::string::String;
-
         match crate::fs::readdir(path) {
             Ok(mut entries) => {
                 entries.sort_by(|a, b| a.name.cmp(&b.name));
@@ -1986,8 +1993,9 @@ fn cmd_hda(args: &[&str]) {
             if args[0] == "enumerate" || args[0] == "enumeration" {
                 crate::drivers::hda::enumerate_codecs();
             } else if args[0] == "test" {
-                crate::drivers::hda::play_test();
                 mesa_println!("Reproduciendo audio de prueba...");
+                mesa_println!("Controles: ESPACIO pausa/reanuda, Ctrl+C detiene.");
+                crate::drivers::hda::play_test();
             } else if args[0] == "stop" {
                 crate::drivers::hda::stop_stream();
                 mesa_println!("Audio detenido.");
@@ -3376,6 +3384,34 @@ fn cmd_net(args: &[&str]) {
     print_section("Informacion de Red");
     mesa_println!();
 
+    // RTL8822CE WiFi (hardware real)
+    if crate::drivers::net::rtl8822ce::is_ready() {
+        if let Some(device) = pci::find_device(0x10EC, 0xC822)
+            .or_else(|| pci::find_device(0x10EC, 0xC82F))
+        {
+            print_info_line("Controlador", "Realtek RTL8822CE WiFi (802.11ac)");
+            print_info_line("PCI Bus", &format!("{:02x}:{:02x}.{}", device.bus, device.device, device.function));
+            print_info_line("Estado", "Inicializado");
+
+            if let Some(mac) = drivers::net::rtl8822ce::get_mac() {
+                print_info_line(
+                    "MAC Address",
+                    &format!(
+                        "{:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+                        mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]
+                    ),
+                );
+            }
+
+            let ip = net::get_ip();
+            let gw = net::get_gateway();
+            print_info_line("IP Address", &format!("{}.{}.{}.{}", ip[0], ip[1], ip[2], ip[3]));
+            print_info_line("Gateway", &format!("{}.{}.{}.{}", gw[0], gw[1], gw[2], gw[3]));
+            return;
+        }
+    }
+
+    // RTL8139 fallback
     if let Some(device) = pci::find_device(0x10EC, 0x8139) {
         print_info_line("Controlador", "Realtek RTL8139");
         print_info_line("PCI Bus", &format!("{}", device.bus));
@@ -3418,6 +3454,60 @@ fn cmd_net(args: &[&str]) {
 }
 
 #[cfg(target_arch = "x86_64")]
+fn cmd_dhcp() {
+    mesa_println!();
+    print_info("Solicitando IP por DHCP...");
+    for attempt in 1..=6 {
+        if let Err(e) = crate::net::dhcp::send_discover() {
+            print_error(&format!("DHCP: {}", e));
+            return;
+        }
+        // Real 2.5 s wait (250 ticks at ~100 Hz). An OFFER restarts the
+        // window (and retries the REQUEST) so a late offer still gets its ACK.
+        let mut start = curr_arch::get_ticks();
+        let mut last_req = start;
+        let mut offer_seen = false;
+        let mut req_retries = 0u32;
+        while curr_arch::get_ticks().wrapping_sub(start) < 250 {
+            crate::net::poll();
+            if crate::net::get_ip() != [0, 0, 0, 0] {
+                let ip = crate::net::get_ip();
+                let gw = crate::net::get_gateway();
+                let dns = crate::net::get_dns();
+                print_success(&format!(
+                    "IP {}.{}.{}.{}  GW {}.{}.{}.{}  DNS {}.{}.{}.{}",
+                    ip[0], ip[1], ip[2], ip[3],
+                    gw[0], gw[1], gw[2], gw[3],
+                    dns[0], dns[1], dns[2], dns[3]
+                ));
+                mesa_println!();
+                return;
+            }
+            let now = curr_arch::get_ticks();
+            if crate::net::dhcp::offer_pending() {
+                if !offer_seen {
+                    offer_seen = true;
+                    let _ = crate::net::dhcp::resend_request();
+                    last_req = now;
+                    start = now;
+                } else if now.wrapping_sub(last_req) >= 50 && req_retries < 8 {
+                    let _ = crate::net::dhcp::resend_request();
+                    req_retries += 1;
+                    last_req = now;
+                    start = now;
+                }
+            }
+            crate::linux::mdelay(1);
+        }
+        if attempt < 6 {
+            mesa_println!("[DHCP] sin respuesta (intento {}/6)", attempt);
+        }
+    }
+    print_error("DHCP sin respuesta tras 15 s");
+    print_info("Prueba 'ifconfig eth0 <ip> <mascara> <gateway>'");
+    mesa_println!();
+}
+
 fn cmd_ifconfig(args: &[&str]) {
     if args.len() < 3 {
         let ip = net::get_ip();
@@ -3495,6 +3585,12 @@ fn cmd_ping(args: &[&str]) {
         return;
     }
 
+    if net::get_ip() == [0, 0, 0, 0] {
+        print_error("Sin IP: ejecuta 'dhcp' para obtener un lease");
+        mesa_println!();
+        return;
+    }
+
     // Resolve hostname or parse IP (resolve handles both now)
     let dest_ip = if let Some(ip) = net::dns::resolve(args[0]) {
         ip
@@ -3539,14 +3635,15 @@ fn cmd_ping(args: &[&str]) {
 
         let start_tick = curr_arch::get_ticks();
 
+        net::icmp::clear_replies();
         if let Err(e) = net::icmp::send_ping(dest_ip, 1, seq as u16) {
             print_error(&format!("Error enviando ping: {}", e));
         } else {
             // Esperar respuesta (máximo 1 segundo)
-            if let Some((reply_ip, ttl)) = net::icmp::wait_for_reply(1, seq as u16, 1000) {
+            if let Some((reply_ip, ttl)) = net::icmp::wait_for_reply(1, seq as u16, 1000, dest_ip) {
                 let end_tick = curr_arch::get_ticks();
                 let rtt_ticks = end_tick.wrapping_sub(start_tick);
-                let rtt_ms = rtt_ticks * 55; // Aproximación 18.2 Hz -> 55ms por tick
+                let rtt_ms = rtt_ticks * 10; // 1 tick = 10 ms (timer ~100 Hz)
 
                 mesa_println!(
                     "64 bytes from {}.{}.{}.{}: icmp_seq={} ttl={} time={} ms",
@@ -3567,8 +3664,8 @@ fn cmd_ping(args: &[&str]) {
 
         seq += 1;
 
-        // Esperar hasta completar 1 segundo (18-19 ticks)
-        let wait_until = start_tick + 18;
+        // Esperar hasta completar 1 segundo (100 ticks a ~100 Hz)
+        let wait_until = start_tick + 100;
         while curr_arch::get_ticks() < wait_until {
             crate::net::poll(); // Seguir procesando red mientras esperamos
             core::hint::spin_loop();
@@ -3601,11 +3698,21 @@ fn cmd_curl(args: &[&str]) {
 
     let url = args[0];
     let output_file = args.get(1).copied();
-    let hostname = if url.starts_with("http://") {
-        &url[7..]
+    // Strip scheme, then the path/query/fragment and an optional :port so the
+    // DNS query uses a bare hostname. Leaving "example.com/" made resolve()
+    // send an invalid name (NXDOMAIN) and curl reported "no se pudo resolver".
+    let after_scheme = if let Some(rest) = url.strip_prefix("http://") {
+        rest
+    } else if let Some(rest) = url.strip_prefix("https://") {
+        rest
     } else {
         url
     };
+    let host_port = after_scheme
+        .split(['/', '?', '#'])
+        .next()
+        .unwrap_or(after_scheme);
+    let hostname = host_port.split(':').next().unwrap_or(host_port);
 
     // DNS Resolve
     mesa_print!("Resolviendo {}... ", hostname);
@@ -3629,37 +3736,46 @@ fn cmd_curl(args: &[&str]) {
     let src_port = 49152 + (curr_arch::get_ticks() % 1000) as u16;
     let mut seq = 100;
 
-    // SYN
-    let syn = net::tcp::TcpHeader::new(src_port, 80, seq, 0, net::tcp::TCP_FLAG_SYN);
-    let _ = net::tcp::send_tcp_packet(dest_ip, syn, &[]);
-
-    // Wait for SYN-ACK
+    // Wait for SYN-ACK. Slow ISP links can take seconds; retry the SYN three
+    // times (2.5 s each) instead of giving up after ~200 ms.
     let mut ack_num = 0;
     let mut success = false;
-    unsafe {
-        net::tcp::LAST_TCP_PACKETS.clear();
-    }
+    for syn_try in 0..5 {
+        let syn = net::tcp::TcpHeader::new(src_port, 80, seq, 0, net::tcp::TCP_FLAG_SYN);
+        unsafe {
+            net::tcp::LAST_TCP_PACKETS.clear();
+        }
+        if let Err(e) = net::tcp::send_tcp_packet(dest_ip, syn, &[]) {
+            mesa_println!("[CURL] SYN no enviado: {}", e);
+        }
 
-    let start_wait = curr_arch::get_ticks();
-    while curr_arch::get_ticks().wrapping_sub(start_wait) < 54 {
-        // 3s
-        net::poll();
-        let packets = unsafe { core::mem::take(&mut net::tcp::LAST_TCP_PACKETS) };
-        for (header, _, _) in packets {
-            if header.dest_port == src_port
-                && (header.flags & net::tcp::TCP_FLAG_SYN != 0)
-                && (header.flags & net::tcp::TCP_FLAG_ACK != 0)
-            {
-                ack_num = header.seq_num + 1;
-                seq += 1;
-                success = true;
+        let start_wait = curr_arch::get_ticks();
+        while curr_arch::get_ticks().wrapping_sub(start_wait) < 300 {
+            // 3 s per attempt at ~100 Hz
+            net::poll();
+            let packets = unsafe { core::mem::take(&mut net::tcp::LAST_TCP_PACKETS) };
+            for (header, _, _) in packets {
+                if header.dest_port == src_port
+                    && (header.flags & net::tcp::TCP_FLAG_SYN != 0)
+                    && (header.flags & net::tcp::TCP_FLAG_ACK != 0)
+                {
+                    ack_num = header.seq_num + 1;
+                    seq += 1;
+                    success = true;
+                    break;
+                }
+            }
+            if success {
                 break;
             }
+            core::hint::spin_loop();
         }
         if success {
             break;
         }
-        core::hint::spin_loop();
+        if syn_try < 4 {
+            mesa_println!("[CURL] reintento SYN {}/5...", syn_try + 2);
+        }
     }
 
     if !success {
@@ -3791,7 +3907,9 @@ fn cmd_ip() {
     );
 
     let status = if net::is_virtio() {
-        "LINK UP"
+        "LINK UP (virtio-net)"
+    } else if crate::drivers::net::rtl8822ce::is_ready() {
+        "LINK UP (RTL8822CE WiFi)"
     } else {
         "LINK DOWN"
     };
@@ -4045,6 +4163,198 @@ fn cmd_scan() {
     mesa_println!();
 }
 
+fn cmd_wifi(args: &[&str]) {
+    if args.is_empty() {
+        print_section("WiFi");
+        mesa_println!();
+        if !drivers::net::rtl8822ce::is_ready() {
+            print_error("RTL8822CE no inicializado");
+        } else {
+            if let Some(mac) = drivers::net::rtl8822ce::get_mac() {
+                print_info(&format!("MAC: {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+                    mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]));
+            }
+            print_info(&format!("Estado: {}", drivers::wifi::state::get_state().name()));
+        }
+        mesa_println!();
+        print_info("Uso: wifi scan | wifi scanner | wifi connect <ssid> | wifi status | wifi diag | wifi disconnect");
+        mesa_println!();
+        return;
+    }
+
+    match args[0] {
+        "scan" => {
+            if !drivers::net::rtl8822ce::is_ready() {
+                print_error("RTL8822CE no inicializado");
+                return;
+            }
+
+            drivers::framebuffer::set_color(palette::FOAM);
+            mesa_println!("Escaneando redes WiFi...");
+            drivers::framebuffer::set_color(palette::TEXT);
+            mesa_println!("(Pulsa Ctrl+C para detener el escaneo y mostrar las redes totales)");
+
+            // Use the new proper scan implementation
+            match drivers::net::rtl8822ce::wifi_scan() {
+                Ok(results) => {
+                    mesa_println!();
+                    if results.is_empty() {
+                        print_info("No se encontraron redes WiFi");
+                    } else {
+                        print_section(&format!("Redes encontradas ({})", results.len()));
+                        mesa_println!();
+                        for (i, r) in results.iter().enumerate() {
+                            let enc = if r.has_rsn { "WPA2" } else { "Open" };
+                            mesa_println!("  {:2}. {:32} ch={:2} RSSI={:3}dBm [{}]",
+                                i + 1, r.ssid, r.channel, r.rssi, enc);
+                        }
+                        mesa_println!();
+                        print_info("Usa 'wifi connect <ssid>' para conectarte");
+                    }
+                    mesa_println!();
+                }
+                Err(e) => {
+                    print_error(&format!("Error en scan: {}", e));
+                }
+            }
+        }
+
+        "scanner" => {
+            if !drivers::net::rtl8822ce::is_ready() {
+                print_error("RTL8822CE no inicializado");
+                return;
+            }
+
+            drivers::framebuffer::set_color(palette::FOAM);
+            mesa_println!("Escaneo WiFi DETALLADO (canales 1-13)...");
+            drivers::framebuffer::set_color(palette::TEXT);
+
+            match drivers::net::rtl8822ce::wifi_scan_detailed() {
+                Ok(results) => {
+                    mesa_println!();
+                    if results.is_empty() {
+                        print_info("No se encontraron redes WiFi");
+                    } else {
+                        print_section(&format!("Redes encontradas ({})", results.len()));
+                        mesa_println!();
+                        for (i, r) in results.iter().enumerate() {
+                            let enc = if r.has_rsn { "WPA2" } else { "Open" };
+                            mesa_println!("  {:2}. {:32} ch={:2} RSSI={:3}dBm [{}]",
+                                i + 1, r.ssid, r.channel, r.rssi, enc);
+                        }
+                        mesa_println!();
+                        print_info("Usa 'wifi connect <ssid>' para conectarte");
+                    }
+                    mesa_println!();
+                }
+                Err(e) => {
+                    print_error(&format!("Error en scan: {}", e));
+                }
+            }
+        }
+
+        "connect" => {
+            if args.len() < 2 {
+                print_error("Uso: wifi connect <ssid> [password]");
+                return;
+            }
+            if !drivers::net::rtl8822ce::is_ready() {
+                print_error("RTL8822CE no inicializado");
+                return;
+            }
+
+            let ssid = args[1];
+            let password: alloc::string::String = if let Some(pw) = args.get(2) {
+                alloc::string::String::from(*pw)
+            } else {
+                // Prompt interactivo para la contraseña (WPA2-PSK)
+                drivers::framebuffer::set_color(palette::FOAM);
+                mesa_print!("Contraseña para '{}' (Enter si es red abierta): ", ssid);
+                drivers::framebuffer::set_color(palette::TEXT);
+                let mut pw_buf = alloc::string::String::new();
+                read_line_password(&mut pw_buf);
+                pw_buf
+            };
+
+            drivers::framebuffer::set_color(palette::FOAM);
+            mesa_println!("Conectando a '{}'...", ssid);
+            drivers::framebuffer::set_color(palette::TEXT);
+
+            // Use the new proper connect implementation
+            match drivers::net::rtl8822ce::wifi_connect(ssid, &password) {
+                Ok(()) => {
+                    if net::get_ip() == [0, 0, 0, 0] {
+                        print_error("Asociado, pero SIN IP: DHCP no respondió");
+                        print_info("Reintenta con 'dhcp' (sin reconectar) o usa 'ifconfig'");
+                    } else {
+                        print_info("¡Conectado exitosamente!");
+                    }
+                    let state = drivers::wifi::state::get_state();
+                    if state == drivers::wifi::state::WifiState::Connected {
+                        let ssid = drivers::wifi::state::get_ssid();
+                        let bssid = drivers::wifi::state::get_bssid();
+                        let ch = drivers::wifi::state::get_channel();
+                        mesa_println!("  SSID:  {}", ssid);
+                        mesa_println!("  BSSID: {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+                            bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+                        mesa_println!("  Canal: {}", ch);
+                    }
+                }
+                Err(e) => {
+                    print_error(&format!("Error conectando: {}", e));
+                }
+            }
+            mesa_println!();
+        }
+
+        "status" => {
+            let state = drivers::wifi::state::get_state();
+            print_section("Estado WiFi");
+            mesa_println!();
+            mesa_println!("  Estado: {}", state.name());
+            if state == drivers::wifi::state::WifiState::Connected {
+                let ssid = drivers::wifi::state::get_ssid();
+                let bssid = drivers::wifi::state::get_bssid();
+                let ch = drivers::wifi::state::get_channel();
+                mesa_println!("  SSID:  {}", ssid);
+                mesa_println!("  BSSID: {:02x}:{:02x}:{:02x}:{:02x}:{:02x}:{:02x}",
+                    bssid[0], bssid[1], bssid[2], bssid[3], bssid[4], bssid[5]);
+                mesa_println!("  Canal: {}", ch);
+            }
+            mesa_println!();
+        }
+
+        "diag" => {
+            drivers::net::rtl8822ce::wifi_diag();
+        }
+
+        "disconnect" => {
+            if !drivers::net::rtl8822ce::is_ready() {
+                print_error("RTL8822CE no inicializado");
+                return;
+            }
+            
+            drivers::framebuffer::set_color(palette::FOAM);
+            mesa_println!("Desconectando...");
+            drivers::framebuffer::set_color(palette::TEXT);
+
+            // Use the driver's disconnect flow: HW cleanup + H2C JOIN_BSSRPT (disconnect)
+            match drivers::net::rtl8822ce::wifi_disconnect() {
+                Ok(()) => {
+                    print_info("Desconectado correctamente");
+                }
+                Err(e) => {
+                    print_error(&format!("Error desconectando: {}", e));
+                }
+            }
+        }
+
+        _ => {
+            print_error("Subcomandos: scan, connect <ssid>, status, diag, disconnect");
+        }
+    }
+}
+
 fn cmd_html(args: &[&str]) {
     if args.is_empty() {
         print_error("Uso: html <archivo.html>");
@@ -4285,19 +4595,33 @@ fn cmd_play(args: &[&str]) {
         }
     }
 
+    print_info("Controles: ESPACIO pausa/reanuda, Ctrl+C detiene la reproducción.");
+    mesa_println!();
+
     if loop_playback {
-        print_info("Modo loop activado. Pulsa Ctrl+C en otra terminal (o espera) para parar.");
+        print_info("Modo loop activado.");
         mesa_println!();
         loop {
-            if let Err(e) = audio_player::play_file(path) {
-                print_error(&format!("Error en reproducción: {}", e.as_str()));
-                return;
+            match audio_player::play_file(path) {
+                Ok(()) => {}
+                Err(audio_player::AudioError::Stopped) => {
+                    print_info("Reproducción detenida.");
+                    mesa_println!();
+                    return;
+                }
+                Err(e) => {
+                    print_error(&format!("Error en reproducción: {}", e.as_str()));
+                    return;
+                }
             }
         }
     } else {
         match audio_player::play_file(path) {
             Ok(()) => {
                 print_success("Reproducción completada");
+            }
+            Err(audio_player::AudioError::Stopped) => {
+                print_info("Reproducción detenida.");
             }
             Err(e) => {
                 print_error(&format!("Error: {}", e.as_str()));

@@ -10,7 +10,7 @@
 //! El reporte `BatteryReport` expone toda la información disponible en una
 //! estructura apta para imprimir estilo `upower -i` o `acpi -V`.
 
-extern crate alloc;
+
 
 use alloc::string::String;
 use core::sync::atomic::{AtomicBool, Ordering};

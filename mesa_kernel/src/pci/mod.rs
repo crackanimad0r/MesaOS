@@ -1,6 +1,6 @@
 // mesa_kernel/src/pci/mod.rs
 
-extern crate alloc;
+
 
 use alloc::vec::Vec;
 use spin::Mutex;

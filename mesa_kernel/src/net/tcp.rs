@@ -114,7 +114,7 @@ pub fn send_tcp_packet(
     tcp_data[16] = (checksum >> 8) as u8;
     tcp_data[17] = (checksum & 0xFF) as u8;
 
-    ipv4::send_packet(dest_ip, 6, &tcp_data)
+    ipv4::send_packet(dest_ip, crate::net::get_ip(), 6, &tcp_data)
 }
 
 // Store (TcpHeader, payload, src_ip) for TCP packet inspection
@@ -122,6 +122,15 @@ pub static mut LAST_TCP_PACKETS: Vec<(TcpHeader, Vec<u8>, [u8; 4])> = Vec::new()
 
 pub fn handle_tcp(data: &[u8], src_ip: [u8; 4]) {
     if let Some((header, payload)) = TcpHeader::from_bytes(data) {
+        // Surface handshake packets on screen so a failed curl shows whether
+        // the SYN-ACK ever came back (network/RX) or not (TX/ARP).
+        if (header.flags & TCP_FLAG_SYN != 0) && (header.flags & TCP_FLAG_ACK != 0) {
+            crate::mesa_println!(
+                "[TCP] SYN-ACK de {}.{}.{}.{}:{} -> :{}",
+                src_ip[0], src_ip[1], src_ip[2], src_ip[3],
+                header.src_port, header.dest_port
+            );
+        }
         // Push to the shared packet buffer for connect/accept inspection
         unsafe {
             LAST_TCP_PACKETS.push((header, payload.to_vec(), src_ip));

@@ -65,6 +65,8 @@ pub enum AudioError {
     DriverNotReady,
     /// Error durante la decodificación
     DecodeError,
+    /// El usuario detuvo la reproducción (Ctrl+C)
+    Stopped,
 }
 
 impl AudioError {
@@ -76,6 +78,7 @@ impl AudioError {
             AudioError::OutOfMemory => "Memoria insuficiente",
             AudioError::DriverNotReady => "Driver de audio (HDA) no inicializado",
             AudioError::DecodeError => "Error al decodificar el audio",
+            AudioError::Stopped => "Reproducción detenida por el usuario",
         }
     }
 }
@@ -376,8 +379,12 @@ pub fn play_pcm_blocking(pcm: &PcmBuffer) -> AudioResult<()> {
                 out_frames_this,
             );
 
-            if let Err(_e) = crate::drivers::hda::play_chunk(&chunk_bytes) {
-                return Err(AudioError::DriverNotReady);
+            match crate::drivers::hda::play_chunk(&chunk_bytes) {
+                Ok(crate::drivers::hda::PlaybackStatus::Completed) => {}
+                Ok(crate::drivers::hda::PlaybackStatus::Stopped) => {
+                    return Err(AudioError::Stopped)
+                }
+                Err(_) => return Err(AudioError::DriverNotReady),
             }
         }
     }

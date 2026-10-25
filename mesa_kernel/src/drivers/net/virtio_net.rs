@@ -1,5 +1,4 @@
 // mesa_kernel/src/drivers/net/virtio_net.rs
-use crate::pci::PciDevice;
 use alloc::vec::Vec;
 use core::sync::atomic::{fence, AtomicBool, Ordering};
 use x86_64::instructions::port::Port;
